@@ -1,32 +1,23 @@
-@read_out_sibvars
-dir = '/dados/SiB/'
-varfile =  'sib2dt.dat'
-file = dir+varfile
+pro ts_sumday, datetime, sibvar, ts_uniqdays, ts_sibvarsumday
 
-read_out_sibvars, file, datetime, vars, kval
+  caldat, datetime, month, day, year
+  ts_days = julday(month, day, year, 00)
 
-Tm = fltarr(kval)
-Tm[*] = vars[0, *]
+  ts_uniqdays = ts_days[uniq(ts_days, sort(ts_days))]
+  ndays = n_elements(ts_uniqdays)
 
-caldat, datetime, month, day, year
-ts_days = julday(month, day, year, 00)
+  ts_sibvarsumday = fltarr(ndays)
 
-ts_uniqdays = ts_days[uniq(ts_days, sort(ts_days))]
-ndays = n_elements(ts_uniqdays)
+  for k = 0, ndays - 1L do begin
 
-ts_varaccday = fltarr(ndays)
+    posday = where(datetime ge ts_uniqdays[k] and datetime lt ts_uniqdays[k]+1d)
 
-for k = 0, ndays - 1L do begin
+                                ;print, '----------------------' 
+                                ;print, datetime[posday], format = '(c())'
+                                ;wait, 2
+    
+    ts_sibvarsumday[k] = total(sibvar[posday]) 
+    
+  endfor
 
-  posday = where(datetime ge ts_uniqdays[k] and datetime lt ts_uniqdays[k]+1d)
-
-  ;print, '----------------------' 
-  ;print, datetime[posday], format = '(c())'
-  ;wait, 2
-  
-  ts_varaccday[k] = total(Tm[posday]) 
-  
-endfor
-
-plot, ts_varaccday
 end

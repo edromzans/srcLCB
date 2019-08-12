@@ -1,17 +1,30 @@
 @read_out_sibvars
 @ts_avgmonth
-dir = '/dados/SiB/'
+@ts_summonth
+
+;dir = '/dados/SiB/sites/Pastagem_SP_15Out09/run/'
+;dir = '/dados/SiB/sites/Pastagem_Rondonia/run/'
+;dir = '/dados/SiB/sites/Floresta_Rondonia/run/'
+;dir = '/dados/SiB/sites/FlorestaAtlantica-novo/run/'
+;dir = '/dados/SiB/sites/FlorestaAtlantica/run/'
+;dir = '/dados/SiB/sites/Fazenda-K77/run/'
+;dir = '/dados/SiB/sites/Eucalipto/run/'
+;dir = '/dados/SiB/sites/Cana_27Nov09/run/'
+;dir = '/dados/SiB/sites/Cerrado_27Nov09/run/'
+dir = '/dados/SiB/controle/run/'
 varfile =  'sib2dt.dat'
 file = dir+varfile
-
+print, file
 read_out_sibvars, file, datetime, vars, kval
+
+stop
 
 ;default
 t0 = min(datetime)
 t1 = max(datetime)
 ;set your own date
-t0 = julday(01, 01, 2005, 00) ; julday(MM, DD, YYYY, HH)
-t1 = julday(01, 01, 2006, 00)
+;t0 = julday(01, 01, 2005, 00) ; julday(MM, DD, YYYY, HH)
+;t1 = julday(01, 01, 2006, 00)
 
 Tm = fltarr(kval)
 em = fltarr(kval)
@@ -96,6 +109,8 @@ um_sth = smooth(um, swth, /edge_truncate)
 ts_avgmonth, datetime, um, ts_uniqmonths, um_avg
 Ki_sth = smooth(Ki, swth, /edge_truncate)
 Prec_sth = smooth(Prec, swth, /edge_truncate)
+ts_summonth, datetime, Prec, ts_uniqmonths, Prec_sum
+
 
 W1_C_sth = smooth(W1_C, swth, /edge_truncate)
 W2_C_sth = smooth(W2_C, swth, /edge_truncate)
@@ -149,7 +164,8 @@ oplot, ts_uniqmonths, um_avg, linestyle = 1
 plot, datetime, Ki_sth, ytitle = 'Ki', xstyle = 1, ystyle = 1, $
       xtickformat = 'LABEL_DATE', xtickunits = 'Time', xrange = [t0, t1]
 plot, datetime, Prec_sth, ytitle = 'Prec', xstyle = 1, ystyle = 1, $
-      xtickformat = 'LABEL_DATE', xtickunits = 'Time', xrange = [t0, t1]
+      xtickformat = 'LABEL_DATE', xtickunits = 'Time', xrange = [t0, t1];,  yrange = [0, 400.]
+oplot, ts_uniqmonths, Prec_sum, linestyle = 1,  color = 10
 
 plot, datetime, W1_C_sth, ytitle = 'W(1-10)_C', xstyle = 1, ystyle = 1, $
       xtickformat = 'LABEL_DATE', xtickunits = 'Time', xrange = [t0, t1], yrange = [0.3, 1.], /nodata

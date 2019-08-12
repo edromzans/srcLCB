@@ -1,32 +1,23 @@
-@read_out_sibvars
-dir = '/dados/SiB/'
-varfile =  'sib2dt.dat'
-file = dir+varfile
+pro ts_avgday, datetime, sibvar, ts_uniqdays, ts_sibvaravgday
 
-read_out_sibvars, file, datetime, vars, kval
+  caldat, datetime, month, day, year
+  ts_days = julday(month, day, year, 00)
 
-Tm = fltarr(kval)
-Tm[*] = vars[0, *]
+  ts_uniqdays = ts_days[uniq(ts_days, sort(ts_days))]
+  ndays = n_elements(ts_uniqdays)
 
-caldat, datetime, month, day, year
-ts_days = julday(month, day, year, 00)
+  ts_sibvaravgday = fltarr(ndays)
 
-ts_uniqdays = ts_days[uniq(ts_days, sort(ts_days))]
-ndays = n_elements(ts_uniqdays)
+  for k = 0, ndays - 1L do begin
 
-ts_varavgday = fltarr(ndays)
+    posday = where(datetime ge ts_uniqdays[k] and datetime lt ts_uniqdays[k]+1d)
 
-for k = 0, ndays - 1L do begin
+                                ;print, '----------------------' 
+                                ;print, datetime[posday], format = '(c())'
+                                ;wait, 2
+    
+    ts_sibvaravgday[k] = mean(sibvar[posday], /nan) 
+    
+  endfor
 
-  posday = where(datetime ge ts_uniqdays[k] and datetime lt ts_uniqdays[k]+1d)
-
-  ;print, '----------------------' 
-  ;print, datetime[posday], format = '(c())'
-  ;wait, 2
-  
-  ts_varavgday[k] = mean(Tm[posday], /nan) 
-  
-endfor
-
-plot, ts_varavgday
 end

@@ -1,0 +1,26 @@
+pro ts_summonth, datetime, sibvar, ts_uniqmonths, ts_sibvarsummonth   
+
+  caldat, datetime, month, day, year
+  ts_months = julday(month, 01, year, 00)
+
+  ts_uniqmonths = ts_months[uniq(ts_months, sort(ts_months))]
+  nmonths = n_elements(ts_uniqmonths)
+
+  ts_sibvarsummonth = fltarr(nmonths)
+
+  for k = 0, nmonths - 1L do begin
+
+    if k lt (nmonths - 1L) then begin
+      posmonth = where(datetime ge ts_uniqmonths[k] and datetime lt ts_uniqmonths[k+1])
+    endif else begin
+      posmonth = where(datetime ge ts_uniqmonths[k] and datetime lt !values.f_infinity)
+    endelse
+    
+    ;print, '----------------------' 
+    ;print, datetime[posmonth], format = '(c())'
+    ;wai, 2
+    
+    ts_sibvarsummonth[k] = total(sibvar[posmonth], /nan) 
+    
+  endfor
+end
