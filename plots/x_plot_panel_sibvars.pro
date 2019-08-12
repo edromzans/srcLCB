@@ -1,5 +1,5 @@
 @read_out_sibvars
-dir = '/dados/SiB'
+dir = '/dados/SiB/'
 varfile =  'sib2dt.dat'
 file = dir+varfile
 
