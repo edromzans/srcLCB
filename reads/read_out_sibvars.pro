@@ -1,4 +1,4 @@
-pro read_out_sibvars, file, datetime, vars, kval
+pro read_out_sibvars, file, datetime, vars, varnames, kval
 ;dir = '/dados/SiB/'
 ;varfile =  'sib2dt.dat'
 ;file = dir+varfile
@@ -49,4 +49,5 @@ pro read_out_sibvars, file, datetime, vars, kval
     endelse
   endfor
   close, 1
+  varnames = varnames[1:*] ;remove time name column 
 end
