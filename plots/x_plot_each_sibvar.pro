@@ -2,11 +2,16 @@
 @ts_avgmonth
 @ts_summonth
 
+;devel--------------------
+dir = '/home/evandro/SiB2run/'  
+;-------------------------
+
+
 ;dir = '/dados/SiB/sites/Pastagem_SP_15Out09/run/'
 ;dir = '/dados/SiB/sites/Pastagem_Rondonia/run/'
 ;dir = '/dados/SiB/sites/Floresta_Rondonia/run/'
 ;dir = '/dados/SiB/sites/FlorestaAtlantica-novo/run/'
-dir = '/dados/SiB/sites/FlorestaAtlantica/run/'
+;dir = '/dados/SiB/sites/FlorestaAtlantica/run/'
 ;dir = '/dados/SiB/sites/Fazenda-K77/run/'
 ;dir = '/dados/SiB/sites/Eucalipto/run/'
 ;dir = '/dados/SiB/sites/Cana_27Nov09/run/'
@@ -38,7 +43,7 @@ date_label = LABEL_DATE( DATE_FORMAT=['%Y%N'] )
 xws = 2500
 yws = 1000
 !p.multi = [0, 5, 9]
-window, 0, xsize = xws,  ysize = yws
+window, 0, xsize = xws,  ysize = yws, title = 'Variaveis SiB'
 device, decomposed = 0
 loadct, 13, ncolors = 11
 tvlct, 255, 255, 255, 255
@@ -76,7 +81,28 @@ endfor
 ;; endfor
 
 !p.multi = [0, 5, 9]
-window, 2, xsize = xws,  ysize = yws
+window, 1, xsize = xws,  ysize = yws, title = 'Media diaria'
+device, decomposed = 0
+loadct, 13, ncolors = 11
+tvlct, 255, 255, 255, 255
+
+;Day average SiBvars
+for k = 0L, nvars - 1L do begin
+
+  SiBvar[*] = vars[k, *]
+  titlevar =  varnames[k]
+    
+  ts_avgday, datetime, SiBvar, ts_uniqdays, SiBvar_avg
+    
+  plot, ts_uniqdays, SiBvar_avg, ytitle = titlevar, xstyle = 1, ystyle = 1, $
+      xtickformat = 'LABEL_DATE', xtickunits = 'Time', xrange = [t0, t1]
+  print, '-----------> ', titlevar
+  ;read, u
+  
+endfor
+
+!p.multi = [0, 5, 9]
+window, 2, xsize = xws,  ysize = yws,  title = 'Media mensal'
 device, decomposed = 0
 loadct, 13, ncolors = 11
 tvlct, 255, 255, 255, 255
