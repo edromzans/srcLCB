@@ -3,16 +3,18 @@
 @ts_summonth
 
 ;devel--------------------
-dirdefault = '/home/evandro/SiB2run/'  
+dirdefault = '/home/evandro/SiB2run/'
+;dirdefault = '/home/evandro/SIBI_controle/SiBparaEvandro/SiB2/Eucalipto/'
+;dirdefault = '/home/evandro/SIBI_controle/SiBparaEvandro/SiB2/Cana_27Nov09/'
 ;-------------------------
 
 ;dir = '/dados/SiB/sites/Pastagem_SP_15Out09/run/'
-;dir = '/dados/SiB/sites/Pastagem_Rondonia/run/'
+dir = '/dados/SiB/sites/Pastagem_Rondonia/run/'
 ;dir = '/dados/SiB/sites/Floresta_Rondonia/run/'
 ;dir = '/dados/SiB/sites/FlorestaAtlantica-novo/run/'
 ;dir = '/dados/SiB/sites/FlorestaAtlantica/run/'
 ;dir = '/dados/SiB/sites/Fazenda-K77/run/'
-dir = '/dados/SiB/sites/Eucalipto/run/'
+;dir = '/dados/SiB/sites/Eucalipto/run/'
 ;dir = '/dados/SiB/sites/Cana_27Nov09/run/'
 ;dir = '/dados/SiB/sites/Cerrado_27Nov09/run/'
 ;dir = '/dados/SiB/controle/run/'
@@ -27,12 +29,9 @@ file = dir+varfile
 print, file
 read_out_sibvars, file, datetime, vars, varnames, kval
 
-
 !p.font = 0
 !p.charsize = 3
 date_label = LABEL_DATE( DATE_FORMAT=['%Y%N'] )
-
-
 
 ;default
 t0 = min(datetime)
@@ -45,12 +44,9 @@ t1 = max(datetime)
 pos1day = where( datetime ge datetime[0] and datetime lt datetime[0]+1d, daytimeres) 
 print, 'hourly resolution in the day = ' , daytimeres
 
-
-
 nvars = n_elements(varnames)
 SiBvar = fltarr(kval)
 SiBvardefault = fltarr(kval)
-
 
 xws = 1800
 yws = 900
@@ -107,15 +103,10 @@ for k = 0L, nvars - 1L do begin
 
   print, '-----------> ', titlevar
 
-  read, u
+  rp = ' '
+  read,rp,prompt='Press ENTER to continue...'
+  if rp eq 'q' then stop 
  
 endfor
-
-
-
-
-
-
-
 
 end

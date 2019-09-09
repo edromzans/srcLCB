@@ -1,0 +1,170 @@
+\documentclass[12pt, a4paper, oneside, chapter=TITLE, section=title, subsubsection=title, english, brazil, font=plain]{abntex2}
+
+\usepackage{parskip}			% espaçamento entre os parágrafos
+\usepackage{microtype} 			% para melhorias de justificação
+\usepackage{morefloats}			% permite mais floats
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{makeidx}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{subfig}
+\usepackage{tabularx,array,colortbl}
+\usepackage{rotating}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+\usepackage[alf]{abntex2cite}
+\usepackage{graphicx}
+\geometry{tmargin= 3cm,bmargin= 1.5cm,lmargin= 3cm,rmargin=2.5cm}
+\chapterstyle{reparticle}
+%\renewcommand{\ABNTEXchapterfont}{\bfseries}
+%\renewcommand{\ABNTEXchapterfontsize}{\normalsize}
+%\renewcommand{\ABNTEXsectionfontsize}{\normalsize} 
+%\renewcommand{\ABNTEXsectionfont}{\bfseries} 
+%\renewcommand{\ABNTEXsubsectionfontsize}{\normalsize}
+%\renewcommand{\ABNTEXsubsectionfont}{\normalsize}
+%\renewcommand{\ABNTEXsubsubsectionfontsize}{\normalsize}
+%\renewcommand{\ABNTEXsubsubsectionfont}{\bfseries}
+\renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
+
+\counterwithout{footnote}{chapter}
+\counterwithout{equation}{chapter}
+\setlength\afterchapskip{\lineskip}
+\hypersetup{bookmarks=true}
+
+\autor{}
+\instituicao{ }
+\titulo{}
+\local{}
+\data{}
+
+%\comentario{}
+\makeatletter
+%\@removefromreset{footnote}{chapter}
+\makeatother
+
+\begin{document}
+%\selectlanguage{brazil}
+%\frenchspacing 
+
+%\imprimircapa
+%\imprimirfolhaderosto
+%\sumario
+
+% ---
+% inserir o sumario
+% ---
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+% ---
+
+% ----------------------------------------------------------
+% ELEMENTOS TEXTUAIS
+% ----------------------------------------------------------
+\textual
+%\setcounter{page}{2}
+
+
+\begingroup
+\let\clearpage\relax
+
+
+
+\chapter{Formato dos dados ambientais de entrada: arquivo data2}
+
+São sete colunas de dados, sendo, da esquerda para direita:\\
+
+\noindent
+1\textsuperscript{a} -- datetime: ano, mês, dia e hora YYMMDDHH \\
+2\textsuperscript{a} -- Ki(Wm\^{$-2$}): irradiância de onda curta incidente observada [Wm$^{-2}$]\\
+3\textsuperscript{a} -- em(hPa): pressão de vapor d'água observada [hPa]\\
+4\textsuperscript{a} -- tm(K): temperatura do ar observada [K]\\
+5\textsuperscript{a} -- um(ms\^{$-1$}): velocidade horizontal do vento observada [ms$^{-1}$]\\
+6\textsuperscript{a} -- prec(mm): precipitação observada [mm]\\
+7\textsuperscript{a} -- Rn(Wm\^{$-2$}): saldo de radiação observado [Wm$^{-2}$]\\
+
+O formato explícito em fortran é ``(A8,6F11.4)'', exemplo:
+
+\begin{verbatim}
+write(2,'(A8,6F11.4)') nymd, swdown, em, tm, um, prec, rnetm
+\end{verbatim}
+
+Os arquivos data2 são gerados pelo programa em Fortran 95 denominado como ``data2\_format.f95'' localizado no diretório ``utils'' do repositório SiB. Inicialmente Rn ficava na 3\textsuperscript{a} coluna, mas em agosto de 2019, a ordem das colunas foi alterada para permitir a inserção de uma condição if no código ``sib2c'' que seleciona o flag ilw e decide sobre o uso da coluna de Rn. 
+
+
+
+\chapter{Equação rsoil no Sib2xb}
+\vspace{\baselineskip}
+
+O LCB vem utilizando 2 equações para rsoil:
+
+\begin{equation}
+  rsoil =  amax1 (0.1, 694. - fac*1500.) + 23.6
+\label{default}
+\end{equation}
+
+\begin{equation}
+  rsoil =  amax1 (0.1, 1001. - exp(fac*6.686))
+\label{cinthiacerrado}
+\end{equation}
+
+
+A tabela abaixo indica qual a equação rsoil tem sido utilizada para cada local de medidas.
+
+\begin{table}[ht]
+  \centering
+  \caption{Equação rsoil utilizada em cada sítio de medidas}
+  \begin{tabular}{l c}
+    \hline 
+    \hline 
+  Locais & equação \\
+    \hline 
+  Cana & \ref{cinthiacerrado}\\
+  Cerrado & \ref{cinthiacerrado}\\
+  Eucalipto & \ref{default}\\
+  Fazenda K77 & \ref{cinthiacerrado}\\ 
+  Floresta Atlântica & \ref{default}\\
+  Floresta Rondônia & \ref{cinthiacerrado}\\
+  Pastagem Rondônia & \ref{cinthiacerrado}\\
+  Pastagem SP & \ref{cinthiacerrado}\\
+    \hline
+  \end{tabular}
+\end{table}
+\vspace{\baselineskip}
+
+\chapter{Tradução do SiB2 para linguagem C com f2c}
+\vspace{\baselineskip}
+
+Pode ser conveniente traduzir o SiB2 do Fortan 77 para linguagem C e para isto pode-se utilizar o f2c (http://www.netlib.org/f2c/). Este processo tem se mostrado eficiente, evitando incompatibilidades de compiladores mais antigos de fortran para os mais atuais. Desta forma obtém-se o código em C e compila-se com o um compilador C, gerando um binário executável independente de um compilador de Fortan.
+
+Inicialmente os arquivos .for devem ser renomeados para .F. Após execute.
+
+\begin{verbatim}
+f2c -Nn802 *.F
+\end{verbatim}
+
+Desta forma obtém os códigos fontes em C: sib2x.c, Sib2xa.c e Sib2xb.c. Para obter o executável, aqui nomeado com SiB2runF2C, execute.  
+
+\begin{verbatim}
+gcc -c -o sib2x.o sib2x.c
+gcc -c -o Sib2xa.o Sib2xa.c
+gcc -c -o Sib2xb.o Sib2xb.c
+gcc -o SiB2runF2C sib2x.o Sib2xa.o Sib2xb.o -lf2c -lm
+\end{verbatim}
+
+Este mesmo resultado obtém utilizando o script fort77 em perl que pode ser obtido pelo pacote ``fort77 - Invoke f2c like a real compiler'' do debian.
+
+\vspace{\baselineskip}
+
+
+\endgroup
+
+%\renewcommand{\bibname}{REFER\^ENCIAS}
+%\bibliography{referencias}
+
+\end{document}

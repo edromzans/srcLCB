@@ -16,8 +16,9 @@ program data2_format
   read(1, *, iostat=ios) ! read head
   
   do while (ios == 0)
-     read(1, *, iostat=ios) nymd, swdown, rnetm, em, tm, um, prec !check columns firt 
+     read(1, *, iostat=ios) nymd, swdown, rnetm, em, tm, um, prec !check columns firt
      write(2,'(A8,6F11.4)') nymd, swdown, em, tm, um, prec, rnetm
+!     write(2,'(A8,6F11.4)') '0'//nymd, swdown, em, tm, um, prec, rnetm
   end do
 
   close(1)
