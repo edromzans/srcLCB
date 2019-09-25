@@ -6,6 +6,7 @@ pro read_aguadados,  arqv,  datatempo, prec, vazao,  escb
   prec = intarr(nlines)
   vazao =  fltarr(nlines)
   escb =  fltarr(nlines)
+  header = ' '
   
   close, 1
   openr, 1, arqv
