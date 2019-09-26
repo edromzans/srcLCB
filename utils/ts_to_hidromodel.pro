@@ -98,11 +98,11 @@ mytimes =  timegen(start = ts_mes[0], final = ts_mes[ntempoagua-1L],  units = 'M
 
 nmymes =  n_elements(mytimes)
 
-rad_avgmes = fltarr(nmes)
-tmax_avgmes = fltarr(nmes)
-tmin_avgmes = fltarr(nmes)
-tmed_avgmes = fltarr(nmes)
-etp_avgmes = fltarr(nmes)
+rad_avgmes = fltarr(nmymes)
+tmax_avgmes = fltarr(nmymes)
+tmin_avgmes = fltarr(nmymes)
+tmed_avgmes = fltarr(nmymes)
+etp_avgmes = fltarr(nmymes)
 
 print, dir+arqvdsamb
 read_dadosamb, dir+arqvdsamb, datatempo_dsamb, rad, tmax, tmin, tmed
@@ -126,7 +126,18 @@ for n = 0L, nmymes-1L do begin
   tmaxmes = tmax[posmes]
   tminmes = tmin[posmes]
   
-  radmmdia = radmes*( 10.^3./(2500.8-2.37*tmedmes+0.0016*(tmedmes^2.)-0.00006*(tmedmes^3.)) )
+  radmmdia1 = radmes*( 10.^3./(2500.8-2.37*tmedmes+0.0016*(tmedmes^2.)-0.00006*(tmedmes^3.)) )
+  radmmdia2 = radmes * (10.^6. / (28.9*86400.) )
+  ;print,  mean(radmmdia1), mean(radmmdia2),  format = '(2F20.5)'
+
+  ;; plot, radmmdia1
+  ;; oplot, radmmdia2,  color = 2
+  ;; rp = ' '
+  ;; read,rp,prompt='Press ENTER to continue...'
+  ;; if rp eq 'q' then stop
+
+  radmmdia = radmmdia2
+  
   etp = (0.0023*radmmdia*(tmaxmes-tminmes)^0.5)*(tmedmes+17.8)
 
   ;medias mensais
@@ -136,7 +147,7 @@ for n = 0L, nmymes-1L do begin
   tmed_avgmes[n] = mean(tmedmes, /nan)
   etp_avgmes[n] = mean(etp, /nan) * float(pmes) ; de [mm/dia] para [mm]
 
-  print,  n,  pmes,  pmesag,  posmesagua
+  ;print,  n,  pmes,  pmesag,  posmesagua
   ;if pmes lt 0 or pmesag lt 0 then stop
   if pmesag gt 1 then stop
   
