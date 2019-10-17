@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from lmfit import Minimizer, Parameters, report_fit
 import matplotlib.pyplot as plt
+
+
 def residual(params):
     a1 = params['a1']
     a2 = params['a2']
@@ -43,26 +45,23 @@ def residual(params):
         n2 = p2[kount]-etp[kount]*(1-np.exp(-p2[kount]/etp[kount]))
         f2 = a3*max(m1, 0.)*n2
         d2 = s2+f2
-        #
-        # print *,  etp[kount], p2[kount], q2[kount], escb[kount]
-        # print *, 'parametros: ', x_a
-        # !print *, '----->', q2[kount], d2, abs(q2[kount]-d2)
-        #
         m2 = m1 + p2[kount] - r2 - d2
-        #
         modeloerro[kount] = np.sqrt(q2[kount]) - np.sqrt(d2)  # Wanderwiele
         # modeloerro[kount] = np.sqrt((q2[kount] - d2)**2.)  # erro quad. med.
         # modeloerro[kount] = q2[kount] - d2
-        #
-        print(d2, s2, f2, m2)
-        #
+        # print(d2, s2, f2, m2)
         m1 = m2
-    return modeloerro
+        return modeloerro
+
+
+"""
+Processo de otimizacao de parametros
+"""
 params = Parameters()
-params.add('a1', min=0., max=1.)
-params.add('a2', value=0.009)
-params.add('a22', min=0.5, max=2.)
-params.add('a3', value=0.001)
+params.add('a1', min=0., max=1., brute_step=0.2)
+params.add('a2', min=0.01, max=1., brute_step=0.01)
+params.add('a22', min=0.5, max=2., brute_step=0.5)
+params.add('a3', min=1e-04, max=9e-04, brute_step=0.01e-04)
 # params = Parameters()
 # params.add('a1', value=0.5, vary=False)
 # params.add('a2',value=0.002)
@@ -71,8 +70,11 @@ params.add('a3', value=0.001)
 
 otimiza = Minimizer(residual, params)
 
-# out = otimiza.leastsq()
-out = otimiza.minimize(method='leastsq')  # Levenberg-Marquardt
+#out = otimiza.leastsq()
+#out = otimiza.minimize(method='brute')
+
+out = otimiza.brute(workers=-1)
+
 
 # report_fit(out.params)
 report_fit(out)
@@ -109,7 +111,7 @@ d2 = np.float64(0)
 m2 = np.float64(0)
 for kount in range(0, m_func):
     """
-    Modelo de balanço de agua
+    Modelo de balanco de agua
 
     r2 => evapotranpiracao real
     s2 => escoamento lento

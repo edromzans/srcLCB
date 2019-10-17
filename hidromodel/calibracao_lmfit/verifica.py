@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 # from lmfit import Minimizer, Parameters, report_fit
+import matplotlib.pyplot as plt
 # a1 = 0.5
 # a2 = 0.001
 # a22 = 1.
@@ -17,7 +18,9 @@ dadosobs = pd.read_table(
 m_func = len(dadosobs)
 modeloerro = np.zeros(m_func, dtype='float64')
 #
-var = np.zeros(m_func, dtype='float64')
+ts_mt = np.zeros(m_func, dtype='float64')
+ts_dt = np.zeros(m_func, dtype='float64')
+ts_u = np.zeros(m_func, dtype='float64')
 #
 etp = np.float64(dadosobs['etp'])
 p2 = np.float64(dadosobs['p2'])
@@ -50,7 +53,29 @@ for kount in range(0, m_func):
     d2 = s2+f2
     m2 = m1 + p2[kount] - r2 - d2
     print(d2, s2, f2, m2)
-    var[kount] = m2
+    ts_mt[kount] = m2
+    ts_dt[kount] = d2
+    ts_u[kount] = abs(np.sqrt(q2[kount]) - np.sqrt(d2))
     m1 = m2
     # print(s2)
-print('---------------> ', np.average(var))
+print('---------------> ', np.average(ts_mt))
+
+x_eixo = np.arange(m_func)
+
+plt.subplot(3, 1, 1)
+plt.plot(x_eixo, ts_mt, '.-')
+plt.xlabel('Unidade de tempo')
+plt.ylabel('m_t')
+
+plt.subplot(3, 1, 2)
+plt.scatter(q2, ts_u)
+plt.xlabel('q')
+plt.ylabel('abs(u)')
+
+plt.subplot(3, 1, 3)
+plt.plot(x_eixo, q2, label='q_t')
+plt.plot(x_eixo, ts_dt, label='d_t')
+# plt.xlabel('q')
+# plt.ylabel('d_t')
+plt.legend()
+plt.show()
