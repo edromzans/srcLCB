@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from lmfit import Minimizer, Parameters, report_fit
 import matplotlib.pyplot as plt
+
+
 def residual(params):
     a1 = params['a1']
     a2 = params['a2']
@@ -54,36 +56,47 @@ def residual(params):
         # modeloerro[kount] = np.sqrt((q2[kount] - d2)**2.)  # erro quad. med.
         # modeloerro[kount] = q2[kount] - d2
         #
-        print(d2, s2, f2, m2)
+        # print(d2, s2, f2, m2)
         #
         m1 = m2
     return modeloerro
+
+
+# Com spin up 
+# params = Parameters()
+# params.add('a1', value=0., min=0., max=1.)
+# params.add('a2', value=0.2)
+# params.add('a22', value=0.5, min=0.5, max=2.)
+# params.add('a3', value=0.0001)
+
 params = Parameters()
 params.add('a1', min=0., max=1.)
 params.add('a2', value=0.009)
 params.add('a22', min=0.5, max=2.)
 params.add('a3', value=0.001)
+
 # params = Parameters()
 # params.add('a1', value=0.5, vary=False)
 # params.add('a2',value=0.002)
 # params.add('a22', value=1., vary=False)
 # params.add('a3',value=0.00001)
 
-otimiza = Minimizer(residual, params)
+otimiza = Minimizer(residual, params, reduce_fcn=None, calc_covar=True)
 
 # out = otimiza.leastsq()
 out = otimiza.minimize(method='leastsq')  # Levenberg-Marquardt
 
 # report_fit(out.params)
+
 report_fit(out)
 
 """
 Verificacao dos parametros caculados
 """
-a1 = params['a1']
-a2 = params['a2']
-a22 = params['a22']
-a3 = params['a3']
+a1 = out.params['a1']
+a2 = out.params['a2']
+a22 = out.params['a22']
+a3 = out.params['a3']
 #
 dadosobs = pd.read_table(
     'input.txt', header=None, delim_whitespace=True, names=[
@@ -129,7 +142,8 @@ for kount in range(0, m_func):
     # print(d2, s2, f2, m2)
     ts_mt[kount] = m2
     ts_dt[kount] = d2
-    ts_u[kount] = abs(np.sqrt(q2[kount]) - np.sqrt(d2))
+    ts_u[kount] = (np.sqrt(q2[kount]) - np.sqrt(d2))
+
     m1 = m2
     # print(s2)
 print('---------------> ', np.average(ts_mt))
@@ -144,7 +158,7 @@ plt.ylabel('m_t')
 plt.subplot(3, 2, 2)
 plt.scatter(q2, ts_u)
 plt.xlabel('q')
-plt.ylabel('abs(u)')
+plt.ylabel('u')
 
 plt.subplot(3, 2, 3)
 plt.plot(x_eixo, q2, label='q_t')
