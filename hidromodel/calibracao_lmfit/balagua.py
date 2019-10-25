@@ -62,18 +62,27 @@ def residual(params):
     return modeloerro
 
 
+
+params = Parameters()
+params.add('a1', value=0.5, min=0., max=1.)
+params.add('a2', value=0.1)
+params.add('a22', value=0.5, min=0.5, max=2.)
+params.add('a3', value=2e-05)
+
+
+# estatistica foi calculada
+# params = Parameters()
+# params.add('a1', value=0.2, min=0., max=1.)
+# params.add('a2', value=0.1)
+# params.add('a22', min=0.5, max=2.)
+# params.add('a3', value=0.000001)
+
 # Com spin up 
 # params = Parameters()
 # params.add('a1', value=0., min=0., max=1.)
 # params.add('a2', value=0.2)
 # params.add('a22', value=0.5, min=0.5, max=2.)
 # params.add('a3', value=0.0001)
-
-params = Parameters()
-params.add('a1', min=0., max=1.)
-params.add('a2', value=0.009)
-params.add('a22', min=0.5, max=2.)
-params.add('a3', value=0.001)
 
 # params = Parameters()
 # params.add('a1', value=0.5, vary=False)
@@ -146,7 +155,9 @@ for kount in range(0, m_func):
 
     m1 = m2
     # print(s2)
+
 print('---------------> ', np.average(ts_mt))
+print('Media u---------------> ', np.average(ts_u))
 
 x_eixo = np.arange(m_func)
 
