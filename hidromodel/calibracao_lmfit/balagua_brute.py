@@ -64,16 +64,15 @@ Processo de otimizacao de parametros
 
 params = Parameters()
 params.add('a1', min=0., max=1., brute_step=0.005)
-params.add('a2', min=0.0, max=2.0, brute_step=0.005)
+params.add('a2', min=0.0, max=0.6, brute_step=0.003)
 params.add('a22', min=0.5, max=2.0, brute_step=0.5)
-params.add('a3', min=0., max=1e-08, brute_step=2.5e-11)
+params.add('a3', min=0., max=5e-04, brute_step=2.5e-06)
 
-# 9*10^6
 # params = Parameters()
-# params.add('a1', min=0., max=1., brute_step=0.01)
-# params.add('a2', min=0.01, max=1.5, brute_step=0.0149)
+# params.add('a1', min=0., max=1., brute_step=0.02)
+# params.add('a2', min=0.0, max=1.8, brute_step=0.018)
 # params.add('a22', min=0.5, max=2., brute_step=0.5)
-# params.add('a3', min=1e-07, max=1e-02, brute_step=3.333e-05)
+# params.add('a3', min=1e-06, max=1e-03, brute_step=5e-06)
 
 # params = Parameters()
 # params.add('a1', min=0., max=1., brute_step=0.2)
@@ -114,13 +113,11 @@ print('pa22 ', pa22)
 print('pa3 ', pa3)
 print('Total = ', pa1*pa2*pa22*pa3)
 
-
-
-
 otimiza = Minimizer(residual, params, reduce_fcn=None, calc_covar=True)
-out = otimiza.brute(workers=-1)
+# out = otimiza.brute(workers=-1)
+out = otimiza.brute(workers=20)
 
-pickle.dump(out, open("save_outbruteMinimizerResult.p", "wb"))
+pickle.dump(out, open("/vol0/evandro/save_outbruteMinimizerResult.p", "wb"))
 
 # report_fit(out.params)
 report_fit(out)
