@@ -4,7 +4,14 @@ from lmfit import report_fit
 import matplotlib.pyplot as plt
 import pickle
 
-out = pickle.load(open("save_outbruteMinimizerResult.p", "rb"))
+diresults = '/dados/calibracaoBalagua/resultados/'
+# arqv = 'save_outbruteMinimizerResult_9mi.p'
+# arqv = 'save_outbruteMinimizerResult_20191028.p'
+# arqv = 'save_outbruteMinimizerResult.p'
+arqv = 'save_outbruteMinimizerResult_a.p'
+
+out = pickle.load(open(diresults+arqv, "rb"))
+
 report_fit(out)
 
 """
@@ -20,8 +27,9 @@ a2 = out.params['a2']
 a22 = out.params['a22']
 a3 = out.params['a3']
 #
+entradados = '/dados/calibracaoBalagua/dados/input.txt'
 dadosobs = pd.read_table(
-    'input.txt', header=None, delim_whitespace=True, names=[
+    entradados, header=None, delim_whitespace=True, names=[
         'ano', 'mes', 'dia', 'hora', 'minuto', 'segundo',
         'etp', 'p2', 'q2', 'escb'])
 m_func = len(dadosobs)

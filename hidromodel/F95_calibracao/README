@@ -1,0 +1,4 @@
+Para compilar:
+$ gfortran -c varsobs.f95 minpack.f90 main.f95
+$ gfortran varsobs.o minpack.o main.o -o run
+$ ./run

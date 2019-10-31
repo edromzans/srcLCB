@@ -4,14 +4,17 @@ from lmfit import Minimizer, Parameters, report_fit
 import matplotlib.pyplot as plt
 
 
+
+
 def residual(params):
     a1 = params['a1']
     a2 = params['a2']
     a22 = params['a22']
     a3 = params['a3']
     #
+    entradados = '/dados/calibracaoBalagua/dados/input.txt'
     dadosobs = pd.read_table(
-        'input.txt', header=None, delim_whitespace=True, names=[
+        entradados, header=None, delim_whitespace=True, names=[
             'ano', 'mes', 'dia', 'hora', 'minuto', 'segundo',
             'etp', 'p2', 'q2', 'escb'])
     m_func = len(dadosobs)
@@ -57,18 +60,22 @@ def residual(params):
         # modeloerro[kount] = q2[kount] - d2
         #
         # print(d2, s2, f2, m2)
-        #
+        # print('---------------->', q2[kount], d2)
+        # print(modeloerro[kount])
         m1 = m2
     return modeloerro
 
-
-
 params = Parameters()
-params.add('a1', value=0.5, min=0., max=1.)
-params.add('a2', value=0.1)
-params.add('a22', value=0.5, min=0.5, max=2.)
-params.add('a3', value=2e-05)
+params.add('a1', value=0.905, min=0., max=1.)
+params.add('a2', value=0.168)
+params.add('a22', value=0.5, vary=False)  # min=0.5, max=2.)
+params.add('a3', value=2.75e-05)
 
+# params = Parameters()
+# params.add('a1', value=0.905, min=0., max=1.)
+# params.add('a2', value=0.174)
+# params.add('a22', value=0.5, vary=False)  # min=0.5, max=2.)
+# params.add('a3', value=2.5e-05)
 
 # estatistica foi calculada
 # params = Parameters()
@@ -107,8 +114,9 @@ a2 = out.params['a2']
 a22 = out.params['a22']
 a3 = out.params['a3']
 #
+entradados = '/dados/calibracaoBalagua/dados/input_est.txt'
 dadosobs = pd.read_table(
-    'input.txt', header=None, delim_whitespace=True, names=[
+    entradados, header=None, delim_whitespace=True, names=[
         'ano', 'mes', 'dia', 'hora', 'minuto', 'segundo',
         'etp', 'p2', 'q2', 'escb'])
 m_func = len(dadosobs)
