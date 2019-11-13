@@ -7,10 +7,12 @@ import pickle
 from gradeparamsbrute import plot_results_brute
 
 diresults = '/dados/ProcessoOtimizacaoModelos/calibracaoBalagua/resultados/'
+# diresults = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/calibracaoBalagua/resultados/'
+
 # arqv = 'save_outbruteMinimizerResult_9mi.p'
 # arqv = 'save_outbruteMinimizerResult_20191028.p'
 # arqv = 'save_outbruteMinimizerResult_am.p'
-arqvminres = 'save_outbruteMinimizerResult_a.p'
+arqvminres = 'save_outbruteMinimizerResult.p'
 
 out = pickle.load(open(diresults+arqvminres, "rb"))
 
@@ -20,6 +22,9 @@ Verificacao dos parametros candidatos caculados
 
 dirdados = '/dados/ProcessoOtimizacaoModelos/' \
     'calibracaoBalagua/dados/inputs/jaraguari_obs/'
+# dirdados = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
+#     'calibracaoBalagua/dados/inputs/jaraguari_obs/'
+
 arqinput = 'input.txt'
 entradados = dirdados+arqinput
 
@@ -90,6 +95,11 @@ Plota a grade de parametros
 
 pngfigplot = '/dados/ProcessoOtimizacaoModelos/' \
     'calibracaoBalagua/plots/plotaBruteParams.png'
+
+
+# pngfigplot = '/home/evandro/lcbiag/' \
+#     'ProcessoOtimizacaoModelos/calibracaoBalagua/' \
+#     'plots/plotaBruteParams.png'
 
 plot_results_brute(out, best_vals=True, varlabels=None,
                    output=pngfigplot)
