@@ -69,6 +69,7 @@ def plot_results_brute(result, best_vals=True, varlabels=None,
             elif j == 0 and i > 0:
                 ax = axes[i, j]
                 red_axis = tuple([a for a in range(npars) if a != i])
+                print(red_axis, ' <<<<<<<<<<<<<<<<<<')
                 ax.plot(np.minimum.reduce(result.brute_Jout, axis=red_axis),
                         np.unique(result.brute_grid[i]), '+', ms=3)
                 ax.invert_xaxis()

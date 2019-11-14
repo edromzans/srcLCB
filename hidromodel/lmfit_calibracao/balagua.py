@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 from lmfit import Minimizer, Parameters, report_fit
+from lmfit.models import GaussianModel
+
 import matplotlib.pyplot as plt
 
 
@@ -136,14 +138,18 @@ entradados = '/dados/ProcessoOtimizacaoModelos/' \
 
 dadosobs = pd.read_table(
     entradados, header=None, delim_whitespace=True, names=[
-        'ano', 'mes', 'dia', 'hora', 'minuto', 'segundo',
+        'year', 'month', 'day', 'h', 'm', 's',
         'etp', 'p2', 'q2', 'escb'])
+
+datatempo = pd.to_datetime(dadosobs[['year', 'month', 'day', 'h', 'm', 's']])
 m_func = len(dadosobs)
 modeloerro = np.zeros(m_func, dtype='float64')
 #
 ts_mt = np.zeros(m_func, dtype='float64')
 ts_dt = np.zeros(m_func, dtype='float64')
 ts_u = np.zeros(m_func, dtype='float64')
+ts_Dm = np.zeros(m_func, dtype='float64')
+ts_r = np.zeros(m_func, dtype='float64')
 #
 etp = np.float64(dadosobs['etp'])
 p2 = np.float64(dadosobs['p2'])
@@ -179,6 +185,8 @@ for kount in range(0, m_func):
     ts_mt[kount] = m2
     ts_dt[kount] = d2
     ts_u[kount] = (np.sqrt(q2[kount]) - np.sqrt(d2))
+    ts_Dm[kount] = m2 - m1
+    ts_r[kount] = r2
 
     m1 = m2
     # print(s2)
@@ -186,28 +194,93 @@ for kount in range(0, m_func):
 print('---------------> ', np.average(ts_mt))
 print('Media u---------------> ', np.average(ts_u))
 
-x_eixo = np.arange(m_func)
+
+
+'''
+Graficos
+'''
+
+x_eixo = datatempo  # np.arange(m_func)
+
+# histograma de u
+minbin = -5
+maxbin = 5
+nx = 30.
+step = (maxbin - minbin) / nx
+
+binarr = np.arange(nx+1)*step + minbin
+hist_u, edges_u = np.histogram(ts_u, bins=binarr, density='True')
+
+xhist = np.arange(nx)*step + minbin + step
+
+# ajuste gaussiano
+gmodel = GaussianModel()
+
+print('parameter names: {}'.format(gmodel.param_names))
+print('independent variables: {}'.format(gmodel.independent_vars))
+
+gparams = gmodel.make_params()
+
+gresult = gmodel.fit(hist_u, gparams, x=xhist)
+
+print(gresult.fit_report())
+
 
 plt.subplot(3, 2, 1)
 plt.plot(x_eixo, ts_mt, '.-')
-plt.xlabel('Unidade de tempo')
+# plt.xlabel('Unidade de tempo')
 plt.ylabel('m_t')
 
 plt.subplot(3, 2, 2)
-plt.scatter(q2, ts_u)
-plt.xlabel('q')
-plt.ylabel('u')
+plt.plot(x_eixo, ts_Dm, '.-')
+plt.ylabel('Dm/Dt')
+# plt.scatter(q2, ts_u)
+# plt.xlabel('q')
+# plt.ylabel('u')
 
 plt.subplot(3, 2, 3)
 plt.plot(x_eixo, q2, label='q_t')
 plt.plot(x_eixo, ts_dt, label='d_t')
-# plt.xlabel('q')
-# plt.ylabel('d_t')
 plt.legend()
 
+# plt.subplot(3, 2, 4)
+# plt.hist(ts_u, bins='auto')
+# plt.xlabel('u')
+# plt.ylabel('ocorrencias')
+
 plt.subplot(3, 2, 4)
-plt.hist(ts_u, bins='auto')
-plt.xlabel('u')
-plt.ylabel('ocorrencias')
+plt.plot(x_eixo, q2, label='q_t')
+plt.plot(x_eixo, ts_dt, label='d_t')
+plt.plot(x_eixo, p2, label='prec')
+plt.plot(x_eixo, ts_r, label='r')
+
+plt.legend()
+
+
+
+
+plt.subplot(3, 2, 5)
+plt.scatter(xhist, hist_u)
+plt.plot(xhist, gresult.best_fit, 'r-', label='Gaussiana')
+# plt.plot(hist_u[1], hist_u[0])
+plt.legend()
+
+print('correlacao de pearson')
+print(np.corrcoef(hist_u, gresult.best_fit))
+
+# semivariancia
+plt.subplot(3, 2, 6)
+dx=len(x_eixo)
+semivar = np.zeros(dx)
+for k in range(dx):
+    semivar[k] = np.var( ts_u[0:k+1] )
+semivar[0] = np.nan
+plt.plot(x_eixo, semivar)
+plt.ylabel('semivariancia')
+
+
+
+
+
 
 plt.show()
