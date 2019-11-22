@@ -97,7 +97,6 @@ write(2,'(A8,6F11.4)') nymd, swdown, em, tm, um, prec, rnetm
 Os arquivos data2 são gerados pelo programa em Fortran 95 denominado como ``data2\_format.f95'' localizado no diretório ``utils'' do repositório SiB. Inicialmente Rn ficava na 3\textsuperscript{a} coluna, mas em agosto de 2019, a ordem das colunas foi alterada para permitir a inserção de uma condição if no código ``sib2c'' que seleciona o flag ilw e decide sobre o uso da coluna de Rn. 
 
 
-
 \chapter{Equação rsoil no Sib2xb}
 \vspace{\baselineskip}
 
@@ -176,7 +175,18 @@ cmake -DLIBPROJ4=YES -DLIBPROJ4DIR='/home/user/GDL/libs/proj-4.9.3_bin' -DPYTHON
 
 \vspace{\baselineskip}
 
+\chapter{SiB2pymod}
+\vspace{\baselineskip}
+O SiB2pymod é o modelo SiB2 em Fortran 95, compilado como um módulo de python
+3 com o uso do f2py do integra o numpy. Para isso, uma pequena mudança
+no código do SiB2 é feita. O programa sib2 é descrito como
+uma subrotina. Desta forma o sib2 é usado como uma função python.
 
+\begin{verbatim}
+f2py3.7 --fcompiler=gnu95 --f90flags='-fno-automatic -finit-local-zero' -c *.f95 -m sib2pymod
+\end{verbatim}
+
+\vspace{\baselineskip}
 \endgroup
 
 %\renewcommand{\bibname}{REFER\^ENCIAS}

@@ -3,15 +3,18 @@
 @ts_summonth
 
 ;devel--------------------
-dirdefault = '/home/evandro/SiB2run/'
+
+dirdefault = '/home/evandro/src_codes/gitSiB2model/SiB2python/'
+;dirdefault = '/home/evandro/SiB2run/'
+
 ;dirdefault = '/home/evandro/SIBI_controle/SiBparaEvandro/SiB2/Eucalipto/'
 ;dirdefault = '/home/evandro/SIBI_controle/SiBparaEvandro/SiB2/Cana_27Nov09/'
 ;-------------------------
 
 ;dir = '/dados/SiB/sites/Pastagem_SP_15Out09/run/'
-dir = '/dados/SiB/sites/Pastagem_Rondonia/run/'
+;dir = '/dados/SiB/sites/Pastagem_Rondonia/run/'
 ;dir = '/dados/SiB/sites/Floresta_Rondonia/run/'
-;dir = '/dados/SiB/sites/FlorestaAtlantica-novo/run/'
+dir = '/dados/SiB/sites/FlorestaAtlantica-novo/run/'
 ;dir = '/dados/SiB/sites/FlorestaAtlantica/run/'
 ;dir = '/dados/SiB/sites/Fazenda-K77/run/'
 ;dir = '/dados/SiB/sites/Eucalipto/run/'

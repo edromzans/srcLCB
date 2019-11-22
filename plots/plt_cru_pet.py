@@ -3,7 +3,8 @@ import numpy as np
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 
-ncf_cru_pet = '/dados/CRU_TS/cru_ts4.03.1901.1910.pet.dat.nc'
+ncf_cru_pet = '/dados/CRU_TS/cru_ts4.03.1901.2018.pet.dat.nc'
+# '/dados/CRU_TS/cru_ts4.03.1901.1910.pet.dat.nc'
 
 cru = nc4.Dataset(ncf_cru_pet, 'r')
 
@@ -28,7 +29,10 @@ x, y = map(xlon2d, ylat2d)
 # xp, yp = map(xlon, ylat)
 
 
-map.contourf(x, y, pet[100, :, :], 255)
-map.scatter(x, y, marker='.', color='r')
-# plt.colorbar()
+post = 1308
+print(datatempo[post])
+
+map.contourf(x, y, pet[post, :, :], 255)
+# map.scatter(x, y, marker='.', color='r')
+plt.colorbar()
 plt.show()
