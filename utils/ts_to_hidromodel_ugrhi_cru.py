@@ -3,13 +3,34 @@ import numpy as np
 import netCDF4 as nc4
 
 
-dirInput = '/dados/ProcessoOtimizacaoModelos/' \
+# dirInput = '/dados/ProcessoOtimizacaoModelos/' \
+#     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
+# dirInput = '/media/hd2TB/lcbiag/ProcessoOtimizacaoModelos/' \
+#     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
+dirInput = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
 
 # UGRHI SP
-tagname = '58220000'
-lat = -22.69
-lon = -44.98
+# tagname = '58220000'
+# lat = -22.69
+# lon = -44.98
+#-------------------------
+# tagname = '3D-001'
+# lat = -22.68
+# lon = -46.97
+#-------------------------
+# tagname = '4C-007'
+# lat = -21.7
+# lon = -47.82
+#-------------------------
+# tagname = '4B-015'
+# lat = -20.63
+# lon = -47.28
+#-------------------------
+tagname = '5B-011'
+lat = -20.91
+lon = -48.09
+#-------------------------
 ##########
 
 # Leitura dos dados da UGRHI selecionada
@@ -19,7 +40,9 @@ aguadf = pd.read_csv(dirInput+aguadados_csv, header=0, parse_dates=[0], names=[
 aguadf.index = aguadf['datatempo']
 
 # Dados do Climatic Research Unit (CRU)
-ncf_cru_pet = '/dados/CRU_TS/cru_ts4.03.1901.2018.pet.dat.nc'
+# ncf_cru_pet = '/dados/CRU_TS/cru_ts4.03.1901.2018.pet.dat.nc'
+ncf_cru_pet = '/media/hd2TB/lcbiag/CRU_TS/cru_ts4.03.1901.2018.pet.dat.nc'
+
 cru = nc4.Dataset(ncf_cru_pet, 'r')
 
 xlon = cru.variables['lon'][:]
