@@ -4,10 +4,11 @@ from lmfit import report_fit  # Minimizer, Parameters,
 # from lmfit.models import GaussianModel
 import matplotlib.pyplot as plt
 import pickle
+import calendar
 
 
 # UGRHI SP
-# tagname = '58220000'
+tagname = '58220000'
 # -------------------------
 # tagname = '3D-001'
 # -------------------------
@@ -15,9 +16,11 @@ import pickle
 # -------------------------
 # tagname = '4B-015'
 # -------------------------
-tagname = '5B-011'
+# tagname = '5B-011'
 
-dirR = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/resultados/'
+# dirR = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/resultados/'
+dirR = '/dados/ProcessoOtimizacaoModelos/calibracaoBalagua/resultados/'
+dirplot = '/dados/ProcessoOtimizacaoModelos/calibracaoBalagua/plots/'
 (out_leastsq,
  x_eixo, xi, xf,
  ts_mt,
@@ -33,9 +36,16 @@ dirR = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/resultados/'
  gresult) = pickle.load(open(
      dirR+tagname+'_ugrhi_leastsqMinimizerResult.pkl', "rb"))
 
-pngfigplot = '/home/evandro/lcbiag/' \
-    'ProcessoOtimizacaoModelos/calibracaoBalagua/' \
-    'plots/'+tagname+'_pltTsBalagua_new.png'
+# corrigindo tempo!!!!!
+xtimeM = np.array(x_eixo.to_pydatetime(), dtype='datetime64[M]')
+corrig = xtimeM + np.timedelta64(9, 'M')  # + np.timedelta64(9, 'M') ou - np.timedelta64(3, 'M')
+x_eixo = pd.to_datetime(corrig)
+
+p2 = np.asarray(p2)
+etp = np.asarray(etp)
+q2 = np.asarray(q2)
+
+pngfigplot = dirplot+tagname+'_pltTsBalagua_new.png'
 
 report_fit(out_leastsq)
 print(gresult.fit_report())
@@ -64,7 +74,7 @@ ax1 = plt.subplot(6, 1, 3)
 # plt.plot(x_eixo, q2, label='q_t')
 # plt.plot(x_eixo, ts_dt, label='d_t')
 ax1.plot(x_eixo, q2, 'black', label='Q$_m$', linewidth=0.8)
-ax1.plot(x_eixo, ts_dt, 'r', label='Q$_c$', linewidth=0.8)
+ax1.plot(x_eixo, ts_dt, 'red', label='Q$_c$', linewidth=0.8)
 plt.ylabel('(mm/mês)')
 #ax1.plot(x_eixo, ts_r, 'g', label='ET', linewidth=0.8)
 #plt.ylabel('ET (mm/mês)', axes=ax1)
@@ -115,26 +125,23 @@ print(np.corrcoef(hist_u, gresult.best_fit))
 
 plt.savefig(pngfigplot, dpi=300, bbox_inches='tight')
 
-plt.show()
-
-
-
-
 
 '''
 Segunda figura
 '''
 
-pngfigplot = '/home/evandro/lcbiag/' \
-    'ProcessoOtimizacaoModelos/calibracaoBalagua/' \
-    'plots/'+tagname+'_pltTsBalagua_new_2.png'
+pngfigplot = dirplot+tagname+tagname+'_pltTsBalagua_new_2.png'
+
+d_mes = dict(enumerate(calendar.month_abbr))
 
 dados = {'ETP': etp, 'ET': ts_r, 'P': p2,
-         'Qm': q2, 'Qc': ts_dt, 'S': ts_mt, 'mes': x_eixo.month}
+         'Qm': q2, 'Qc': ts_dt, 'S': ts_mt, 'DeltaS': ts_Dm,
+         'mes': x_eixo.month}
 toanual_df = pd.DataFrame(data=dados, index=x_eixo)
 
 canual = toanual_df.groupby('mes').agg(np.nanmean)
 
+canual.index = canual.index.map(d_mes)  # .str.slice(stop=3)
 
 fig = plt.figure()
 # fig.set_figwidth(20)
@@ -188,19 +195,24 @@ plt.savefig(pngfigplot, dpi=300, bbox_inches='tight')
 Terceira figura
 '''
 
-pngfigplot = '/home/evandro/lcbiag/' \
-    'ProcessoOtimizacaoModelos/calibracaoBalagua/' \
-    'plots/'+tagname+'_pltTsBalagua_new_3.png'
+pngfigplot = dirplot+tagname+'_pltTsBalagua_new_3.png'
 
-
-totanual = toanual_df.resample('Y').sum()
+# totanual = toanual_df.resample('Y').sum()
+totanual = toanual_df.resample('Y').agg(np.nansum)
 
 fig = plt.figure()
 fig.set_figwidth(10)
 fig.set_figheight(20)
 
 plt.subplot(331)
-plt.scatter(q2, ts_dt)
+# IDL where
+q2 = np.asarray(q2)
+posval = np.asarray(~np.isnan(q2) &
+                    ~np.isnan(ts_dt)).nonzero()
+posval = posval[0]
+q2_plt = q2[posval]
+ts_dt_plt = ts_dt[posval]
+plt.scatter(q2_plt, ts_dt_plt)
 plt.ylabel('Q$_c$ (mm/mês)')
 plt.xlabel('Q$_m$ (mm/mês)')
 
@@ -224,6 +236,19 @@ plt.scatter(totanual.ET, totanual.P)
 plt.xlabel('ET (mm/ano)')
 plt.ylabel('P (mm/ano)')
 
+
+
+
+
+posjan = np.asarray(toanual_df.mes == 1).nonzero()
+posjan = posjan[0]
+posdez = np.asarray(toanual_df.mes == 12).nonzero()
+posdez = posdez[0]
+
+plt.subplot(336)
+plt.scatter(totanual.DeltaS, totanual.P)
+plt.xlabel('S-S$_{-ano}$ (mm/ano)')
+plt.ylabel('P (mm/ano)')
 
 plt.savefig(pngfigplot, dpi=300, bbox_inches='tight')
 
