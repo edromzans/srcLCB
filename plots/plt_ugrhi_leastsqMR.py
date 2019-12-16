@@ -10,13 +10,13 @@ import calendar
 # UGRHI SP
 # tagname = '58220000'
 # -------------------------
-tagname = '3D-001'
+# tagname = '3D-001'
 # -------------------------
 # tagname = '4C-007'
 # -------------------------
 # tagname = '4B-015'
 # -------------------------
-# tagname = '5B-011'
+tagname = '5B-011'
 
 # dirR = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/resultados/'
 dirR = '/dados/ProcessoOtimizacaoModelos/calibracaoBalagua/resultados/'
@@ -221,6 +221,12 @@ posval = np.asarray(~np.isnan(q2) |
 posval = posval[0]
 q2_plt = q2[posval]
 ts_dt_plt = ts_dt[posval]
+
+minv = np.nanmin(np.concatenate((q2_plt, ts_dt_plt)))
+maxv = np.nanmax(np.concatenate((q2_plt, ts_dt_plt)))
+xx = np.arange(minv, maxv)
+yy = xx
+plt.plot(xx, yy, c='green', linewidth=0.8)
 plt.scatter(q2_plt, ts_dt_plt, c='black', marker='+', linewidth=0.8)
 plt.ylabel('Q$_c$ (mm/mês)')
 plt.xlabel('Q$_m$ (mm/mês)')
@@ -231,27 +237,51 @@ posval = np.asarray(~np.isnan(ts_r) |
 posval = posval[0]
 ts_r_plt = ts_r[posval]
 etp_plt = etp[posval]
-plt.scatter(ts_r_plt, etp_plt, c='black', marker='+', linewidth=0.8)
-plt.ylabel('ETP (mm/mês)')
-plt.xlabel('ET (mm/mês)')
+
+minv = np.nanmin(np.concatenate((ts_r_plt, etp_plt)))
+maxv = np.nanmax(np.concatenate((ts_r_plt, etp_plt)))
+xx = np.arange(minv, maxv)
+yy = xx
+plt.plot(xx, yy, c='green', linewidth=0.8)
+plt.scatter(etp_plt, ts_r_plt, c='black', marker='+', linewidth=0.8)
+plt.xlabel('ETP (mm/mês)')
+plt.ylabel('ET (mm/mês)')
+
 
 plt.subplot(323)
 posval = np.asarray((nantotanual.Qm < 1.) & (nantotanual.P < 1.)).nonzero()
 posval = posval[0]
 Qm_ano_plt = totanual.Qm[posval]
 P_ano_plt = totanual.P[posval]
-plt.scatter(Qm_ano_plt, P_ano_plt, c='black', marker='+', linewidth=0.8)
-plt.xlabel('Q$_m$ (mm/ano)')
-plt.ylabel('P (mm/ano)')
+
+
+posval = np.asarray((nantotanual.Qc < 1.) & (nantotanual.P < 1.)).nonzero()
+posval = posval[0]
+Qc_ano_plt = totanual.Qc[posval]
+P_ano_plt = totanual.P[posval]
+
+posval = np.asarray((nantotanual.ET < 1.) & (nantotanual.P < 1.)).nonzero()
+posval = posval[0]
+ET_ano_plt = totanual.ET[posval]
+
+
+plt.scatter(P_ano_plt, ET_ano_plt, c='red', marker='1', linewidth=0.8, label='ET')
+plt.scatter(P_ano_plt, Qc_ano_plt, c='blue', marker='.', linewidth=0.8, label='Q$_c$')
+plt.scatter(P_ano_plt, Qm_ano_plt, c='black', marker='+', linewidth=0.8, label='Q$_m$')
+plt.ylabel('(mm/ano)')
+plt.xlabel('P (mm/ano)')
+plt.legend()
+
 
 plt.subplot(324)
 posval = np.asarray((nantotanual.Qc < 1.) & (nantotanual.P < 1.)).nonzero()
 posval = posval[0]
 Qc_ano_plt = totanual.Qc[posval]
 P_ano_plt = totanual.P[posval]
-plt.scatter(Qc_ano_plt, P_ano_plt, c='black', marker='+', linewidth=0.8)
-plt.xlabel('Q$_c$ (mm/ano)')
-plt.ylabel('P (mm/ano)')
+
+plt.scatter(P_ano_plt, Qc_ano_plt,  c='black', marker='+', linewidth=0.8)
+plt.xlabel('P (mm/ano)')
+plt.ylabel('Q$_c$ (mm/ano)')
 
 plt.subplot(325)
 posval = np.asarray((nantotanual.ET < 1.) & (nantotanual.P < 1.)).nonzero()
