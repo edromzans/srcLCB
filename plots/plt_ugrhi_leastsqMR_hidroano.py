@@ -137,6 +137,7 @@ Terceira figura
 
 pngfigplot = dirplot+tagname+'_pltTsBalagua_hidroano_dispersao.png'
 
+
 # totanual = toanual_df.resample('Y').sum()
 totanual = toanual_df.resample('Y').agg(np.nansum)
 nantotanual = toanual_df.isnull().resample('Y').agg(np.sum)
@@ -145,7 +146,8 @@ fig = plt.figure()
 fig.set_figwidth(10)
 fig.set_figheight(9)
 
-plt.subplot(321)
+plt.subplot(221)
+
 # IDL where
 q2 = np.asarray(q2)
 posval = np.asarray(~np.isnan(q2) |
@@ -153,68 +155,76 @@ posval = np.asarray(~np.isnan(q2) |
 posval = posval[0]
 q2_plt = q2[posval]
 ts_dt_plt = ts_dt[posval]
+
+minv = np.nanmin(np.concatenate((q2_plt, ts_dt_plt)))
+maxv = np.nanmax(np.concatenate((q2_plt, ts_dt_plt)))
+xx = np.arange(minv, maxv)
+yy = xx
+plt.plot(xx, yy, c='green', linewidth=0.8)
 plt.scatter(q2_plt, ts_dt_plt, c='black', marker='+', linewidth=0.8)
 plt.ylabel('Q$_c$ (mm/mês)')
 plt.xlabel('Q$_m$ (mm/mês)')
 
-plt.subplot(322)
+plt.subplot(222)
 posval = np.asarray(~np.isnan(ts_r) |
                     ~np.isnan(etp)).nonzero()
 posval = posval[0]
 ts_r_plt = ts_r[posval]
 etp_plt = etp[posval]
-plt.scatter(ts_r_plt, etp_plt, c='black', marker='+', linewidth=0.8)
-plt.ylabel('ETP (mm/mês)')
-plt.xlabel('ET (mm/mês)')
 
-plt.subplot(323)
+minv = np.nanmin(np.concatenate((ts_r_plt, etp_plt)))
+maxv = np.nanmax(np.concatenate((ts_r_plt, etp_plt)))
+xx = np.arange(minv, maxv)
+yy = xx
+plt.plot(xx, yy, c='green', linewidth=0.8)
+plt.scatter(etp_plt, ts_r_plt, c='black', marker='+', linewidth=0.8)
+plt.xlabel('ETP (mm/mês)')
+plt.ylabel('ET (mm/mês)')
+
+
+plt.subplot(223)
 posval = np.asarray((nantotanual.Qm < 1.) & (nantotanual.P < 1.)).nonzero()
 posval = posval[0]
 Qm_ano_plt = totanual.Qm[posval]
 P_ano_plt = totanual.P[posval]
-plt.scatter(Qm_ano_plt, P_ano_plt, c='black', marker='+', linewidth=0.8)
-plt.xlabel('Q$_m$ (mm/ano)')
-plt.ylabel('P (mm/ano)')
 
-plt.subplot(324)
 posval = np.asarray((nantotanual.Qc < 1.) & (nantotanual.P < 1.)).nonzero()
 posval = posval[0]
 Qc_ano_plt = totanual.Qc[posval]
 P_ano_plt = totanual.P[posval]
-plt.scatter(Qc_ano_plt, P_ano_plt, c='black', marker='+', linewidth=0.8)
-plt.xlabel('Q$_c$ (mm/ano)')
-plt.ylabel('P (mm/ano)')
 
-plt.subplot(325)
 posval = np.asarray((nantotanual.ET < 1.) & (nantotanual.P < 1.)).nonzero()
 posval = posval[0]
 ET_ano_plt = totanual.ET[posval]
-P_ano_plt = totanual.P[posval]
-plt.scatter(ET_ano_plt, P_ano_plt, c='black', marker='+', linewidth=0.8)
-plt.xlabel('ET (mm/ano)')
-plt.ylabel('P (mm/ano)')
 
-plt.subplot(326)
-# # Desta S_ano
-# gano = toanual_df.groupby(toanual_df.index.year) # agrupa por ano
-# # gnomes = list(gano.groups)
-# # dfgano = gano.get_group(2000)
+minv = np.nanmin(np.concatenate((
+    P_ano_plt, Qm_ano_plt, Qc_ano_plt, ET_ano_plt)))
+maxv = np.nanmax(np.concatenate((
+    P_ano_plt, Qm_ano_plt, Qc_ano_plt, ET_ano_plt)))
+xx = np.arange(minv, maxv)
+yy = xx
 
-# for gp in gano.groups:
-#     dfgano = gano.get_group(gp)
-#     posck = np.asarray((dfgano.index.month == 1) |
-#                        (dfgano.index.month == 12)).nonzero()
-#     posck = posck[0]
-#     if len(posck) > 1:
+plt.plot(xx, yy, c='green', linewidth=0.8)
+plt.scatter(P_ano_plt, ET_ano_plt, c='red', marker='1',
+            linewidth=0.8, label='ET')
+plt.scatter(P_ano_plt, Qc_ano_plt, c='blue', marker='.',
+            linewidth=0.8, label='Q$_c$')
+plt.scatter(P_ano_plt, Qm_ano_plt, c='black', marker='+',
+            linewidth=0.8, label='Q$_m$')
+plt.ylabel('(mm/ano)')
+plt.xlabel('P (mm/ano)')
+plt.legend()
+
+plt.subplot(224)
 
 posval = np.asarray((nantotanual.DeltaS < 1.) & (nantotanual.P < 1.)).nonzero()
 posval = posval[0]
 DeltaS_ano_plt = totanual.DeltaS[posval]
 P_ano_plt = totanual.P[posval]
 
-plt.scatter(DeltaS_ano_plt, P_ano_plt, c='black', marker='+', linewidth=0.8)
-plt.xlabel('S-S$_{-ano}$ (mm/ano)')
-plt.ylabel('P (mm/ano)')
+plt.scatter(P_ano_plt, DeltaS_ano_plt, c='black', marker='+', linewidth=0.8)
+plt.ylabel('S-S$_{-ano}$ (mm/ano)')
+plt.xlabel('P (mm/ano)')
 
 plt.savefig(pngfigplot, dpi=300, bbox_inches='tight')
 
