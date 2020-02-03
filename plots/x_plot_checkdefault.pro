@@ -5,16 +5,23 @@
 ;devel--------------------
 
 ;dirdefault = '/home/evandro/src_codes/gitSiB2model/SiB2python/'
-dirdefault = '/home/evandro/SiB2run/'
+;dirdefault = '/home/evandro/SiB2run/'
 
 ;dirdefault = '/home/evandro/SIBI_controle/SiBparaEvandro/SiB2/Eucalipto/'
 ;dirdefault = '/home/evandro/SIBI_controle/SiBparaEvandro/SiB2/Cana_27Nov09/'
+
+;dirdefault = '/dados/ProcessoOtimizacaoModelos/SiB2/momentum/semDT/'
+;dirdefault = '/home/evandro/SiB2run/modvars/'
+dirdefault = '/home/evandro/src_codes/LCB/srcsib2model/SiB2_DBHM_derive_trans/F95/'
+;dirdefault = '/home/evandro/src_codes/LCB/srcsib2model/SiB2_DBHM_derive_trans/F95/semDT/'
+
+
 ;-------------------------
 
 ;dir = '/dados/SiB/sites/Pastagem_SP_15Out09/run/'
 ;dir = '/dados/SiB/sites/Pastagem_Rondonia/run/'
 ;dir = '/dados/SiB/sites/Floresta_Rondonia/run/'
-;dir = '/dados/SiB/sites/FlorestaAtlantica-novo/run/'
+dir = '/dados/SiB/sites/FlorestaAtlantica-novo/run/'
 ;dir = '/dados/SiB/sites/FlorestaAtlantica/run/'
 ;dir = '/dados/SiB/sites/Fazenda-K77/run/'
 ;dir = '/dados/SiB/sites/Eucalipto/run/'
@@ -22,10 +29,11 @@ dirdefault = '/home/evandro/SiB2run/'
 ;dir = '/dados/SiB/sites/Cerrado_27Nov09/run/'
 ;dir = '/dados/SiB/controle/run/'
 
-dir =  '/home/evandro/src_codes/gitSiB2model/SiB2pymod/'
-
+;dir =  '/home/evandro/src_codes/gitSiB2model/SiB2pymod/'
 ;dir = '/home/evandro/lcbiag/SiB/sites/FlorestaAtlantica-novo/run/'
-
+;dir =  '/dados/ProcessoOtimizacaoModelos/SiB2/momentum/comDT/'
+dir =  '/home/evandro/src_codes/LCB/srcsib2model/SiB2_DBHM_derive_trans/F95/comDT/'
+ 
 varfile =  'sib2dt.dat'
 
 filedefault = dirdefault+varfile
@@ -65,6 +73,7 @@ tvlct, 255, 255, 255, 255
 
 ;SiBvars
 for k = 5L, nvars - 1L do begin
+;for k = 15L, 17L do begin
 
   SiBvar[*] = vars[k, *]
   SiBvardefault[*] = varsdefault[k, *]
@@ -108,8 +117,10 @@ for k = 5L, nvars - 1L do begin
         xtickformat = 'LABEL_DATE', xtickunits = 'Time', xrange = [t0, t1] ;,  yrange = [-10, 10]
   oplot, ts_uniqmonths, SiBvardefault_monthavg, color = 10
 
-  print, '-----------> ', titlevar
+  print, '-----------> ', titlevar,  k
 
+  ;Write_png, string(k, format = '(I02)')+'SiB2varC.png',tvrd(true=1)
+  
   rp = ' '
   read,rp,prompt='Press ENTER to continue...'
   if rp eq 'q' then stop 

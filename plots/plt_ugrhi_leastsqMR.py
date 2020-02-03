@@ -137,17 +137,17 @@ plt.ylabel('Autocorr')
 plt.xlabel('Lag')
 # plt.xlim(xi, xf)
 
-# plt.subplot(6, 1, 6)
-# plt.scatter(xhist, hist_u)
-# plt.plot(xhist, gresult.best_fit, 'r-', label='Gaussiana')
-# plt.ylabel('Prob')
-# plt.legend()
-# corrperson = np.corrcoef(hist_u, gresult.best_fit)
-# corrperson = corrperson[0, 1]
-# plt.text(2.5, np.max(hist_u)/2.,
-#          'C(prob, gauss) = '+'{:5.3f}'.format(corrperson), wrap=True)
-# print('correlacao de pearson')
-# print(np.corrcoef(hist_u, gresult.best_fit))
+plt.subplot(6, 1, 6)
+plt.scatter(xhist, hist_u)
+plt.plot(xhist, gresult.best_fit, 'r-', label='Gaussiana')
+plt.ylabel('Prob')
+plt.legend()
+corrperson = np.corrcoef(hist_u, gresult.best_fit)
+corrperson = corrperson[0, 1]
+plt.text(2.5, np.max(hist_u)/2.,
+         'C(prob, gauss) = '+'{:5.3f}'.format(corrperson), wrap=True)
+print('correlacao de pearson')
+print(np.corrcoef(hist_u, gresult.best_fit))
 
 plt.savefig(pngfigplot, dpi=300, bbox_inches='tight')
 
