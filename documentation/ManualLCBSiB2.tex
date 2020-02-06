@@ -4,6 +4,8 @@
 \usepackage{microtype} 			% para melhorias de justificação
 \usepackage{morefloats}			% permite mais floats
 
+\usepackage{Alegreya,AlegreyaSans} 
+%\usepackage{lmodern}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{indentfirst}
@@ -11,6 +13,9 @@
 \usepackage{amssymb}
 \usepackage{makeidx}
 \usepackage{geometry}
+\usepackage{fancyvrb}
+\usepackage{fvextra}
+%\usepackage{listings}
 \usepackage{hyperref}
 \usepackage{subfig}
 \usepackage{tabularx,array,colortbl}
@@ -20,7 +25,7 @@
 \usepackage[alf]{abntex2cite}
 \usepackage{graphicx}
 \geometry{tmargin= 3cm,bmargin= 1.5cm,lmargin= 3cm,rmargin=2.5cm}
-\chapterstyle{reparticle}
+%\chapterstyle{reparticle}
 %\renewcommand{\ABNTEXchapterfont}{\bfseries}
 %\renewcommand{\ABNTEXchapterfontsize}{\normalsize}
 %\renewcommand{\ABNTEXsectionfontsize}{\normalsize} 
@@ -29,6 +34,37 @@
 %\renewcommand{\ABNTEXsubsectionfont}{\normalsize}
 %\renewcommand{\ABNTEXsubsubsectionfontsize}{\normalsize}
 %\renewcommand{\ABNTEXsubsubsectionfont}{\bfseries}
+
+% CONFIGURACAO DO SUMARIO
+% -----------------------------------------------------------------------------
+% Modifica o espaçamento no sumário
+% Nao ha espacos, exceto para as entradas de capitulos
+
+% \renewcommand{\tocheadstart}{\ABNTEXchapterfont}
+\renewcommand{\tocheadstart}{\normalfont}
+\setlength{\cftbeforeparagraphskip}{0pt}
+\setlength{\cftbeforesubsectionskip}{0pt}
+\setlength{\cftbeforesectionskip}{0pt}
+\setlength{\cftbeforesubsubsectionskip}{0pt}
+\setlength{\cftbeforechapterskip}{\onelineskip}
+% \renewcommand*{\cftsubsectionfont}{\itshape}
+% \renewcommand*{\cftchapterpagefont}{\normalfont}
+% \renewcommand*{\cftsectionfont}{\normalfont}
+
+% Modifica a formatacao dos textos
+\renewcommand{\chaptitlefont}{\normalfont\bfseries}
+\setsecheadstyle{\normalfont\bfseries}
+\setsubsecheadstyle{\normalfont\bfseries}
+\setsubsubsecheadstyle{\normalfont\bfseries}
+% Secao secundaria (Section) Caixa baixa, Negrito, tamanho 12
+\renewcommand{\cftsectionfont}{\bfseries} %ponha \rmfamily se quiser serifadas...
+% Secao terciaria (Subsection) Caixa baixa, italico, tamanho 12
+\renewcommand{\cftsubsectionfont}{\itshape}
+% Secao quaternaria (Subsubsection) Caixa baixa, Negrito, sublinhado, tamanho 12
+\renewcommand{\cftsubsubsectionfont}{\itshape\bfseries}
+% Seção quinaria (subsubsubsection) Caixa baixa, sem negrito, tamanho 12
+\renewcommand{\cftparagraphfont}{\normalfont}
+
 \renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
 
 \counterwithout{footnote}{chapter}
@@ -58,7 +94,7 @@
 % ---
 % inserir o sumario
 % ---
-\pdfbookmark[0]{\contentsname}{toc}
+%\pdfbookmark[0]{\contentsname}{toc}
 \tableofcontents*
 \cleardoublepage
 % ---
@@ -73,9 +109,36 @@
 \begingroup
 \let\clearpage\relax
 
+\chapter{Início}
+\vspace{\baselineskip}
 
+Esta documentação faz referência aos repositórios: \textbf{srcLCB} e \textbf{srcsib2model}.
+A versão mais atual do modelo SiB2 está no repositório \textbf{srcsib2model},
+diretório ``SiB2f95modvars'', em que, o SiB2 está traduzido para Fortran
+95 e as variáveis do comsibc e pardif operam como um módulo de Fortran.
 
-\chapter{Formato dos dados ambientais de entrada: arquivo data2}
+Para compilar o SiB2:
+\begin{Verbatim}[breaklines=true]
+gfortran comsibc.f95 pardif.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f95 -o sib2run
+\end{Verbatim}
+
+Para executar:
+\begin{Verbatim}[breaklines=true]
+./sib2run
+\end{Verbatim}
+no diretório em que se encontra os arquivos ``data1'' e ``data2''.
+
+O código do SiB2 que se trabalhava no LCB em Fortran 77
+está no repositório \textbf{srcsib2model}, diretório ``SiB2f77''.
+
+O SiB2 também foi convertido em um módulo de Python no diretório
+``SiB2pymod'' do \textbf{srcsib2model}, principalmente para servir ao conjunto
+numérico de otimização de parâmetros do SiB2 desenvolvido em Python. 
+
+\vspace{\baselineskip}
+
+\chapter{Descrição e melhorias no SiB2 do LCB}
+\section{Formato dos dados ambientais de entrada: arquivo data2}
 
 São sete colunas de dados, sendo, da esquerda para direita:\\
 
@@ -94,10 +157,11 @@ O formato explícito em fortran é ``(A8,6F11.4)'', exemplo:
 write(2,'(A8,6F11.4)') nymd, swdown, em, tm, um, prec, rnetm
 \end{verbatim}
 
-Os arquivos data2 são gerados pelo programa em Fortran 95 denominado como ``data2\_format.f95'' localizado no diretório ``utils'' do repositório SiB. Inicialmente Rn ficava na 3\textsuperscript{a} coluna, mas em agosto de 2019, a ordem das colunas foi alterada para permitir a inserção de uma condição if no código ``sib2c'' que seleciona o flag ilw e decide sobre o uso da coluna de Rn. 
+Os arquivos data2 são gerados pelo programa em Fortran 95 denominado
+como ``data2\_format.f95'' localizado no diretório ``utils'' do
+repositório \textbf{srcLCB}. Inicialmente Rn ficava na 3\textsuperscript{a} coluna, mas em agosto de 2019, a ordem das colunas foi alterada para permitir a inserção de uma condição ``if'' no código que seleciona o flag ``ilw'' e decide sobre o uso da coluna de Rn. 
 
-
-\chapter{Equação rsoil no Sib2xb}
+\section{Equação rsoil no Sib2xb}
 \vspace{\baselineskip}
 
 O LCB vem utilizando 2 equações para rsoil:
@@ -111,7 +175,6 @@ O LCB vem utilizando 2 equações para rsoil:
   rsoil =  amax1 (0.1, 1001. - exp(fac*6.686))
 \label{cinthiacerrado}
 \end{equation}
-
 
 A tabela abaixo indica qual a equação rsoil tem sido utilizada para cada local de medidas.
 
@@ -136,59 +199,185 @@ A tabela abaixo indica qual a equação rsoil tem sido utilizada para cada local
 \end{table}
 \vspace{\baselineskip}
 
-\chapter{Tradução do SiB2 para linguagem C com f2c}
+\section{Compilando o SiB2 no gcc e a tradução do Fortran 77 para Fortran 95}
+
+Identificou-se que o modelo SiB2 que vinha sendo utilizado no LCB, escrito em Fortran 77, apresentava erros de compilação e de execução quando compilado a partir do gfortran no linux debian buster e versões anteriores mesmo usando o g77 que integrava o gcc até a sua versão 3.4.6. O SiB2 no LCB geralmente era utilizado a partir de compiladores de Fortran 77 em windows antigos que já não estão mais disponíveis no LCB, portanto, foi estudada as possibilidades de continuar fazendo altereções no SiB2 usando compiladores de Fortran mais portáveis e nas versões mais atuais e neste sentido o gfortran que integra o gcc 8.3.0 foi considerado o mais apropriado.
+
+Fazendo modificações no código do SiB2 em Fortran 77, combinadas com
+os flags de compilação ``-fno-automatic'' e ``-finit-local-zero''
+disponíveis no gfortran, os erros de compilação e execução do SiB2 do
+LCB no gfortran do gcc 8.3.0 foram solucionados e os resultados das
+saídas do modelo compilado no gfortran e nos compiladores de windows
+antigos ficaram iguais, apresentando pequenas diferenças provavelmente
+associadas com arredondamento numérico, conforme mostra a figura \ref{checkvars}.
+
+\begin{figure}[ht]
+\centering 
+\includegraphics[width=\textwidth]{img/09SiB2varC}
+\caption{Comparação entre H calculado com o SiB2 compilado no windows e
+  compilado no gfortran com os flags ``-fno-automatic'' e
+  ``-finit-local-zero''. Em cada coluna deste painel (da esquerda para
+  direita) está a dispersão, o desvio no tempo de H windows - gfortran
+  e H no tempo, sendo H na cor branca = windows e H na cor vermelha =
+  gfortran, sendo possível ver apenas a sobreposição da cor vermelha. Em
+  cada linha (de cima para baixo) temos a série temporal horária, as
+  médias diárias e mensais.}
+\label{checkvars}
+\end{figure}
+
+Com o código em IDL \textbf{srcLCB}/plots/x\_plot\_checkdefault.pro é possível gerar o
+painel da figura \ref{checkvars} para todas as variáveis do SiB2.
+
+Após esta etapa de compilação e execução do SiB2 em Fortran 77, o
+código do SiB2 do LCB foi traduzido integralmente para o Fortran 95 em \textbf{srcsib2model}/SiB2f95.  
+
+\section{SiB2 em Fortran 95: comsibc.h e pardif.h como módulo de variáveis}
+\label{f95}
+
+Após a tradução do SiB2 de Fortran 77 para 95, foi desenvolvida uma
+versão do código, em \textbf{srcsib2model}/SiB2f95modvars, que elimina as
+declarações de variáveis do tipo "commom" e cria módulos de variáveis
+de Fortran: o  comsibc.f95 e o pardif.f95. Nesta versão deve-se compilar o código conforme os seguintes comandos:
+
+\begin{Verbatim}[breaklines=true]
+gfortran comsibc.f95 pardif.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f95 -o sib2run
+\end{Verbatim}
+
+Além dos módulos de variáveis, acrescentou-se ``implicit none'' no
+programa e em todas as sub-rotinas declarando todas as variáveis
+explicitamente.
+
+Nesta etapa, foi revisada a necessidade do uso dos
+flags de compilação -- ``-fno-automatic -finit-local-zero'' -- que
+inicializa todas as variáveis com valor zero e declara todas as
+variáveis como ``save''.
+
+Usando o flag de compilação ``-Wall'', o gfortran indicou as variáveis
+que integravam os cálculos do SiB2 e que deveriam inicializar com
+valores, pois estavam sendo inicializadas os valores qualquer
+alocados na memória na hora da declaração de variáveis. Estas
+variáveis identificadas foram:
+
+\begin{Verbatim}[breaklines=true]
+  sib2x: ptot
+
+  Sib2xa: zinc
+        : us1
+
+  Sib2xb: cs
+        : th
+        : qm
+        : wmin
+\end{Verbatim}
+
+Declarando estas variáveis com valores iniciais igual a zero (e isso
+está feito em \textbf{srcsib2model}/SiB2f95modvars) exclui-se a
+necessidade do uso dos flags de compilação ``-fno-automatic
+-finit-local-zero'', pois assim os resultados
+dos cálculos são idênticos aos valores calculados pelo SiB2 em
+Fortran 77 compilado nos compiladores antigos de windows. No entanto, sugiro uma
+verificação destas variáveis a respeito de quais os valores elas devem
+ter inicialmente no código, se existe alguma que o seu valor deve ser diferente de zero.
+
+\section{SiB2pymod}
+
+O SiB2pymod é o modelo SiB2 em Fortran 95, compilado como um módulo de python 
+3 com o uso do f2py do integra o numpy. Para isso, uma pequena mudança
+no código do SiB2 é feita. O programa sib2 é descrito como
+uma subrotina. Desta forma o sib2 é usado como uma função python.
+
+Para gerar o sib2pymod execute:
+\begin{Verbatim}[breaklines=true]
+f2py3.7 --fcompiler=gnu95 -c comsibc.f95 pardif.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f95 -m sib2pymod
+\end{Verbatim}
+
+\subsection{Os usuários do sib2pymod devem ter saber}
+
+Observou-se que as variáveis do SiB2 quando carregadas via python 
+\begin{Verbatim}[breaklines=true]
+import sib2pymod
+resultado = sib2pymod.sib2()
+\end{Verbatim}
+não são declaradas novamente a cada solicitação da função
+``sib2()''. As variáveis são declaradas apenas uma vez na
+importação. A cada execução da função ``sib2()'', as variáveis do SiB2
+iniciam com os valores que ficaram na memória referente a rodada
+anterior.
+
+Na figura \ref{rn1rn2} observe as pequenas diferenças ente os valores
+de Rn para uma primeira execução da função ``sib2()'' e uma segunda
+execução da função ``sib2()''. 
+\begin{figure}[ht]
+\centering 
+\includegraphics[width=0.7\textwidth]{img/rn1rn2sib2pymod}
+\caption{Comparação entre o cálculo de Rn para a primeira execução da
+  função python ``sib2()'' (Rn1) e na segunda execução da
+  função python ``sib2()'' (Rn2) em um programa python. Dispersão,
+  desvio e ampliação do desvio no eixo x (de cima para baixo).}
+\label{rn1rn2}
+\end{figure}
+
+Observe que devido os valores iniciais de alguma ou algumas variáveis
+serem diferentes, existem um pequeno desvio nos valores iniciais e que
+se estabilizam no decorrer dos cálculos, principalmente nos 30
+primeiros passos de tempo.
+
+Na segunda execução, deve ocorrer algo igual eu cito em
+\ref{f95}. Deve haver variáveis que deveriam ser inicializadas com
+determinados valores no primeiro passo de tempo do SiB2 e que não
+estão sendo inicializadas.
+
+Como é o caso da variável itero, que deve ser = 0 no início dos
+cálculos, e a cada execução da função ``sib2()''. Quando o SiB2
+offline é executado na linha de comando apenas uma vez, não se observa
+ problemas de herança de valores da rodada anterior. Agora na
+execução do SiB2 como um módulo de python, o problema de herança de
+valores da rodada anterior pode ser notado como mostra a figura \ref{rn1rn2}.
+
+\section{Tradução do SiB2 para linguagem C com f2c}
 \vspace{\baselineskip}
 
 Pode ser conveniente traduzir o SiB2 do Fortan 77 para linguagem C e para isto pode-se utilizar o f2c (http://www.netlib.org/f2c/). Este processo tem se mostrado eficiente, evitando incompatibilidades de compiladores mais antigos de fortran para os mais atuais. Desta forma obtém-se o código em C e compila-se com o um compilador C, gerando um binário executável independente de um compilador de Fortan.
 
 Inicialmente os arquivos .for devem ser renomeados para .F. Após execute.
 
-\begin{verbatim}
+\begin{Verbatim}[breaklines=true]
 f2c -Nn802 *.F
-\end{verbatim}
+\end{Verbatim}
 
 Desta forma obtém os códigos fontes em C: sib2x.c, Sib2xa.c e Sib2xb.c. Para obter o executável, aqui nomeado com SiB2runF2C, execute.  
 
-\begin{verbatim}
+\begin{Verbatim}[breaklines=true]
 gcc -c -o sib2x.o sib2x.c
 gcc -c -o Sib2xa.o Sib2xa.c
 gcc -c -o Sib2xb.o Sib2xb.c
 gcc -o SiB2runF2C sib2x.o Sib2xa.o Sib2xb.o -lf2c -lm
-\end{verbatim}
+\end{Verbatim}
 
 Este mesmo resultado obtém utilizando o script fort77 em perl que pode ser obtido pelo pacote ``fort77 - Invoke f2c like a real compiler'' do debian.
 
-\vspace{\baselineskip}
 
-\chapter{Usando o GNU Data Language - GDL}
+\vspace{\baselineskip}
+\chapter{Utilitários para o LCB: repositório srcLCB}
+\vspace{\baselineskip}
+\section{Usando o GNU Data Language - GDL}
 \vspace{\baselineskip}
 
 Baixe a ultima versão em https://github.com/gnudatalanguage/gdl
-
-\begin{verbatim}
+ 
+\begin{Verbatim}[breaklines=true]
 mkdir gdl-build
 cd gdl-build
-cmake -DLIBPROJ4=YES -DLIBPROJ4DIR='/home/user/GDL/libs/proj-4.9.3_bin' -DPYTHON_MODULE=YES ../gdl-mastercmake -DLIBPROJ4=YES -DLIBPROJ4DIR='/home/evandro/pacotes/GDL/libs/proj-4.9.3_bin' -DPYTHON_MODULE=YES -DPYTHON=YES ../gdl-master
+cmake -DLIBPROJ4=YES
+-DLIBPROJ4DIR='/home/user/GDL/libs/proj-4.9.3_bin' -DPYTHON_MODULE=YES
+../gdl-master cmake -DLIBPROJ4=YES -DLIBPROJ4DIR='/home/evandro/pacotes/GDL/libs/proj-4.9.3_bin'
+-DPYTHON_MODULE=YES -DPYTHON=YES ../gdl-master
+\end{Verbatim}
 
-\end{verbatim}
+%\vspace{\baselineskip}
 
 
-\vspace{\baselineskip}
-
-\chapter{SiB2pymod}
-\vspace{\baselineskip}
-O SiB2pymod é o modelo SiB2 em Fortran 95, compilado como um módulo de python
-3 com o uso do f2py do integra o numpy. Para isso, uma pequena mudança
-no código do SiB2 é feita. O programa sib2 é descrito como
-uma subrotina. Desta forma o sib2 é usado como uma função python.
-
-\begin{verbatim}
-f2py3.7 --fcompiler=gnu95 --f90flags='-fno-automatic -finit-local-zero' -c *.f95 -m sib2pymod
-\end{verbatim}
-
-\vspace{\baselineskip}
 \endgroup
-
 %\renewcommand{\bibname}{REFER\^ENCIAS}
 %\bibliography{referencias}
 
