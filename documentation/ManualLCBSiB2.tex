@@ -137,7 +137,7 @@ numérico de otimização de parâmetros do SiB2 desenvolvido em Python.
 
 \vspace{\baselineskip}
 
-\chapter{Descrição e melhorias no SiB2 do LCB}
+\chapter{Descrição e melhorias do SiB2 do LCB}
 \section{Formato dos dados ambientais de entrada: arquivo data2}
 
 São sete colunas de dados, sendo, da esquerda para direita:\\
@@ -201,7 +201,7 @@ A tabela abaixo indica qual a equação rsoil tem sido utilizada para cada local
 
 \section{Compilando o SiB2 no gcc e a tradução do Fortran 77 para Fortran 95}
 
-Identificou-se que o modelo SiB2 que vinha sendo utilizado no LCB, escrito em Fortran 77, apresentava erros de compilação e de execução quando compilado a partir do gfortran no linux debian buster e versões anteriores mesmo usando o g77 que integrava o gcc até a sua versão 3.4.6. O SiB2 no LCB geralmente era utilizado a partir de compiladores de Fortran 77 em windows antigos que já não estão mais disponíveis no LCB, portanto, foi estudada as possibilidades de continuar fazendo altereções no SiB2 usando compiladores de Fortran mais portáveis e nas versões mais atuais e neste sentido o gfortran que integra o gcc 8.3.0 foi considerado o mais apropriado.
+Identificou-se que o modelo SiB2 que vinha sendo utilizado no LCB, escrito em Fortran 77, apresentava erros de compilação e de execução quando compilado a partir do gfortran no linux debian buster e versões anteriores mesmo usando o g77 que integrava o gcc até a sua versão 3.4.6. O SiB2 no LCB geralmente era utilizado a partir de compiladores de Fortran 77 em windows antigos que já não estão mais disponíveis no LCB, portanto, foram estudadas as possibilidades de continuar fazendo altereções no SiB2 usando compiladores de Fortran mais portáveis e nas versões mais atuais e neste sentido o gfortran que integra o gcc 8.3.0 foi considerado o mais apropriado.
 
 Fazendo modificações no código do SiB2 em Fortran 77, combinadas com
 os flags de compilação ``-fno-automatic'' e ``-finit-local-zero''
@@ -236,7 +236,7 @@ código do SiB2 do LCB foi traduzido integralmente para o Fortran 95 em \textbf{
 
 Após a tradução do SiB2 de Fortran 77 para 95, foi desenvolvida uma
 versão do código, em \textbf{srcsib2model}/SiB2f95modvars, que elimina as
-declarações de variáveis do tipo "commom" e cria módulos de variáveis
+declarações de variáveis do tipo "common" e cria módulos de variáveis
 de Fortran: o  comsibc.f95 e o pardif.f95. Nesta versão deve-se compilar o código conforme os seguintes comandos:
 
 \begin{Verbatim}[breaklines=true]
@@ -254,7 +254,7 @@ variáveis como ``save''.
 
 Usando o flag de compilação ``-Wall'', o gfortran indicou as variáveis
 que integravam os cálculos do SiB2 e que deveriam inicializar com
-valores, pois estavam sendo inicializadas os valores qualquer
+valores, pois estavam sendo inicializadas com valores qualquer
 alocados na memória na hora da declaração de variáveis. Estas
 variáveis identificadas foram:
 
@@ -274,8 +274,10 @@ Declarando estas variáveis com valores iniciais igual a zero (e isso
 está feito em \textbf{srcsib2model}/SiB2f95modvars) exclui-se a
 necessidade do uso dos flags de compilação ``-fno-automatic
 -finit-local-zero'', pois assim os resultados
-dos cálculos são idênticos aos valores calculados pelo SiB2 em
-Fortran 77 compilado nos compiladores antigos de windows. No entanto, sugiro uma
+dos cálculos são idênticos aos valores calculados quando
+compila-se o SiB2 com os flags ``-fno-automatic -finit-local-zero''
+e coincidem com os cálculos do SiB2 em Fortran 77 compilado no
+windows, como mostrado na figura \ref{checkvars}. No entanto, sugiro uma
 verificação destas variáveis a respeito de quais os valores elas devem
 ter inicialmente no código, se existe alguma que o seu valor deve ser diferente de zero.
 
@@ -337,7 +339,11 @@ valores da rodada anterior pode ser notado como mostra a figura \ref{rn1rn2}.
 \section{Tradução do SiB2 para linguagem C com f2c}
 \vspace{\baselineskip}
 
-Pode ser conveniente traduzir o SiB2 do Fortan 77 para linguagem C e para isto pode-se utilizar o f2c (http://www.netlib.org/f2c/). Este processo tem se mostrado eficiente, evitando incompatibilidades de compiladores mais antigos de fortran para os mais atuais. Desta forma obtém-se o código em C e compila-se com o um compilador C, gerando um binário executável independente de um compilador de Fortan.
+Pode ser conveniente traduzir o SiB2 do Fortan 77 para linguagem C e
+para isto pode-se utilizar o f2c (http://www.netlib.org/f2c/). Este
+processo tem se mostrado eficiente, evitando incompatibilidades de
+compiladores mais antigos de fortran para os mais atuais. Desta forma
+obtém-se o código em C e compila-se com o um compilador de C, gerando um binário executável independente de um compilador de Fortan.
 
 Inicialmente os arquivos .for devem ser renomeados para .F. Após execute.
 
@@ -345,7 +351,7 @@ Inicialmente os arquivos .for devem ser renomeados para .F. Após execute.
 f2c -Nn802 *.F
 \end{Verbatim}
 
-Desta forma obtém os códigos fontes em C: sib2x.c, Sib2xa.c e Sib2xb.c. Para obter o executável, aqui nomeado com SiB2runF2C, execute.  
+Desta forma obtém-se os códigos fontes em C: sib2x.c, Sib2xa.c e Sib2xb.c. Para obter o executável, aqui nomeado com SiB2runF2C, execute.  
 
 \begin{Verbatim}[breaklines=true]
 gcc -c -o sib2x.o sib2x.c
@@ -357,24 +363,24 @@ gcc -o SiB2runF2C sib2x.o Sib2xa.o Sib2xb.o -lf2c -lm
 Este mesmo resultado obtém utilizando o script fort77 em perl que pode ser obtido pelo pacote ``fort77 - Invoke f2c like a real compiler'' do debian.
 
 
-\vspace{\baselineskip}
-\chapter{Utilitários para o LCB: repositório srcLCB}
-\vspace{\baselineskip}
-\section{Usando o GNU Data Language - GDL}
-\vspace{\baselineskip}
+% \vspace{\baselineskip}
+% \chapter{Utilitários para o LCB: repositório srcLCB}
+% \vspace{\baselineskip}
+% \section{Usando o GNU Data Language - GDL}
+% \vspace{\baselineskip}
 
-Baixe a ultima versão em https://github.com/gnudatalanguage/gdl
+% Baixe a ultima versão em https://github.com/gnudatalanguage/gdl
  
-\begin{Verbatim}[breaklines=true]
-mkdir gdl-build
-cd gdl-build
-cmake -DLIBPROJ4=YES
--DLIBPROJ4DIR='/home/user/GDL/libs/proj-4.9.3_bin' -DPYTHON_MODULE=YES
-../gdl-master cmake -DLIBPROJ4=YES -DLIBPROJ4DIR='/home/evandro/pacotes/GDL/libs/proj-4.9.3_bin'
--DPYTHON_MODULE=YES -DPYTHON=YES ../gdl-master
-\end{Verbatim}
+% \begin{Verbatim}[breaklines=true]
+% mkdir gdl-build
+% cd gdl-build
+% cmake -DLIBPROJ4=YES
+% -DLIBPROJ4DIR='/home/user/GDL/libs/proj-4.9.3_bin' -DPYTHON_MODULE=YES
+% ../gdl-master cmake -DLIBPROJ4=YES -DLIBPROJ4DIR='/home/evandro/pacotes/GDL/libs/proj-4.9.3_bin'
+% -DPYTHON_MODULE=YES -DPYTHON=YES ../gdl-master
+% \end{Verbatim}
 
-%\vspace{\baselineskip}
+% %\vspace{\baselineskip}
 
 
 \endgroup
