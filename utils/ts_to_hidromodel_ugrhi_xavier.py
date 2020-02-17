@@ -1,16 +1,24 @@
 import pandas as pd
 import numpy as np
 import netCDF4 as nc4
+import matplotlib.pyplot as plt
+# import time
 
+# dirInput = '/dados/ProcessoOtimizacaoModelos/' \
+#     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
 
-dirInput = '/dados/ProcessoOtimizacaoModelos/' \
+dirInput = '/vol0/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
 
-dirUgrhi = '/dados/ProcessoOtimizacaoModelos/' \
+# dirUgrhi = '/dados/ProcessoOtimizacaoModelos/' \
+#     'calibracaoBalagua/dados/ugrhi/'
+
+# dirUgrhi = '/media/hd2TB/lcbiag/ProcessoOtimizacaoModelos/' \
+#     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
+
+dirUgrhi = '/vol0/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
     'calibracaoBalagua/dados/ugrhi/'
 
-# dirInput = '/media/hd2TB/lcbiag/ProcessoOtimizacaoModelos/' \
-#     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
 # dirInput = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
 #     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
 
@@ -51,24 +59,28 @@ x_eixo = pd.to_datetime(corrig)
 
 aguadf.index = x_eixo  # aguadf['datatempo']
 
-# Dados do Climatic Research Unit (CRU)
-ncf_cru_pet = '/dados/ET0_xavier/ETo_daily_UT_Brazil_v2_20140101_20170731_s1.nc'
-# ncf_cru_pet = '/media/hd2TB/lcbiag/CRU_TS/cru_ts4.03.1901.2018.pet.dat.nc'
+# Dados Austin/UFES (Xavier)
+#ncf_xavier_pet = '/dados/ET0_xavier/' \
+#    'ETo_daily_UT_Brazil_v2_20140101_20170731_s1.nc'
+ncf_xavier_pet = '/vol0/evandro/lcbiag/ET0_xavier/' \
+    'ETo_daily_UT_Brazil_v2_20140101_20170731_s1.nc'
 
-cru = nc4.Dataset(ncf_cru_pet, 'r')
+xavier = nc4.Dataset(ncf_xavier_pet, 'r')
 
-xlon = cru.variables['longitude'][:]
-ylat = cru.variables['latitude'][:]
-tp = cru.variables['time'][:]
-pet = cru.variables['ETo'][:]
+# time.sleep(20)
+
+xlon = xavier.variables['longitude'][:]
+ylat = xavier.variables['latitude'][:]
+tp = xavier.variables['time'][:]
+pet = xavier.variables['ETo'][:]
 
 xlon = np.ma.getdata(xlon)
 ylat = np.ma.getdata(ylat)
 tp = np.ma.getdata(tp)
 
-datatempo_cru = np.datetime64('2014-01-01', 'h') + tp.astype('timedelta64[h]')
+datatempo_xavier = np.datetime64('2014-01-01', 'h') + tp.astype('timedelta64[h]')
 
-nx_cru = len(datatempo_cru)
+nx_xavier = len(datatempo_xavier)
 
 dislat = np.abs(ylat - lat)
 dislon = np.abs(xlon - lon)
@@ -79,8 +91,8 @@ print(lat, ylat[poslatgr])
 poslongr = np.where(dislon == np.min(dislon))
 print(lon, xlon[poslongr])
 
-ts_pet = np.ma.getdata(pet[:, poslatgr, poslongr]).reshape(nx_cru)
-pet_diario_df = pd.DataFrame(data={'pet': ts_pet}, index=datatempo_cru)
+ts_pet = np.ma.getdata(pet[:, poslatgr, poslongr]).reshape(nx_xavier)
+pet_diario_df = pd.DataFrame(data={'pet': ts_pet}, index=datatempo_xavier)
 
 pet_df = pet_diario_df.resample('M').agg(np.nanmean)
 
@@ -120,21 +132,16 @@ q_ts = np.empty(nx_ts)
 q_ts.fill(np.nan)
 
 for tk in range(len(xtime)):
-    poscru = np.where((pet_df.index.year == tsdf.year[tk]) &
-                      (pet_df.index.month == tsdf.month[tk]))
-    poscru = poscru[0]
+    posxavier = np.where((pet_df.index.year == tsdf.year[tk]) &
+                         (pet_df.index.month == tsdf.month[tk]))
+    posxavier = posxavier[0]
 
     posagua = np.where((aguadf.index.year == tsdf.year[tk]) &
                        (aguadf.index.month == tsdf.month[tk]))
     posagua = posagua[0]
 
-    # print(poscru.size, posagua.size)
-    # if (poscru.size < 1) or (posagua.size < 1):
-    #     print('Falta dados: '+pdts[tk].strftime('%Y %m %d %H %M %S'))
-    #     break
-
-    if (poscru.size == 1) and (posagua.size == 1):
-        etp_ts[tk] = pet_df.pet[poscru] * ndias[tk]  # mm/mes
+    if (posxavier.size == 1) and (posagua.size == 1):
+        etp_ts[tk] = pet_df.pet[posxavier] * ndias[tk]  # mm/mes
         p_ts[tk] = aguadf.p[posagua]
         q_ts[tk] = aguadf.q[posagua]
 

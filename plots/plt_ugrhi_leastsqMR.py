@@ -20,8 +20,19 @@ from scipy import signal
 tagname = '5B-011'
 
 # dirR = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/resultados/'
-dirR = '/dados/ProcessoOtimizacaoModelos/calibracaoBalagua/resultados/'
-dirplot = '/dados/ProcessoOtimizacaoModelos/calibracaoBalagua/plots/'
+# dirR = '/dados/ProcessoOtimizacaoModelos/calibracaoBalagua/resultados/'
+dirR = '/vol0/evandro/lcbiag/' \
+    'ProcessoOtimizacaoModelos/calibracaoBalagua/resultados/'
+
+# CRU
+# dirplot = '/dados/ProcessoOtimizacaoModelos/calibracaoBalagua/plots/'
+# arqresult = dirR+tagname+'_ugrhi_leastsqMinimizerResult.pkl'
+
+# Xavier
+dirplot = '/vol0/evandro/lcbiag/' \
+    'ProcessoOtimizacaoModelos/calibracaoBalagua/plots/xavier/'
+arqresult = dirR+tagname+'_xavier_ugrhi_leastsqMinimizerResult.pkl'
+
 (out_leastsq,
  x_eixo,
  ts_mt,
@@ -35,7 +46,7 @@ dirplot = '/dados/ProcessoOtimizacaoModelos/calibracaoBalagua/plots/'
  xhist,
  hist_u,
  gresult) = pickle.load(open(
-     dirR+tagname+'_ugrhi_leastsqMinimizerResult.pkl', "rb"))
+     arqresult, "rb"))
 
 # IDL where
 posval = np.asarray(~np.isnan(etp) &
