@@ -8,10 +8,19 @@ import time
 # data2 = '/home/evandro/src_codes/LCB/srcLCB/calibracaoSiB2/ustar/' \
 #     'data2'
 
+# data2 = '/dados/ProcessoOtimizacaoModelos/SiB2/input/radiative/' \
+#     'data2'
+
 dadosobs = pd.read_table('data2', header=0, delim_whitespace=True, names=[
             'datetime', 'Ki', 'em', 'tm', 'um', 'prec', 'Rn'])
 
-Rn_O = np.array(dadosobs.Rn)
+Rn_O = dadosobs.Rn
+
+# # verifica dados validos
+# posval = np.asarray(Rn_O > -9999.).nonzero()
+# posval = posval[0]
+
+# Rn_O = Rn_O[posval]
 
 nlinha = len(dadosobs)
 
@@ -50,12 +59,12 @@ def residualSiB2(params, Rn_O, nlinha):
 
 TVN_min = 0.100
 TVN_max = 0.300
-TVN_ngrid = 20.
+TVN_ngrid = 8.
 TVN_step = (TVN_max - TVN_min) / TVN_ngrid
 
 RVN_min = 0.400
 RVN_max = 0.600
-RVN_ngrid = 10.
+RVN_ngrid = 8.
 RVN_step = (RVN_max - RVN_min) / RVN_ngrid
 
 RSOLOP_min = 0.100
@@ -80,8 +89,9 @@ otimiza = Minimizer(residualSiB2, params, fcn_args=(Rn_O, nlinha))
 
 out = otimiza.brute(workers=40)
 
-dirMR = '/vol0/evandro/resultados/'
+# dirMR = '/vol0/evandro/resultados/'
 # dirMR = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/resultados/'
+dirMR = '/dados/ProcessoOtimizacaoModelos/SiB2/resultados/'
 
 pickle.dump(out, open(dirMR+'sib2_rad_bruteMinimizerResult.pkl', 'wb'))
 

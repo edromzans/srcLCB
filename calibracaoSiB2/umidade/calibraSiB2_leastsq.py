@@ -13,74 +13,67 @@ import time
 
 # dadosobs = pd.read_table('data3.csv', delim_whitespace=True)
 dadosobs = pd.read_csv('data3.csv')
-
 # print(dadosobs)
 # time.sleep(30)
 
-Rn_O = dadosobs.Rn
+www1_o = np.asarray(dadosobs.SWC1)
 # verifica dados validos
-posval = np.asarray(Rn_O > -9999.).nonzero()
+posval = np.asarray(www1_o > -9999.).nonzero()
 posval = posval[0]
-Rn_O = Rn_O[posval]
+www1_o = www1_o[posval]
 
 nlinha = len(dadosobs)
 # print(nlinha, ' <--------- nlinha')
 
 
-def residualSiB2(params, Rn_O, posval, nlinha):
+def residualSiB2(params, www1_o, posval, nlinha):
 
-    p_trans_viva_nir = params['TVN']
-    p_ref_viva_nir = params['RVN']
-    p_ref_solo_par = params['RSOLOP']
-    p_ref_solo_nir = params['RSOLON']
+    bee1_param = params['bee1']
+    phsat1_param = params['phsat1']
+    satco1_param = params['satco1']
+    poros1_param = params['poros1']
 
-    trans_viva_nir = p_trans_viva_nir * 1.
-    ref_viva_nir = p_ref_viva_nir * 1.
-    ref_solo_par = p_ref_solo_par * 1.
-    ref_solo_nir = p_ref_solo_nir * 1.
-
-    # print(p_trans_viva_nir, p_ref_viva_nir, p_ref_solo_par, p_ref_solo_nir)
     print(params)
 
     '''
     Roda o SiB2
     '''
 
-    Rn_C = sib2(trans_viva_nir, ref_viva_nir, ref_solo_par, ref_solo_nir,
-                nlinha)
-
-    Rn_C = Rn_C[posval]
+    www1_c = sib2(bee1_param, phsat1_param, satco1_param, poros1_param,
+                  nlinha)
+    www1_c = www1_c[posval]
 
     # print(len(Rn_O), len(Rn_C))
     # time.sleep(5)
     # print(params)
 
-    modeloerro = Rn_O - Rn_C
+    modeloerro = www1_o - www1_c
 
     # remove os 30 primeiros valores calculados
     # modeloerro = modeloerro[30:]
-    # print(modeloerro)
+    print(modeloerro)
     return modeloerro
 
 
 params = Parameters()
-params.add('TVN', value=0.200, max=0.9, min=0.01)
-params.add('RVN', value=0.500, max=0.9, min=0.01)
-params.add('RSOLOP', value=0.110, max=0.9, min=0.01)  # , vary=False)
-params.add('RSOLON', value=0.225, max=0.9, min=0.01)  # , vary=False)
+params.add('bee1', value=7.12, max=15.0, min=2.0)
+params.add('phsat1', value=-0.2, max=-0.01, min=-0.5)
+params.add('satco1', value=5e-06, max=1e-04, min=1e-07)
+params.add('poros1', value=0.515, max=0.6, min=0.3)  # , vary=False)
 
 otimiza = Minimizer(residualSiB2, params,
                     reduce_fcn=None,
                     calc_covar=True,
-                    fcn_args=(Rn_O, posval, nlinha))
+                    fcn_args=(www1_o, posval, nlinha))
 
 # out_leastsq = otimiza.leastsq()
 out_leastsq = otimiza.minimize(method='leastsq')  # Levenberg-Marquardt
 
 # report_fit(out_leastsq.params)
+# report_fit(out_leastsq)
 
 print('###################################################')
-print('Modulo: Radiacao')
+print('Modulo: Umidade do solo')
 print('---Parametros---')
 params.pretty_print()
 print('---Otimizacao---')

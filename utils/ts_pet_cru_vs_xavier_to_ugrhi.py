@@ -4,23 +4,23 @@ import netCDF4 as nc4
 import matplotlib.pyplot as plt
 # import time
 
-dirInput = '/dados/ProcessoOtimizacaoModelos/' \
-    'calibracaoBalagua/dados/inputs/ugrhi_sp/'
-# dirInput = '/vol0/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
+# dirInput = '/dados/ProcessoOtimizacaoModelos/' \
 #     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
 
-dirUgrhi = '/dados/ProcessoOtimizacaoModelos/' \
-    'calibracaoBalagua/dados/ugrhi/'
-# dirUgrhi = '/media/hd2TB/lcbiag/ProcessoOtimizacaoModelos/' \
-#     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
-# dirUgrhi = '/vol0/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
+dirInput = '/vol0/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
+    'calibracaoBalagua/dados/inputs/ugrhi_sp/'
+
+# dirUgrhi = '/dados/ProcessoOtimizacaoModelos/' \
 #     'calibracaoBalagua/dados/ugrhi/'
 
-# Dados Austin/UFES (Xavier)
-ncf_xavier_pet = '/dados/ET0_xavier/' \
-   'ETo_daily_UT_Brazil_v2_20140101_20170731_s1.nc'
-# ncf_xavier_pet = '/vol0/evandro/lcbiag/ET0_xavier/' \
-#     'ETo_daily_UT_Brazil_v2_20140101_20170731_s1.nc'
+# dirUgrhi = '/media/hd2TB/lcbiag/ProcessoOtimizacaoModelos/' \
+#     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
+
+dirUgrhi = '/vol0/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
+    'calibracaoBalagua/dados/ugrhi/'
+
+# dirInput = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
+#     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
 
 # UGRHI SP
 # tagname = '58220000'
@@ -35,13 +35,13 @@ ncf_xavier_pet = '/dados/ET0_xavier/' \
 # lat = -21.7
 # lon = -47.82
 #-------------------------
-tagname = '4B-015'
-lat = -20.63
-lon = -47.28
+# tagname = '4B-015'
+# lat = -20.63
+# lon = -47.28
 #-------------------------
-# tagname = '5B-011'
-# lat = -20.91
-# lon = -48.09
+tagname = '5B-011'
+lat = -20.91
+lon = -48.09
 #-------------------------
 ##########
 
@@ -58,6 +58,12 @@ corrig = xtimeM - np.timedelta64(4, 'M')
 x_eixo = pd.to_datetime(corrig)
 
 aguadf.index = x_eixo  # aguadf['datatempo']
+
+# Dados Austin/UFES (Xavier)
+#ncf_xavier_pet = '/dados/ET0_xavier/' \
+#    'ETo_daily_UT_Brazil_v2_20140101_20170731_s1.nc'
+ncf_xavier_pet = '/vol0/evandro/lcbiag/ET0_xavier/' \
+    'ETo_daily_UT_Brazil_v2_20140101_20170731_s1.nc'
 
 xavier = nc4.Dataset(ncf_xavier_pet, 'r')
 

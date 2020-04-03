@@ -286,14 +286,14 @@ ter inicialmente no código, se existe alguma que o seu valor deve ser diferente
 O SiB2pymod é o modelo SiB2 em Fortran 95, compilado como um módulo de python 
 3 com o uso do f2py do integra o numpy. Para isso, uma pequena mudança
 no código do SiB2 é feita. O programa sib2 é descrito como
-uma subrotina. Desta forma o sib2 é usado como uma função python.
+uma sub-rotina. Desta forma o sib2 é usado como uma função python.
 
 Para gerar o sib2pymod execute:
 \begin{Verbatim}[breaklines=true]
 f2py3.7 --fcompiler=gnu95 -c comsibc.f95 pardif.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f95 -m sib2pymod
 \end{Verbatim}
 
-\subsection{Os usuários do sib2pymod devem ter saber}
+\subsection{Os usuários do sib2pymod devem saber}
 
 Observou-se que as variáveis do SiB2 quando carregadas via python 
 \begin{Verbatim}[breaklines=true]
@@ -327,15 +327,58 @@ primeiros passos de tempo.
 Na segunda execução, deve ocorrer algo igual eu cito em
 \ref{f95}. Deve haver variáveis que deveriam ser inicializadas com
 determinados valores no primeiro passo de tempo do SiB2 e que não
-estão sendo inicializadas.
-
-Como é o caso da variável itero, que deve ser = 0 no início dos
+estão sendo inicializadas. Como é o caso da variável itero, que deve ser = 0 no início dos
 cálculos, e a cada execução da função ``sib2()''. Quando o SiB2
 offline é executado na linha de comando apenas uma vez, não se observa
  problemas de herança de valores da rodada anterior. Agora na
 execução do SiB2 como um módulo de python, o problema de herança de
 valores da rodada anterior pode ser notado como mostra a figura \ref{rn1rn2}.
 
+%\vspace{\baselineskip}
+\subsection{Calibração do SiB2: uso de método de otimização de parâmetros
+do modelo.}
+%\vspace{\baselineskip}
+
+O SiB2pymod foi criado especialmente para ser acoplado em um
+instrumento numérico de otimização de parâmetros que integra o
+ambiente Python, o LMFIT (\url{https://lmfit.github.io/lmfit-py/}).
+
+A calibração do SiB2 é realizada em 4 módulos:
+
+\begin{itemize}
+\item Módulo de radiação
+\item Módulo de momentum
+\item Módulo de umidade do solo
+\item Módulo de carbono e água
+\end{itemize}
+
+O processo de otimização de parâmetros consiste basicamente na
+definição de uma função que determina um erro a ser
+minimizado. Diferentes métodos numéricos de minimização de erro pode
+ser utilizado, no entanto, aqui utiliza-se o método ``brute'' que
+calcula todas as possibilidades diante uma pré definida de parâmetros
+e o método ``leastqr'' (Levenberg-Marquardt). 
+
+Foi desenvolvido um SiB2pymod para cada módulo de calibração que se
+encontram em \textbf{srcsib2model}/SiB2pymod/.
+
+As rotinas para a calibração, que usam cada respectivo SiB2pymod estão
+em \textbf{srcLCB}/calibracaoSiB2/.
+
+
+É importante sempre verificar os valores do ``modeloerro'' da função
+``residualSiB2''. Erros enormes, principalmente associados a valores
+inválidos (-9999.) comprometem todo o processo de otimização de parâmetros.
+
+
+\vspace{\baselineskip}
+\section{Cálculo do conjunto de parâmetros aerodinâmicos a cada passo
+  de tempo: acoplamento da derive\_trans do DBHM no SiB2.}
+\vspace{\baselineskip}
+
+
+
+\vspace{\baselineskip}
 \section{Tradução do SiB2 para linguagem C com f2c}
 \vspace{\baselineskip}
 
@@ -363,6 +406,52 @@ gcc -o SiB2runF2C sib2x.o Sib2xa.o Sib2xb.o -lf2c -lm
 Este mesmo resultado obtém utilizando o script fort77 em perl que pode ser obtido pelo pacote ``fort77 - Invoke f2c like a real compiler'' do debian.
 
 
+
+
+\vspace{\baselineskip}
+\chapter{Processos de Calibração do SiB2}
+\vspace{\baselineskip}
+
+A calibração do SiB2 obedece uma sequência de etapas que inicia em executar o SiB2 com os parâmetros determinados sem calibração, execução o instrumentos numérico de calibração para cada módulo e determinando um conjunto de parâmetros ótimos sequencialmente, a cada módulo, de modo que os parâmetros calibrados no módulo anterior sejam incorporados para a calibração do módulo subsequente.
+
+A sequência de calibração deve ser:
+\begin{enumerate}
+\item Módulo de radiação
+\item Módulo de momentum
+\item Módulo de umidade do solo
+\item Módulo de carbono e água
+\end{enumerate}
+
+Após obter todos os parâmetros calibrados, executa-se o SiB2 com todos os parâmetros calibrados para comparação dos resultados com a execução inicial do SiB2 sem calibração.
+
+\section{Execução do SiB2 sem calibração}
+
+\begin{enumerate}
+\item Obtenha o arquivo das variáveis de entrada do SiB2, arquivo ``data2'' e o arquivo ``data1'' de parâmetros.
+\item Obtenha o código do SiB2 em \textbf{srcsib2model}/SiB2f95modvars. 
+Compile
+\begin{Verbatim}[breaklines=true]
+gfortran comsibc.f95 pardif.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f95 -o sib2run
+\end{Verbatim}
+
+e execute
+\begin{Verbatim}[breaklines=true]
+./sib2run
+\end{Verbatim}
+no diretório em que se encontra os arquivos ``data1'' e ``data2''.
+\item Observe que os arquivo ``sib2dt.dat'' com as variáveis calculadas do SiB2 foi criado.
+\end{enumerate}
+
+\section{Calibração do Módulo de Radiação}
+
+\section{Calibração do Módulo de Momentum}
+
+\section{Calibração do Módulo de Umidade do Solo}
+
+\section{Calibração do Módulo de Carbono e Água}
+
+\section{Execução do SiB2 calibrado}
+
 % \vspace{\baselineskip}
 % \chapter{Utilitários para o LCB: repositório srcLCB}
 % \vspace{\baselineskip}
@@ -386,5 +475,10 @@ Este mesmo resultado obtém utilizando o script fort77 em perl que pode ser obti
 \endgroup
 %\renewcommand{\bibname}{REFER\^ENCIAS}
 %\bibliography{referencias}
+
+
+
+
+
 
 \end{document}

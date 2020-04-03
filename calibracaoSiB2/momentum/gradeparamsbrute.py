@@ -96,12 +96,14 @@ def plot_results_brute(result, best_vals=True, varlabels=None,
                 # lvls = np.linspace(result.brute_Jout.min(),
                 #                   result.brute_Jout.max(), 255, dtype='int')
                 lvls = np.linspace(result.brute_Jout.min(),
-                                   np.median(result.brute_Jout), 10, dtype='int')
+                                   np.median(result.brute_Jout), 70, dtype='int')
                 print('------> red_axis ----->', red_axis)
+                print(lvls, ' <--------------')
                 cplot = ax.contourf(
                     X.T, Y.T, np.minimum.reduce(
                         result.brute_Jout, axis=red_axis),lvls, norm=LogNorm(),
                     cmap='viridis', extend='max')  # viridis 'YlGnBu_r'
+                
                 #cplot.cmap.set_over('cyan')
                 # cplot = ax.contourf(
                 #     X.T, Y.T, np.minimum.reduce(
@@ -125,7 +127,7 @@ def plot_results_brute(result, best_vals=True, varlabels=None,
     # flog = LogFormatter(10, labelOnlyBase=False)
     # sbticks = np.arange(40, dtype=float)*100+300 
     cbar = fig.colorbar(cplot, ax=axes, orientation='horizontal',
-                        fraction=0.03)  # format='%.0e' ticks=lvls
+                        fraction=0.2)  # format='%.0e' ticks=lvls
     # cbar.formatter = LogFormatter(base=10, minor_thresholds=(2, 1)) #LogLocator(subs='all')
     # cbar.formatter = LogLocator(subs='all')
     cbar.set_ticks(LogLocator(subs='all'))

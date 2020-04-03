@@ -23,7 +23,7 @@ Plota a grade de parametros
 """
 
 pngfigplot = '/dados/ProcessoOtimizacaoModelos/SiB2/plots/' \
-    'sib2_ustar_pltGridParams_brute.png'
+    'sib2_rad_pltGridParams_brute.png'
 
 plot_results_brute(out, best_vals=True, varlabels=None,
                    output=pngfigplot)

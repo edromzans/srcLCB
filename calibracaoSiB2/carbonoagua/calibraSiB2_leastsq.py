@@ -14,74 +14,75 @@ import time
 # dadosobs = pd.read_table('data3.csv', delim_whitespace=True)
 dadosobs = pd.read_csv('data3.csv')
 
+h_o = np.asarray(dadosobs.H)
+le_o = np.asarray(dadosobs.LE)
+
 # print(dadosobs)
 # time.sleep(30)
 
-Rn_O = dadosobs.Rn
 # verifica dados validos
-posval = np.asarray(Rn_O > -9999.).nonzero()
+posval = np.asarray((h_o > -9999.)
+                    & (le_o > -9999.)).nonzero()
 posval = posval[0]
-Rn_O = Rn_O[posval]
+h_o = h_o[posval]
+le_o = le_o[posval]
 
 nlinha = len(dadosobs)
 # print(nlinha, ' <--------- nlinha')
 
 
-def residualSiB2(params, Rn_O, posval, nlinha):
+def residualSiB2(params, h_o, le_o, posval, nlinha):
 
-    p_trans_viva_nir = params['TVN']
-    p_ref_viva_nir = params['RVN']
-    p_ref_solo_par = params['RSOLOP']
-    p_ref_solo_nir = params['RSOLON']
+    gradm_param = params['gradm']
+    gmudmu_param = params['gmudmu']
+    greeness_param = params['greeness']
+    vmax_param = params['vmax']
 
-    trans_viva_nir = p_trans_viva_nir * 1.
-    ref_viva_nir = p_ref_viva_nir * 1.
-    ref_solo_par = p_ref_solo_par * 1.
-    ref_solo_nir = p_ref_solo_nir * 1.
-
-    # print(p_trans_viva_nir, p_ref_viva_nir, p_ref_solo_par, p_ref_solo_nir)
     print(params)
 
     '''
     Roda o SiB2
     '''
+    [h_c, le_c] = sib2(gradm_param, gmudmu_param,
+                       greeness_param, vmax_param,
+                       nlinha)
 
-    Rn_C = sib2(trans_viva_nir, ref_viva_nir, ref_solo_par, ref_solo_nir,
-                nlinha)
-
-    Rn_C = Rn_C[posval]
+    h_c = h_c[posval]
+    le_c = le_c[posval]
 
     # print(len(Rn_O), len(Rn_C))
     # time.sleep(5)
     # print(params)
 
-    modeloerro = Rn_O - Rn_C
+    modeloerro = (le_c/(h_c+le_c)) - (le_o/(h_o+le_o))
 
     # remove os 30 primeiros valores calculados
     # modeloerro = modeloerro[30:]
-    # print(modeloerro)
+    print(modeloerro)
     return modeloerro
 
 
 params = Parameters()
-params.add('TVN', value=0.200, max=0.9, min=0.01)
-params.add('RVN', value=0.500, max=0.9, min=0.01)
-params.add('RSOLOP', value=0.110, max=0.9, min=0.01)  # , vary=False)
-params.add('RSOLON', value=0.225, max=0.9, min=0.01)  # , vary=False)
+params.add('gradm', value=16.0)  # , max=0.9, min=0.01)
+params.add('gmudmu', value=1.0)  # , max=0.9, min=0.01)
+params.add('greeness', value=0.99)  # , max=0.9, min=0.01)
+params.add('vmax', value=105.0)  # , max=0.9, min=0.01)  # , vary=False)
 
 otimiza = Minimizer(residualSiB2, params,
                     reduce_fcn=None,
                     calc_covar=True,
-                    fcn_args=(Rn_O, posval, nlinha))
+                    fcn_args=(h_o, le_o, posval, nlinha))
 
 # out_leastsq = otimiza.leastsq()
 out_leastsq = otimiza.minimize(method='leastsq')  # Levenberg-Marquardt
 
-# report_fit(out_leastsq.params)
-
 print('###################################################')
-print('Modulo: Radiacao')
+print('Modulo: Carbono e agua')
 print('---Parametros---')
 params.pretty_print()
 print('---Otimizacao---')
 report_fit(out_leastsq)
+
+
+# report_fit(out_leastsq.params)
+# report_fit(out_leastsq)

@@ -7,7 +7,6 @@ import pickle
 import calendar
 from scipy import signal
 
-
 # UGRHI SP
 # tagname = '58220000'
 # -------------------------
@@ -26,16 +25,16 @@ dirR = '/dados/ProcessoOtimizacaoModelos/calibracaoBalagua/resultados/'
 
 # CRU
 # dirplot = '/dados/ProcessoOtimizacaoModelos/calibracaoBalagua/plots/'
-dirplot = '/dados/' \
-    'ProcessoOtimizacaoModelos/calibracaoBalagua/plots/cru/'
-arqresult = dirR+tagname+'_ugrhi_leastsqMinimizerResult.pkl'
+# dirplot = '/dados/' \
+#     'ProcessoOtimizacaoModelos/calibracaoBalagua/plots/cru/'
+# arqresult = dirR+tagname+'_ugrhi_leastsqMinimizerResult.pkl'
 
 # Xavier
 # dirplot = '/vol0/evandro/lcbiag/' \
 #     'ProcessoOtimizacaoModelos/calibracaoBalagua/plots/xavier/'
-# dirplot = '/dados/' \
-#     'ProcessoOtimizacaoModelos/calibracaoBalagua/plots/xavier/'
-# arqresult = dirR+tagname+'_xavier_ugrhi_leastsqMinimizerResult.pkl'
+dirplot = '/dados/' \
+    'ProcessoOtimizacaoModelos/calibracaoBalagua/plots/xavier/'
+arqresult = dirR+tagname+'_xavier_ugrhi_leastsqMinimizerResult.pkl'
 
 (out_leastsq,
  x_eixo,
@@ -81,23 +80,26 @@ plt.title(tagname, fontsize=10)
 plt.plot(x_eixo, ts_mt, '.-')
 plt.ylabel('S\n(mm/mês)')
 plt.xlim(xi, xf)
+plt.ylim(0., 750.)
 
 plt.subplot(6, 1, 2)
 plt.plot(x_eixo, ts_Dm, '.-')
 plt.ylabel('(S-S$_{-1})$\n(mm/mês)')
 plt.xlim(xi, xf)
-
+plt.ylim(-200, 200.)
 
 ax1 = plt.subplot(6, 1, 3)
 ax1.plot(x_eixo, q2, 'black', label='Q$_m$', linewidth=0.8)
 ax1.plot(x_eixo, ts_dt, 'red', label='Q$_c$', linewidth=0.8)
 plt.ylabel('(mm/mês)')
 plt.xlim(xi, xf)
+plt.ylim(0., 100.)
 
 ax2 = ax1.twinx()
 ax2.plot(x_eixo, p2, 'b', label='P', linewidth=0.8)
 plt.ylabel('P (mm/mês)', axes=ax2)
 plt.xlim(xi, xf)
+plt.ylim(0., 300.)
 
 ax2.legend(loc='upper right')
 ax1.legend(loc='upper left')
@@ -107,6 +109,7 @@ plt.plot(x_eixo, ts_r, 'g', label='ET', linewidth=0.8)
 plt.plot(x_eixo, etp, 'black', label='ETP', linewidth=0.8)
 plt.ylabel('(mm/mês)')
 plt.xlim(xi, xf)
+plt.ylim(20., 180.)
 plt.legend()
 
 # semivariancia

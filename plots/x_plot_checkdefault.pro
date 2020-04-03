@@ -5,13 +5,13 @@
 ;devel--------------------
 
 ;dirdefault = '/home/evandro/src_codes/gitSiB2model/SiB2python/'
-dirdefault = '/home/evandro/SiB2run/'
+;dirdefault = '/home/evandro/SiB2run/'
 
 ;dirdefault = '/home/evandro/SIBI_controle/SiBparaEvandro/SiB2/Eucalipto/'
 ;dirdefault = '/home/evandro/SIBI_controle/SiBparaEvandro/SiB2/Cana_27Nov09/'
 
 ;dirdefault = '/dados/ProcessoOtimizacaoModelos/SiB2/momentum/semDT/'
-;dirdefault = '/home/evandro/SiB2run/modvars/'
+dirdefault = '/home/evandro/SiB2run/modvars/'
 ;dirdefault = '/home/evandro/src_codes/LCB/srcsib2model/SiB2_DBHM_derive_trans/F95/'
 ;dirdefault = '/home/evandro/src_codes/LCB/srcsib2model/SiB2_DBHM_derive_trans/F95/semDT/'
 
@@ -21,10 +21,10 @@ dirdefault = '/home/evandro/SiB2run/'
 ;dir = '/dados/SiB/sites/Pastagem_SP_15Out09/run/'
 ;dir = '/dados/SiB/sites/Pastagem_Rondonia/run/'
 ;dir = '/dados/SiB/sites/Floresta_Rondonia/run/'
-dir = '/dados/SiB/sites/FlorestaAtlantica-novo/run/'
+;dir = '/dados/SiB/sites/FlorestaAtlantica-novo/run/'
 ;dir = '/dados/SiB/sites/FlorestaAtlantica/run/'
 ;dir = '/dados/SiB/sites/Fazenda-K77/run/'
-;dir = '/dados/SiB/sites/Eucalipto/run/'
+dir = '/dados/SiB/sites/Eucalipto/run/'
 ;dir = '/dados/SiB/sites/Cana_27Nov09/run/'
 ;dir = '/dados/SiB/sites/Cerrado_27Nov09/run/'
 ;dir = '/dados/SiB/controle/run/'
@@ -133,7 +133,7 @@ for k = 5L, nvars - 1L do begin
 
   print, '-----------> ', titlevar,  k
 
-  Write_png, string(k, format = '(I02)')+'SiB2varC.png',tvrd(true=1)
+  ;Write_png, string(k, format = '(I02)')+'SiB2varC.png',tvrd(true=1)
   
   rp = ' '
   read,rp,prompt='Press ENTER to continue...'
