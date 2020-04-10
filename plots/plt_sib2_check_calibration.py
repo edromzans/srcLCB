@@ -2,15 +2,18 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-dirsib2 = '/dados/ProcessoOtimizacaoModelos/SiB2/' \
-    'calibracaoFlorAtlantica/1_rodadaInicial_semcalibracao/'
+# dirsib2 = '/dados/ProcessoOtimizacaoModelos/SiB2/' \
+#     'calibracaoFlorAtlantica/1_rodadaInicial_semcalibracao/'
 
-dadosobs = pd.read_table(dirsib2+'data3.csv', delim_whitespace=True)
+# dadosobs = pd.read_table(dirsib2+'data3.csv', delim_whitespace=True)
+dadosobs = pd.read_csv('data3.csv')  # , delim_whitespace=True)
 # Timestamp	Ki	em	tm	um	prec	Rn	H
 # LE	NEE	H_f	LE_f	NEE_f	Ustar
 # SWC1	SWC2	SWC3	SWC4	SWC5	SWC6	SWC7
 
-dadoscal = pd.read_table(dirsib2+'sib2dt.dat', delim_whitespace=True)
+# dadoscal = pd.read_table(dirsib2+'sib2dt.dat', delim_whitespace=True)
+dadoscal = pd.read_table('sib2dt.dat', delim_whitespace=True)
+
 #    NYMD        Tm        em        um        Ki      Rn_m       alb
 # Ldwn      Lupw      Rn_C       H_C      LE_C       G_C       J_C
 # Fc_C     Rsc_C      An_C      u*_C        Td      W1_C      W2_C
@@ -18,7 +21,6 @@ dadoscal = pd.read_table(dirsib2+'sib2dt.dat', delim_whitespace=True)
 # Rss        Rs    Runoff   PARidir   PARidif albPARdir albPARdif
 
 xtime = np.asarray(dadosobs.index)
-
 
 rn_o = np.asarray(dadosobs['Rn'])
 ustar_o = np.asarray(dadosobs['Ustar'])
@@ -40,19 +42,28 @@ df_obs = df_obs.replace(-99999., np.nan)
 dic_c = {'rn': rn_c, 'ustar': ustar_c, 'www1': www1_c, 'h': h_c, 'le': le_c}
 df_cal = pd.DataFrame(data=dic_c, index=xtime)
 
+line1x1 = [-1000., 10000.]
 
 nvars = len(df_obs.columns)
 
 fig, ax = plt.subplots(nrows=3, ncols=2)
 
-k=0
+k = 0
 for row in ax:
     for col in row:
         if k < nvars:
+
+            col.plot(line1x1, line1x1, linewidth=0.5, color='black')
+
             col.scatter(df_obs[df_obs.columns[k]],
                         df_cal[df_cal.columns[k]], marker='+', linewidth=0.8)
             col.set_xlabel(str(df_obs.columns[k])+'_o')
             col.set_ylabel(str(df_cal.columns[k])+'_c')
+
+            col.set_xlim(np.nanmin(df_obs[df_obs.columns[k]]),
+                         np.nanmax(df_obs[df_obs.columns[k]]))
+            col.set_ylim(np.nanmin(df_obs[df_obs.columns[k]]),
+                         np.nanmax(df_obs[df_obs.columns[k]]))
 
             print('--------'+str(df_obs.columns[k])+'--------')
             df = pd.DataFrame(data={'obs': df_obs[df_obs.columns[k]],
@@ -61,6 +72,9 @@ for row in ax:
 
         k += 1
 plt.tight_layout()
+
+plt.savefig('SemCalibracao.png', dpi=300, bbox_inches='tight')
+
 plt.show()
 
 # x = range(10)

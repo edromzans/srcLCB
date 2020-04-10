@@ -29,15 +29,17 @@ nlinha = len(dadosobs)
 
 def residualSiB2(params, Rn_O, posval, nlinha):
 
-    p_trans_viva_nir = params['TVN']
-    p_ref_viva_nir = params['RVN']
-    p_ref_solo_par = params['RSOLOP']
-    p_ref_solo_nir = params['RSOLON']
-
-    trans_viva_nir = p_trans_viva_nir * 1.
-    ref_viva_nir = p_ref_viva_nir * 1.
-    ref_solo_par = p_ref_solo_par * 1.
-    ref_solo_nir = p_ref_solo_nir * 1.
+    tran_1_1 = params['tran_11']
+    tran_2_1 = params['tran_21']
+    tran_1_2 = params['tran_12']
+    tran_2_2 = params['tran_22']
+    ref_1_1 = params['ref_11']
+    ref_2_1 = params['ref_21']
+    ref_1_2 = params['ref_12']
+    ref_2_2 = params['ref_22']
+    soref_1 = params['soref_1']
+    soref_2 = params['soref_2']
+    chil_param = params['chil']
 
     # print(p_trans_viva_nir, p_ref_viva_nir, p_ref_solo_par, p_ref_solo_nir)
     print(params)
@@ -46,8 +48,9 @@ def residualSiB2(params, Rn_O, posval, nlinha):
     Roda o SiB2
     '''
 
-    Rn_C = sib2(trans_viva_nir, ref_viva_nir, ref_solo_par, ref_solo_nir,
-                nlinha)
+    Rn_C = sib2(tran_1_1, tran_2_1, tran_1_2, tran_2_2,
+                ref_1_1, ref_2_1, ref_1_2, ref_2_2, soref_1, soref_2,
+                chil_param, nlinha)
 
     Rn_C = Rn_C[posval]
 
@@ -64,10 +67,17 @@ def residualSiB2(params, Rn_O, posval, nlinha):
 
 
 params = Parameters()
-params.add('TVN', value=0.200, max=0.9, min=0.01)
-params.add('RVN', value=0.500, max=0.9, min=0.01)
-params.add('RSOLOP', value=0.110, max=0.9, min=0.01)  # , vary=False)
-params.add('RSOLON', value=0.225, max=0.9, min=0.01)  # , vary=False)
+params.add('tran_11', value=0.0170, max=0.2, min=0.01)
+params.add('tran_21', value=0.2000, max=0.6, min=0.01)
+params.add('tran_12', value=0.0010, max=0.5, min=0.0001)  # , vary=False)
+params.add('tran_22', value=0.0010, max=0.5, min=0.0001)
+params.add('ref_11', value=0.0700, max=0.2, min=0.01)
+params.add('ref_21', value=0.5000, max=0.8, min=0.01)
+params.add('ref_12', value=0.1600, max=0.4, min=0.01)
+params.add('ref_22', value=0.3900, max=0.6, min=0.01)
+params.add('soref_1', value=0.110, max=0.3, min=0.01)
+params.add('soref_2', value=0.225, max=0.4, min=0.01)
+params.add('chil', value=0.1, max=0.2, min=0.05)
 
 otimiza = Minimizer(residualSiB2, params,
                     reduce_fcn=None,

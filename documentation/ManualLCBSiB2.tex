@@ -405,16 +405,13 @@ gcc -o SiB2runF2C sib2x.o Sib2xa.o Sib2xb.o -lf2c -lm
 
 Este mesmo resultado obtém utilizando o script fort77 em perl que pode ser obtido pelo pacote ``fort77 - Invoke f2c like a real compiler'' do debian.
 
-
-
-
 \vspace{\baselineskip}
 \chapter{Processos de Calibração do SiB2}
 \vspace{\baselineskip}
 
-A calibração do SiB2 obedece uma sequência de etapas que inicia em executar o SiB2 com os parâmetros determinados sem calibração, execução o instrumentos numérico de calibração para cada módulo e determinando um conjunto de parâmetros ótimos sequencialmente, a cada módulo, de modo que os parâmetros calibrados no módulo anterior sejam incorporados para a calibração do módulo subsequente.
+A calibração do SiB2 obedece uma sequência de etapas que inicia em executar o SiB2 com os parâmetros determinados sem calibração, execução do instrumento numérico de calibração para cada módulo determinando-se o conjunto de parâmetros ótimos para cada módulo, de forma que, os parâmetros calibrados no módulo anterior sejam incorporados para a calibração do módulo subsequente.
 
-A sequência de calibração deve ser:
+A sequência modular de calibração deve ser:
 \begin{enumerate}
 \item Módulo de radiação
 \item Módulo de momentum
@@ -422,19 +419,20 @@ A sequência de calibração deve ser:
 \item Módulo de carbono e água
 \end{enumerate}
 
+Cada módulo de calibração do SiB2, consiste em uma versão do código do SiB2 em Fortan 95, modificada conforme a necessidade de cada módulo e compilada como uma função de Python 3. 
+
 Após obter todos os parâmetros calibrados, executa-se o SiB2 com todos os parâmetros calibrados para comparação dos resultados com a execução inicial do SiB2 sem calibração.
 
 \section{Execução do SiB2 sem calibração}
 
 \begin{enumerate}
-\item Obtenha o arquivo das variáveis de entrada do SiB2, arquivo ``data2'' e o arquivo ``data1'' de parâmetros.
-\item Obtenha o código do SiB2 em \textbf{srcsib2model}/SiB2f95modvars. 
-Compile
+\item Obtenha os arquivos de entrada do SiB2: arquivo ``data2'' e o arquivo ``data1''.
+\item Obtenha o código do SiB2 em \textbf{srcsib2model}/SiB2f95modvars, compile e gere o executável.
 \begin{Verbatim}[breaklines=true]
 gfortran comsibc.f95 pardif.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f95 -o sib2run
 \end{Verbatim}
 
-e execute
+\item Execute
 \begin{Verbatim}[breaklines=true]
 ./sib2run
 \end{Verbatim}
@@ -444,13 +442,287 @@ no diretório em que se encontra os arquivos ``data1'' e ``data2''.
 
 \section{Calibração do Módulo de Radiação}
 
+\begin{enumerate}
+\item Obtenha o código do módulo de radiação em \textbf{srcsib2model}/SiB2pymod/RadiativeTransModule. 
+\item  Compile e gere o módulo de Python
+\begin{Verbatim}[breaklines=true]
+f2py3.7 --fcompiler=gnu95 -c *.f95 -m sib2pymod
+\end{Verbatim}
+observe que um arquivo com nome similar à ``sib2pymod.cpython-37m-x86\_64-linux-gnu.so'' deve ser gerado, que é o módulo de Python 3. 
+
+\item Obtenha o programa ``calibraSiB2\_leastsq.py'' de \textbf{srcLCB}/calibracaoSiB2/radiation.
+
+\item Obtenha os arquivos de entrada do SiB2: arquivo ``data2'' e o arquivo ``data1''.
+
+\item Obtenha o arquivo ``data3.csv'' com os dados observados que serão comparados com os valores calculados pelo SiB2 no processo de otimização de parâmetros. 
+
+\item Execute o programa ``calibraSiB2\_leastsq.py''.
+\begin{Verbatim}[breaklines=true]
+python3.7 calibraSiB2_leastsq.py
+\end{Verbatim}
+
+\item Observe que a saída deve ser ter a seguinte forma:
+
+\begin{Verbatim}[breaklines=true]
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 46
+    # data points      = 726
+    # variables        = 4
+    chi-square         = 4484619.38
+    reduced chi-square = 6211.38418
+    Akaike info crit   = 6344.97389
+    Bayesian info crit = 6363.32409
+[[Variables]]
+    TVN:     0.52254353 +/- 0.04203620 (8.04%) (init = 0.2)
+    RVN:     0.45039796 +/- 0.00364906 (0.81%) (init = 0.5)
+    RSOLOP:  0.07975519 +/- 3.23101609 (4051.17%) (init = 0.11)
+    RSOLON:  0.21900602 +/- 1.30159136 (594.32%) (init = 0.225)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(RVN, RSOLON)    =  0.941
+    C(TVN, RSOLON)    = -0.829
+    C(RVN, RSOLOP)    = -0.802
+    C(RSOLOP, RSOLON) = -0.762
+    C(TVN, RVN)       = -0.744
+    C(TVN, RSOLOP)    =  0.289
+\end{Verbatim}
+
+\item Anote os valores dos parâmetros calibrados. Para mais detalhes a respeito da estatística do método de otimização de parâmetros aqui utilizado veja a seção \textit{Goodness-of-Fit Statistics} em \url{https://lmfit.github.io/lmfit-py/fitting.html}
+
+Obs.: O programa callSiB2pymodule.py em em \textbf{srcsib2model}/SiB2pymod/RadiativeTransModule, é um exemplo de como o sib2pymod do módulo de radiação deve ser executado no ambiente Python. 
+  
+\end{enumerate}
+
 \section{Calibração do Módulo de Momentum}
+
+Aqui a calibração possui duas etapas.
+
+\subsection{Determinação da dos parâmetros aerodinâmicos a serem calibrados conforme a variação do índice de área foliar no tempo com uso da derive\_trans}
+\label{zlt_aero_ts}
+
+\begin{enumerate}
+
+\item Obtenha o código em \textbf{srcsib2model}/SiB2pymod/MomentumModule/zlt\_aero\_ts
+
+\item Defina os valores dos parâmetros ``zs'', ``zc'', ``leafw'' e ``leafl'' em ``derive\_trans.f95'', conforme as características do bioma.
+\item  Compile e gere o módulo de Python
+\begin{Verbatim}[breaklines=true]
+f2py3.7 --fcompiler=gnu95 -c *.f95 -m sib2pymod
+\end{Verbatim}
+
+\item Obtenha os arquivos de entrada do SiB2: arquivo ``data2'' e o arquivo ``data1''.
+  
+\item Execute o programa ``callSiB2pymodule.py''.
+\begin{Verbatim}[breaklines=true]
+python3.7 callSiB2pymodule.py
+\end{Verbatim}
+
+\item Note que o arquivo ``zlt\_aero\_ts.dat'' foi gerado, contendo o conjunto de parâmetros aerodinâmicos para cada passo de tempo. 
+  
+\end{enumerate}
+
+\subsection{Calibração dos parâmetros aerodinâmicos}
+\label{aerocal}
+
+\begin{enumerate}
+\item Obtenha o código do módulo de momentum em \textbf{srcsib2model}/SiB2pymod/MomentumModule. 
+\item  Compile e gere o módulo de Python
+\begin{Verbatim}[breaklines=true]
+f2py3.7 --fcompiler=gnu95 -c *.f95 -m sib2pymod
+\end{Verbatim}
+observe que um arquivo com nome similar à ``sib2pymod.cpython-37m-x86\_64-linux-gnu.so'' deve ser gerado, que é o módulo de Python 3. 
+
+\item Obtenha o programa ``calibraSiB2\_momentum\_leastsq.py'' de \textbf{srcLCB}/calibracaoSiB2/momentum.
+
+\item Obtenha os arquivos de entrada do SiB2: arquivo ``data2'' e o arquivo ``data1'' de parâmetros, porém, agora o arquivo ``data1'' deve ser editado para que contenha os valores dos parâmetros calibrados do módulo de radiação.
+
+\item Obtenha o arquivo ``data3.csv'' com os dados observados que serão comparados com os valores calculados pelo SiB2 no processo de otimização de parâmetros. 
+
+\item Copie o arquivo ``zlt\_aero\_ts.dat'' gerado em \ref{zlt_aero_ts}para o mesmo diretório do sib2pymod, ``data1'', ``data2'', ``data3.csv'' e ``calibraSiB2\_momentum\_leastsq.py''  
+  
+\item Execute o programa ``calibraSiB2\_momentum\_leastsq.py''.
+\begin{Verbatim}[breaklines=true]
+python3.7 calibraSiB2_momentum_leastsq.py
+\end{Verbatim}
+
+
+\item A saída deve ser ter a seguinte forma:
+
+\begin{Verbatim}[breaklines=true]
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 85
+    # data points      = 732
+    # variables        = 9
+    chi-square         = 30.6064980
+    reduced chi-square = 0.04233264
+    Akaike info crit   = -2305.78390
+    Bayesian info crit = -2264.42188
+[[Variables]]
+    ha:     23.8058861 +/- 0.56932611 (2.39%) (init = 23.53)
+    z0d:    1.89174756 +/- 0.05014510 (2.65%) (init = 1.459)
+    dd:     25.9954341 +/- 0.22468437 (0.86%) (init = 26.08)
+    g2:     0.68042782 +/- 0.06066055 (8.92%) (init = 0.737)
+    g3:     0.62291820 +/- 0.02801823 (4.50%) (init = 0.737)
+    cc1:    10.3750000 +/- 1.8295e-14 (0.00%) (init = 10.375)
+    cc2:    3324.78806 +/- 241.847705 (7.27%) (init = 2808.157)
+    corb1:  13.1139182 +/- 0.65147631 (4.97%) (init = 12.643)
+    corb2:  322.431000 +/- 2.4962e-13 (0.00%) (init = 322.431)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(cc1, corb2)   = -1.000
+    C(dd, g2)       = -0.990
+    C(g3, cc2)      = -0.971
+    C(ha, dd)       = -0.888
+    C(ha, g2)       =  0.882
+    C(ha, corb1)    = -0.845
+    C(g2, corb2)    =  0.637
+    C(g2, cc1)      = -0.634
+    C(dd, corb2)    = -0.632
+    C(dd, cc1)      =  0.626
+    C(dd, corb1)    =  0.600
+    C(g2, corb1)    = -0.577
+    C(ha, corb2)    =  0.414
+    C(ha, cc1)      = -0.408
+    C(cc2, corb1)   = -0.344
+    C(g3, corb1)    =  0.312
+    C(z0d, g2)      = -0.245
+    C(z0d, corb1)   =  0.230
+    C(z0d, cc1)     =  0.220
+    C(z0d, corb2)   = -0.214
+    C(ha, cc2)      =  0.185
+    C(dd, cc2)      = -0.166
+    C(z0d, dd)      =  0.165
+    C(g3, corb2)    = -0.153
+    C(g3, cc1)      =  0.146
+    C(corb1, corb2) = -0.142
+    C(cc1, corb1)   =  0.132
+    C(cc2, corb2)   =  0.129
+    C(cc1, cc2)     = -0.121
+    C(ha, g3)       = -0.111
+    C(dd, g3)       =  0.105
+    C(g2, cc2)      =  0.104
+\end{Verbatim}
+
+
+\item Observe a criação do arquivo ``params\_calibrado.dat'' com os valores dos parâmetros calibrados que deverá ser carregado nos módulos subsequentes.
+  
+\end{enumerate}
 
 \section{Calibração do Módulo de Umidade do Solo}
 
+\begin{enumerate}
+\item Obtenha o código do módulo de umidade do solo em \textbf{srcsib2model}/SiB2pymod/Soil-MoistureModule. 
+\item  Compile e gere o módulo de Python
+\begin{Verbatim}[breaklines=true]
+f2py3.7 --fcompiler=gnu95 -c *.f95 -m sib2pymod
+\end{Verbatim}
+observe que um arquivo com nome similar à ``sib2pymod.cpython-37m-x86\_64-linux-gnu.so'' deve ser gerado, que é o módulo de Python 3. 
+
+\item Obtenha o programa ``calibraSiB2\_leastsq.py'' de \textbf{srcLCB}/calibracaoSiB2/umidade.
+
+\item Obtenha os arquivos de entrada do SiB2: arquivo ``data2'' e o arquivo ``data1''.
+
+\item Obtenha o arquivo ``data3.csv'' com os dados observados que serão comparados com os valores calculados pelo SiB2 no processo de otimização de parâmetros.
+
+\item Obtenha o arquivo ``params\_calibrado.dat'' gerado em \ref{aerocal}. Nesta etapa, não é necessário editar o arquivo ``data1'', pois os parâmetros aerodinâmicos calibrados são carregados pelo programa ``load\_aeropars.f95'' a cada passo de tempo. 
+
+\item Execute o programa ``calibraSiB2\_leastsq.py''.
+\begin{Verbatim}[breaklines=true]
+python3.7 calibraSiB2_leastsq.py
+\end{Verbatim}
+
+\item Observe que a saída deve ser ter a seguinte forma:
+
+\begin{Verbatim}[breaklines=true]
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 46
+    # data points      = 744
+    # variables        = 4
+    chi-square         = 247.572512
+    reduced chi-square = 0.33455745
+    Akaike info crit   = -810.651114
+    Bayesian info crit = -792.202950
+[[Variables]]
+    bee1:    6.13789646 +/- 19.0310266 (310.06%) (init = 7.12)
+    phsat1: -0.01000158 +/- 0.00693809 (69.37%) (init = -0.2)
+    satco1:  9.3885e-05 +/- 5.8644e-04 (624.64%) (init = 5e-06)
+    poros1:  0.30878321 +/- 0.01715190 (5.55%) (init = 0.515)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(phsat1, satco1) =  0.974
+    C(bee1, phsat1)   = -0.377
+    C(bee1, poros1)   =  0.325
+    C(bee1, satco1)   = -0.156
+\end{Verbatim}
+
+\item Anote os valores dos parâmetros calibrados.
+\end{enumerate}
+
 \section{Calibração do Módulo de Carbono e Água}
 
+\begin{enumerate}
+\item Obtenha o código do módulo de carbono e água em \textbf{srcsib2model}/SiB2pymod/Carbon-WaterModule. 
+\item  Compile e gere o módulo de Python
+\begin{Verbatim}[breaklines=true]
+f2py3.7 --fcompiler=gnu95 -c *.f95 -m sib2pymod
+\end{Verbatim}
+observe que um arquivo com nome similar à ``sib2pymod.cpython-37m-x86\_64-linux-gnu.so'' deve ser gerado, que é o módulo de Python 3. 
+
+\item Obtenha o programa ``calibraSiB2\_leastsq.py'' de \textbf{srcLCB}/calibracaoSiB2/umidade.
+
+\item Obtenha os arquivos de entrada do SiB2: arquivo ``data2'' e o arquivo ``data1''.
+
+\item Obtenha o arquivo ``data3.csv'' com os dados observados que serão comparados com os valores calculados pelo SiB2 no processo de otimização de parâmetros.
+
+\item Obtenha o arquivo ``params\_calibrado.dat'' gerado em \ref{aerocal}. Agora, além dos parâmetros aerodinâmicos serem carregados pelo programa ``load\_aeropars.f95'', é necessário editar o arquivo ``data1'' com os valores dos parâmetros obtidos no módulo de calibração de umidade do solo.
+
+\item Execute o programa ``calibraSiB2\_leastsq.py''.
+\begin{Verbatim}[breaklines=true]
+python3.7 calibraSiB2_leastsq.py
+\end{Verbatim}
+
+\item Observe que a saída deve ser ter a seguinte forma:
+
+\begin{Verbatim}[breaklines=true]
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 64
+    # data points      = 667
+    # variables        = 4
+    chi-square         = 106689.129
+    reduced chi-square = 160.918747
+    Akaike info crit   = 3392.94796
+    Bayesian info crit = 3410.95912
+[[Variables]]
+    gradm:     20.9092373 +/- 2.09814850 (10.03%) (init = 16)
+    gmudmu:    0.72108549 +/- 0.04779871 (6.63%) (init = 1)
+    greeness:  0.99993604 +/- 8.8220e-06 (0.00%) (init = 0.99)
+    vmax:      108.073123 +/- 14.0153431 (12.97%) (init = 105)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(gradm, vmax)     = -0.797
+    C(gmudmu, vmax)    = -0.404
+    C(gradm, gmudmu)   = -0.231
+    C(greeness, vmax)  =  0.186
+    C(gradm, greeness) = -0.183
+\end{Verbatim}
+\end{enumerate}
+
 \section{Execução do SiB2 calibrado}
+
+\begin{enumerate}
+\item Obtenha os arquivos de entrada do SiB2 calibrado: arquivo ``data2'', arquivo ``data1'' com os respectivos parâmetros calibrados e o arquivo ``params\_calibrado.dat'' obtido em \ref{aerocal}.
+\item Obtenha o código do SiB2 em \textbf{srcsib2model}/SiB2f95momentum, compile e gere o executável:
+\begin{Verbatim}[breaklines=true]
+gfortran comsibc.f95 pardif.f95 load_aeropars.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f95 -o sib2run
+\end{Verbatim}
+
+\item Execute
+\begin{Verbatim}[breaklines=true]
+./sib2run
+\end{Verbatim}
+  
+\item Observe que os arquivo ``sib2dt.dat'' com as variáveis calculadas do SiB2 calibrado foi criado.
+\end{enumerate}
 
 % \vspace{\baselineskip}
 % \chapter{Utilitários para o LCB: repositório srcLCB}
@@ -475,10 +747,5 @@ no diretório em que se encontra os arquivos ``data1'' e ``data2''.
 \endgroup
 %\renewcommand{\bibname}{REFER\^ENCIAS}
 %\bibliography{referencias}
-
-
-
-
-
 
 \end{document}
