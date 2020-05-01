@@ -127,7 +127,7 @@ def plot_results_brute(result, best_vals=True, varlabels=None,
     # flog = LogFormatter(10, labelOnlyBase=False)
     # sbticks = np.arange(40, dtype=float)*100+300 
     cbar = fig.colorbar(cplot, ax=axes, orientation='horizontal',
-                        fraction=0.03)  # format='%.0e' ticks=lvls
+                        fraction=0.05)  # format='%.0e' ticks=lvls
     # cbar.formatter = LogFormatter(base=10, minor_thresholds=(2, 1)) #LogLocator(subs='all')
     # cbar.formatter = LogLocator(subs='all')
     cbar.set_ticks(LogLocator(subs='all'))

@@ -12,7 +12,7 @@ from gradeparamsbrute import plot_results_brute
 diresults = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/SiB2/resultados/'
 # diresults = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/SiB2/resultados/checkSiB2pymod/'
 
-arqvminres = 'sib2_radiation_bruteMinimizerResult.pkl'
+arqvminres = 'sib2_umidadesolo_bruteMinimizerResult.pkl'
 
 out = pickle.load(open(diresults+arqvminres, "rb"))
 
@@ -26,8 +26,7 @@ Plota a grade de parametros
 #     'sib2_rad_pltGridParams_brute.png'
 
 pngfigplot = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/SiB2/plots/' \
-    'sib2_radiation_pltGridParams_brute.png'
-
+    'sib2_umidadesolo_pltGridParams_brute.png'
 
 plot_results_brute(out, best_vals=True, varlabels=None,
                    output=pngfigplot)
