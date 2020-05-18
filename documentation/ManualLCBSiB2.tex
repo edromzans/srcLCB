@@ -112,10 +112,10 @@
 \chapter{Início}
 \vspace{\baselineskip}
 
-Esta documentação faz referência aos repositórios: \textbf{srcLCB} e \textbf{srcsib2model}.
+Esta documentação faz referência aos repositórios: \textbf{srcLCB} e \textbf{srcsib2model}. O repositório é composto de códigos utilitários para o LCB/IAG/USP, enquanto o \textbf{srcsib2model} concentra apenas o código fonte do modelo SiB2 \cite{sellers1996I,sellers1996II} e suas respectivas modificações. 
+
 A versão mais atual do modelo SiB2 está no repositório \textbf{srcsib2model},
-diretório ``SiB2f95modvars'', em que, o SiB2 está traduzido para Fortran
-95 e as variáveis do comsibc e pardif operam como um módulo de Fortran.
+diretório ``SiB2f95modvars'', em que, o SiB2 está traduzido para Fortran 95 e as variáveis do comsibc e pardif operam como um módulo de Fortran.
 
 Para compilar o SiB2:
 \begin{Verbatim}[breaklines=true]
@@ -131,9 +131,7 @@ no diretório em que se encontra os arquivos ``data1'' e ``data2''.
 O código do SiB2 que se trabalhava no LCB em Fortran 77
 está no repositório \textbf{srcsib2model}, diretório ``SiB2f77''.
 
-O SiB2 também foi convertido em um módulo de Python no diretório
-``SiB2pymod'' do \textbf{srcsib2model}, principalmente para servir ao conjunto
-numérico de otimização de parâmetros do SiB2 desenvolvido em Python. 
+% O SiB2 também foi convertido em um módulo de Python no diretório ``SiB2pymod'' do \textbf{srcsib2model}, principalmente para servir ao conjunto numérico de otimização de parâmetros do SiB2 desenvolvido em Python. 
 
 \vspace{\baselineskip}
 
@@ -157,7 +155,7 @@ O formato explícito em fortran é ``(A8,6F11.4)'', exemplo:
 write(2,'(A8,6F11.4)') nymd, swdown, em, tm, um, prec, rnetm
 \end{verbatim}
 
-Os arquivos data2 são gerados pelo programa em Fortran 95 denominado
+Os arquivos ``data2'' são gerados pelo programa em Fortran 95 denominado
 como ``data2\_format.f95'' localizado no diretório ``utils'' do
 repositório \textbf{srcLCB}. Inicialmente Rn ficava na 3\textsuperscript{a} coluna, mas em agosto de 2019, a ordem das colunas foi alterada para permitir a inserção de uma condição ``if'' no código que seleciona o flag ``ilw'' e decide sobre o uso da coluna de Rn. 
 
@@ -201,27 +199,14 @@ A tabela abaixo indica qual a equação rsoil tem sido utilizada para cada local
 
 \section{Compilando o SiB2 no gcc e a tradução do Fortran 77 para Fortran 95}
 
-Identificou-se que o modelo SiB2 que vinha sendo utilizado no LCB, escrito em Fortran 77, apresentava erros de compilação e de execução quando compilado a partir do gfortran no linux debian buster e versões anteriores mesmo usando o g77 que integrava o gcc até a sua versão 3.4.6. O SiB2 no LCB geralmente era utilizado a partir de compiladores de Fortran 77 em windows antigos que já não estão mais disponíveis no LCB, portanto, foram estudadas as possibilidades de continuar fazendo altereções no SiB2 usando compiladores de Fortran mais portáveis e nas versões mais atuais e neste sentido o gfortran que integra o gcc 8.3.0 foi considerado o mais apropriado.
+Identificou-se que o modelo SiB2 que vinha sendo utilizado no LCB, escrito em Fortran 77, apresentava erros de compilação e de execução quando compilado a partir do gfortran no linux debian buster e versões anteriores mesmo usando o g77 que integrava o gcc até a sua versão 3.4.6. O SiB2 no LCB geralmente era utilizado a partir de compiladores de Fortran 77 em sistema windows que já não estão mais disponíveis no LCB, portanto, foram estudadas as possibilidades de continuar fazendo altereções no SiB2 usando compiladores de Fortran mais portáveis e nas versões mais atuais e neste sentido o gfortran que integra o gcc 8.3.0 foi considerado o mais apropriado.
 
-Fazendo modificações no código do SiB2 em Fortran 77, combinadas com
-os flags de compilação ``-fno-automatic'' e ``-finit-local-zero''
-disponíveis no gfortran, os erros de compilação e execução do SiB2 do
-LCB no gfortran do gcc 8.3.0 foram solucionados e os resultados das
-saídas do modelo compilado no gfortran e nos compiladores de windows
-antigos ficaram iguais, apresentando pequenas diferenças provavelmente
-associadas com arredondamento numérico, conforme mostra a figura \ref{checkvars}.
+Fazendo modificações no código do SiB2 em Fortran 77, combinadas com os flags de compilação ``-fno-automatic'' e ``-finit-local-zero'' disponíveis no gfortran, os erros de compilação e execução do SiB2 do LCB no gfortran do gcc 8.3.0 foram solucionados e os resultados das saídas do modelo compilado no gfortran e nos compiladores para windows ficaram iguais, apresentando pequenas diferenças provavelmente associadas com arredondamento numérico, conforme mostra a figura \ref{checkvars}.
 
 \begin{figure}[ht]
 \centering 
 \includegraphics[width=\textwidth]{img/09SiB2varC}
-\caption{Comparação entre H calculado com o SiB2 compilado no windows e
-  compilado no gfortran com os flags ``-fno-automatic'' e
-  ``-finit-local-zero''. Em cada coluna deste painel (da esquerda para
-  direita) está a dispersão, o desvio no tempo de H windows - gfortran
-  e H no tempo, sendo H na cor branca = windows e H na cor vermelha =
-  gfortran, sendo possível ver apenas a sobreposição da cor vermelha. Em
-  cada linha (de cima para baixo) temos a série temporal horária, as
-  médias diárias e mensais.}
+\caption{Comparação entre H calculado com o SiB2 compilado no windows e compilado no gfortran com os flags ``-fno-automatic'' e ``-finit-local-zero''. Em cada coluna deste painel (da esquerda para direita) está a dispersão, o desvio no tempo de H windows~-~gfortran e H no tempo, sendo H na cor branca~=~windows e H na cor vermelha~=~gfortran, sendo possível ver apenas a sobreposição da cor vermelha. Em cada linha (de cima para baixo) temos a série temporal horária, as médias diárias e mensais.}
 \label{checkvars}
 \end{figure}
 
@@ -293,7 +278,7 @@ Para gerar o sib2pymod execute:
 f2py3.7 --fcompiler=gnu95 -c comsibc.f95 pardif.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f95 -m sib2pymod
 \end{Verbatim}
 
-\subsection{Os usuários do sib2pymod devem saber}
+\subsection{Herança de valores e warm-up do modelo}
 
 Observou-se que as variáveis do SiB2 quando carregadas via python 
 \begin{Verbatim}[breaklines=true]
@@ -306,16 +291,13 @@ importação. A cada execução da função ``sib2()'', as variáveis do SiB2
 iniciam com os valores que ficaram na memória referente a rodada
 anterior.
 
-Na figura \ref{rn1rn2} observe as pequenas diferenças ente os valores
+Na figura \ref{rn1rn2} observe as pequenas diferenças entre os valores
 de Rn para uma primeira execução da função ``sib2()'' e uma segunda
 execução da função ``sib2()''. 
 \begin{figure}[ht]
 \centering 
 \includegraphics[width=0.7\textwidth]{img/rn1rn2sib2pymod}
-\caption{Comparação entre o cálculo de Rn para a primeira execução da
-  função python ``sib2()'' (Rn1) e na segunda execução da
-  função python ``sib2()'' (Rn2) em um programa python. Dispersão,
-  desvio e ampliação do desvio no eixo x (de cima para baixo).}
+\caption{Comparação entre o cálculo de Rn para a primeira execução da  função python ``sib2()'' (Rn1) e na segunda execução da função python ``sib2()'' (Rn2) em um programa python. De cima para baixo, é mostrado a dispersão, desvio e ampliação do desvio.}
 \label{rn1rn2}
 \end{figure}
 
@@ -324,24 +306,17 @@ serem diferentes, existem um pequeno desvio nos valores iniciais e que
 se estabilizam no decorrer dos cálculos, principalmente nos 30
 primeiros passos de tempo.
 
-Na segunda execução, deve ocorrer algo igual eu cito em
-\ref{f95}. Deve haver variáveis que deveriam ser inicializadas com
-determinados valores no primeiro passo de tempo do SiB2 e que não
-estão sendo inicializadas. Como é o caso da variável itero, que deve ser = 0 no início dos
-cálculos, e a cada execução da função ``sib2()''. Quando o SiB2
-offline é executado na linha de comando apenas uma vez, não se observa
- problemas de herança de valores da rodada anterior. Agora na
-execução do SiB2 como um módulo de python, o problema de herança de
-valores da rodada anterior pode ser notado como mostra a figura \ref{rn1rn2}.
+Na segunda execução, pode ocorrer algo igual eu cito em \ref{f95}, em que variáveis que deveriam ser inicializadas com determinados valores no primeiro passo de tempo do SiB2 não estão sendo inicializadas, como é o caso da variável itero, que deve ser = 0 no início dos cálculos, e a cada execução da função ``sib2()''.
 
+Quando o SiB2 offline é executado na linha de comando apenas uma vez, não se observa  problemas de herança de valores da rodada anterior. Agora na execução do SiB2 como um módulo de python, o problema de herança de valores da rodada anterior pode ser notado como mostra a figura \ref{rn1rn2}.
+
+Também deve-se considerar o \textit{warm-up} do modelo SiB2 em rodadas consecutivas dentro do python. Variáveis com temperatura do solo e umidade do solo, possuem uma persistência maior no tempo do que as demais variáveis. Se o modelo inicia-se em um período úmido, mas a sua rodada anterior no ambiente python terminou em um período seco, os valores iniciais terão um efeito de \textit{warm-up}.  
 %\vspace{\baselineskip}
-\subsection{Calibração do SiB2: uso de método de otimização de parâmetros
+\section{Calibração do SiB2: uso de método de otimização de parâmetros
 do modelo.}
 %\vspace{\baselineskip}
 
-O SiB2pymod foi criado especialmente para ser acoplado em um
-instrumento numérico de otimização de parâmetros que integra o
-ambiente Python, o LMFIT (\url{https://lmfit.github.io/lmfit-py/}).
+O SiB2pymod foi criado especialmente para ser acoplado em um instrumento numérico de otimização de parâmetros que integra o ambiente Python, o LMFIT \cite{lmfit}.
 
 A calibração do SiB2 é realizada em 4 módulos:
 
@@ -352,24 +327,13 @@ A calibração do SiB2 é realizada em 4 módulos:
 \item Módulo de carbono e água
 \end{itemize}
 
-O processo de otimização de parâmetros consiste basicamente na
-definição de uma função que determina um erro a ser
-minimizado. Diferentes métodos numéricos de minimização de erro pode
-ser utilizado, no entanto, aqui utiliza-se o método ``brute'' que
-calcula todas as possibilidades diante uma pré definida de parâmetros
-e o método ``leastqr'' (Levenberg-Marquardt). 
+O processo de otimização de parâmetros consiste basicamente na definição de uma função que determina um erro a ser minimizado. Diferentes métodos numéricos de minimização de erro podem ser utilizado, no entanto, aqui utiliza-se o método ``brute'' que calcula todas as possibilidades diante grade de prarâmetros pré definida e o método ``leastqr'' que consiste no método de Levenberg-Marquardt. 
 
-Foi desenvolvido um SiB2pymod para cada módulo de calibração que se
-encontram em \textbf{srcsib2model}/SiB2pymod/.
+Foi desenvolvido um SiB2pymod para cada módulo de calibração que se encontram em \textbf{srcsib2model}/SiB2pymod/. As rotinas para a calibração, que usam cada respectivo SiB2pymod estão em \textbf{srcLCB}/calibracaoSiB2/.
 
-As rotinas para a calibração, que usam cada respectivo SiB2pymod estão
-em \textbf{srcLCB}/calibracaoSiB2/.
+É importante sempre verificar os valores do ``modeloerro'' da função ``residualSiB2''. Erros enormes, principalmente associados a valores inválidos (-9999.) comprometem todo o processo de otimização de parâmetros.
 
-
-É importante sempre verificar os valores do ``modeloerro'' da função
-``residualSiB2''. Erros enormes, principalmente associados a valores
-inválidos (-9999.) comprometem todo o processo de otimização de parâmetros.
-
+Mais detalhes a respeito dos métodos minimização de erro da classe ``Minimizer'' do LMFIT e a respeito da definição do ``modeloerro'' por meio de uma função residual, aqui denominada como ``residualSiB2'', podem ser consultadas em \url{https://lmfit.github.io/lmfit-py/}
 
 \vspace{\baselineskip}
 \section{Cálculo do conjunto de parâmetros aerodinâmicos a cada passo
@@ -421,7 +385,7 @@ A sequência modular de calibração deve ser:
 
 Cada módulo de calibração do SiB2, consiste em uma versão do código do SiB2 em Fortan 95, modificada conforme a necessidade de cada módulo e compilada como uma função de Python 3. 
 
-Após obter todos os parâmetros calibrados, executa-se o SiB2 com todos os parâmetros calibrados para comparação dos resultados com a execução inicial do SiB2 sem calibração.
+Após a calibração de todos os parâmetros, executa-se o SiB2 para comparação dos resultados com a execução inicial do SiB2 sem calibração.
 
 \section{Execução do SiB2 sem calibração}
 
@@ -437,7 +401,7 @@ gfortran comsibc.f95 pardif.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f95 -o sib2run
 ./sib2run
 \end{Verbatim}
 no diretório em que se encontra os arquivos ``data1'' e ``data2''.
-\item Observe que os arquivo ``sib2dt.dat'' com as variáveis calculadas do SiB2 foi criado.
+\item Observe que o arquivo ``sib2dt.dat'' com as variáveis calculadas do SiB2 foi criado.
 \end{enumerate}
 
 \section{Calibração do Módulo de Radiação}
@@ -450,18 +414,22 @@ f2py3.7 --fcompiler=gnu95 -c *.f95 -m sib2pymod
 \end{Verbatim}
 observe que um arquivo com nome similar à ``sib2pymod.cpython-37m-x86\_64-linux-gnu.so'' deve ser gerado, que é o módulo de Python 3. 
 
-\item Obtenha o programa ``calibraSiB2\_leastsq.py'' de \textbf{srcLCB}/calibracaoSiB2/radiation.
-
 \item Obtenha os arquivos de entrada do SiB2: arquivo ``data2'' e o arquivo ``data1''.
 
 \item Obtenha o arquivo ``data3.csv'' com os dados observados que serão comparados com os valores calculados pelo SiB2 no processo de otimização de parâmetros. 
 
-\item Execute o programa ``calibraSiB2\_leastsq.py''.
+\item Obtenha o programa ``calibraSiB2\_leastsq.py'' para uso do método \textit{Levenberg-Marquardt} ou ``calibraSiB2\_brute.py'' para uso do método \textit{brute} em \textbf{srcLCB}/calibracaoSiB2/radiation.
+  
+\item Execute o programa ``calibraSiB2\_leastsq.py''
 \begin{Verbatim}[breaklines=true]
 python3.7 calibraSiB2_leastsq.py
 \end{Verbatim}
-
-\item Observe que a saída deve ser ter a seguinte forma:
+ou o programa ``calibraSiB2\_brute.py''.
+\begin{Verbatim}[breaklines=true]
+python3.7 calibraSiB2_brute.py
+\end{Verbatim}
+  
+\item Observe que a saída deve ter a seguinte forma:
 
 \begin{Verbatim}[breaklines=true]
 [[Fit Statistics]]
@@ -489,15 +457,15 @@ python3.7 calibraSiB2_leastsq.py
 
 \item Anote os valores dos parâmetros calibrados. Para mais detalhes a respeito da estatística do método de otimização de parâmetros aqui utilizado veja a seção \textit{Goodness-of-Fit Statistics} em \url{https://lmfit.github.io/lmfit-py/fitting.html}
 
-Obs.: O programa callSiB2pymodule.py em em \textbf{srcsib2model}/SiB2pymod/RadiativeTransModule, é um exemplo de como o sib2pymod do módulo de radiação deve ser executado no ambiente Python. 
-  
 \end{enumerate}
+
+Obs.: O programa callSiB2pymodule.py em em \textbf{srcsib2model}/SiB2pymod/RadiativeTransModule, é um exemplo de como o sib2pymod do módulo de radiação deve ser executado no ambiente Python. 
 
 \section{Calibração do Módulo de Momentum}
 
 Aqui a calibração possui duas etapas.
 
-\subsection{Determinação da dos parâmetros aerodinâmicos a serem calibrados conforme a variação do índice de área foliar no tempo com uso da derive\_trans}
+\subsection{Determinação dos parâmetros aerodinâmicos a serem calibrados conforme a variação do índice de área foliar no tempo com uso da derive\_trans}
 \label{zlt_aero_ts}
 
 \begin{enumerate}
@@ -532,21 +500,26 @@ f2py3.7 --fcompiler=gnu95 -c *.f95 -m sib2pymod
 \end{Verbatim}
 observe que um arquivo com nome similar à ``sib2pymod.cpython-37m-x86\_64-linux-gnu.so'' deve ser gerado, que é o módulo de Python 3. 
 
-\item Obtenha o programa ``calibraSiB2\_momentum\_leastsq.py'' de \textbf{srcLCB}/calibracaoSiB2/momentum.
-
 \item Obtenha os arquivos de entrada do SiB2: arquivo ``data2'' e o arquivo ``data1'' de parâmetros, porém, agora o arquivo ``data1'' deve ser editado para que contenha os valores dos parâmetros calibrados do módulo de radiação.
 
 \item Obtenha o arquivo ``data3.csv'' com os dados observados que serão comparados com os valores calculados pelo SiB2 no processo de otimização de parâmetros. 
 
-\item Copie o arquivo ``zlt\_aero\_ts.dat'' gerado em \ref{zlt_aero_ts}para o mesmo diretório do sib2pymod, ``data1'', ``data2'', ``data3.csv'' e ``calibraSiB2\_momentum\_leastsq.py''  
+\item Copie o arquivo ``zlt\_aero\_ts.dat'' gerado em \ref{zlt_aero_ts} para o mesmo diretório do sib2pymod, ``data1'', ``data2'', ``data3.csv''.
+
+
+\item Obtenha o programa ``calibraSiB2\_momentum\_leastsq.py'' para uso do método \textit{Levenberg-Marquardt} ou ``calibraSiB2\_momentum\_brute.py'' para uso do método \textit{brute} em \textbf{srcLCB}/calibracaoSiB2/momentum.
+
   
-\item Execute o programa ``calibraSiB2\_momentum\_leastsq.py''.
+\item Execute o programa ``calibraSiB2\_momentum\_leastsq.py''
 \begin{Verbatim}[breaklines=true]
 python3.7 calibraSiB2_momentum_leastsq.py
 \end{Verbatim}
-
-
-\item A saída deve ser ter a seguinte forma:
+ou o programa ``calibraSiB2\_momentum\_brute.py''.
+\begin{Verbatim}[breaklines=true]
+python3.7 calibraSiB2_momentum_brute.py
+\end{Verbatim}
+  
+\item A saída deve ter a seguinte forma:
 
 \begin{Verbatim}[breaklines=true]
 [[Fit Statistics]]
@@ -603,7 +576,6 @@ python3.7 calibraSiB2_momentum_leastsq.py
     C(g2, cc2)      =  0.104
 \end{Verbatim}
 
-
 \item Observe a criação do arquivo ``params\_calibrado.dat'' com os valores dos parâmetros calibrados que deverá ser carregado nos módulos subsequentes.
   
 \end{enumerate}
@@ -611,14 +583,12 @@ python3.7 calibraSiB2_momentum_leastsq.py
 \section{Calibração do Módulo de Umidade do Solo}
 
 \begin{enumerate}
-\item Obtenha o código do módulo de umidade do solo em \textbf{srcsib2model}/SiB2pymod/Soil-MoistureModule. 
+\item Obtenha o código do módulo de umidade do solo em \textbf{srcsib2model}/SiB2pymod/SoilMoistureModule. 
 \item  Compile e gere o módulo de Python
 \begin{Verbatim}[breaklines=true]
 f2py3.7 --fcompiler=gnu95 -c *.f95 -m sib2pymod
 \end{Verbatim}
 observe que um arquivo com nome similar à ``sib2pymod.cpython-37m-x86\_64-linux-gnu.so'' deve ser gerado, que é o módulo de Python 3. 
-
-\item Obtenha o programa ``calibraSiB2\_leastsq.py'' de \textbf{srcLCB}/calibracaoSiB2/umidade.
 
 \item Obtenha os arquivos de entrada do SiB2: arquivo ``data2'' e o arquivo ``data1''.
 
@@ -626,12 +596,18 @@ observe que um arquivo com nome similar à ``sib2pymod.cpython-37m-x86\_64-linux
 
 \item Obtenha o arquivo ``params\_calibrado.dat'' gerado em \ref{aerocal}. Nesta etapa, não é necessário editar o arquivo ``data1'', pois os parâmetros aerodinâmicos calibrados são carregados pelo programa ``load\_aeropars.f95'' a cada passo de tempo. 
 
-\item Execute o programa ``calibraSiB2\_leastsq.py''.
+\item Obtenha o programa ``calibraSiB2\_leastsq.py'' para uso do método \textit{Levenberg-Marquardt} ou ``calibraSiB2\_brute.py'' para uso do método \textit{brute} em \textbf{srcLCB}/calibracaoSiB2/umidade.
+  
+\item Execute o programa ``calibraSiB2\_leastsq.py''
 \begin{Verbatim}[breaklines=true]
 python3.7 calibraSiB2_leastsq.py
 \end{Verbatim}
+ou o programa ``calibraSiB2\_brute.py''.
+\begin{Verbatim}[breaklines=true]
+python3.7 calibraSiB2_brute.py
+\end{Verbatim}
 
-\item Observe que a saída deve ser ter a seguinte forma:
+\item Observe que a saída deve ter a seguinte forma:
 
 \begin{Verbatim}[breaklines=true]
 [[Fit Statistics]]
@@ -661,27 +637,31 @@ python3.7 calibraSiB2_leastsq.py
 \section{Calibração do Módulo de Carbono e Água}
 
 \begin{enumerate}
-\item Obtenha o código do módulo de carbono e água em \textbf{srcsib2model}/SiB2pymod/Carbon-WaterModule. 
+\item Obtenha o código do módulo de carbono e água em \textbf{srcsib2model}/SiB2pymod/CarbonWaterModule. 
 \item  Compile e gere o módulo de Python
 \begin{Verbatim}[breaklines=true]
 f2py3.7 --fcompiler=gnu95 -c *.f95 -m sib2pymod
 \end{Verbatim}
 observe que um arquivo com nome similar à ``sib2pymod.cpython-37m-x86\_64-linux-gnu.so'' deve ser gerado, que é o módulo de Python 3. 
 
-\item Obtenha o programa ``calibraSiB2\_leastsq.py'' de \textbf{srcLCB}/calibracaoSiB2/umidade.
-
 \item Obtenha os arquivos de entrada do SiB2: arquivo ``data2'' e o arquivo ``data1''.
 
 \item Obtenha o arquivo ``data3.csv'' com os dados observados que serão comparados com os valores calculados pelo SiB2 no processo de otimização de parâmetros.
 
 \item Obtenha o arquivo ``params\_calibrado.dat'' gerado em \ref{aerocal}. Agora, além dos parâmetros aerodinâmicos serem carregados pelo programa ``load\_aeropars.f95'', é necessário editar o arquivo ``data1'' com os valores dos parâmetros obtidos no módulo de calibração de umidade do solo.
-
-\item Execute o programa ``calibraSiB2\_leastsq.py''.
+x
+\item Obtenha o programa ``calibraSiB2\_leastsq.py'' para uso do método \textit{Levenberg-Marquardt} ou ``calibraSiB2\_brute.py'' para uso do método \textit{brute} em \textbf{srcLCB}/calibracaoSiB2/carbonoagua.
+  
+\item Execute o programa ``calibraSiB2\_leastsq.py''
 \begin{Verbatim}[breaklines=true]
 python3.7 calibraSiB2_leastsq.py
 \end{Verbatim}
+ou o programa ``calibraSiB2\_brute.py''.
+\begin{Verbatim}[breaklines=true]
+python3.7 calibraSiB2_brute.py
+\end{Verbatim}
 
-\item Observe que a saída deve ser ter a seguinte forma:
+\item Observe que a saída deve ter a seguinte forma:
 
 \begin{Verbatim}[breaklines=true]
 [[Fit Statistics]]
@@ -724,6 +704,19 @@ gfortran comsibc.f95 pardif.f95 load_aeropars.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f9
 \item Observe que os arquivo ``sib2dt.dat'' com as variáveis calculadas do SiB2 calibrado foi criado.
 \end{enumerate}
 
+
+\vspace{\baselineskip}
+\chapter{Calibração de modelo de balanço de água para pequenas bacias}
+\vspace{\baselineskip}
+
+O modelo de balanço de água descrito em \cite{vandewiele1992}, foi reproduzido em python, de forma que os parâmetros são obtidos por um processo de otimização de parâmetros com base em dados observacionais de evapotranspiração potencial, precipitação e vazão. Ao invés do uso do pacote computacional ``VA05A'' foi utilizado os métodos ``brute'' e ``Levenberg-Marquardt'' do LMFI \cite{lmfit} para obtenção dos parâmetros do modelo de balanço de água.
+
+\section{Obtendo os parâmetros do modelo de balanço de água}
+
+
+
+
+
 % \vspace{\baselineskip}
 % \chapter{Utilitários para o LCB: repositório srcLCB}
 % \vspace{\baselineskip}
@@ -745,7 +738,7 @@ gfortran comsibc.f95 pardif.f95 load_aeropars.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f9
 
 
 \endgroup
-%\renewcommand{\bibname}{REFER\^ENCIAS}
-%\bibliography{referencias}
+\renewcommand{\bibname}{REFER\^ENCIAS}
+\bibliography{referencias}
 
 \end{document}
