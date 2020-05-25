@@ -709,12 +709,25 @@ gfortran comsibc.f95 pardif.f95 load_aeropars.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f9
 \chapter{Calibração de modelo de balanço de água para pequenas bacias}
 \vspace{\baselineskip}
 
-O modelo de balanço de água descrito em \cite{vandewiele1992}, foi reproduzido em python, de forma que os parâmetros são obtidos por um processo de otimização de parâmetros com base em dados observacionais de evapotranspiração potencial, precipitação e vazão. Ao invés do uso do pacote computacional ``VA05A'' foi utilizado os métodos ``brute'' e ``Levenberg-Marquardt'' do LMFI \cite{lmfit} para obtenção dos parâmetros do modelo de balanço de água.
+O modelo de balanço de água descrito em \citeonline{vandewiele1992}, foi reproduzido no ambiente python. Nesta formulação, os parâmetros do  modelo são obtidos por um processo numérico de minimização de erros com base em dados observacionais de evapotranspiração potencial, precipitação e vazão. Ao invés do uso do pacote computacional ``VA05A'' foi utilizado os métodos ``brute'' e ``Levenberg-Marquardt'' do LMFI \cite{lmfit} para obtenção dos parâmetros do modelo de balanço de água.
+
+O formulação numérica do modelo está no repositório \textbf{hidromodel}, nos códigos ``balagua\_ugrhi\_brute.py'' e ``balagua\_ugrhi\_leastsq.py'' que correspondem ao mesmo modelo de balanço de água de \citeonline{vandewiele1992} já acoplado com o método de obtenção de parâmetros ``brute'' e ``Levenberg-Marquardt'' respectivamente.   
 
 \section{Obtendo os parâmetros do modelo de balanço de água}
 
+Os parâmetros do modelo são obtidos com base na série temporal mensal de dados observacionais de evapotranspiração potencial (etp), precipitação (p) e vazão (q). Aqui, a evapotranspiração potencial foi obtida da \textit{Climatic Research Unit (University of East Anglia) and Met Office} (\url{http://www.cru.uea.ac.uk/}) ou da \textit{Texas A\&M University} \url{https://utexas.app.box.com/v/xavier-etal-ijoc-data} e os dados de vazão e precipitação, obtidos das UGRHI (Unidade de Gerenciamento de Recursos Hídricos de São Paulo) e estações meteorológicas do INMET (Instituto Nacional de Meteorologia). Porém essa combinação pode variar conforme cada bacia hidrográfica e método de obtenção da evapotranspiração potencial.
 
+O código fonte ``ts\_to\_hidromodel\_ugrhi\_cru.py'' em \textbf{srcLCB}/utils vem sendo utilizado para criar as séries de dados observacionais de entrada para o modelamento das bacias hidrográficas que pertencem as UGRHI do estado de São Paulo no LCB e poderá auxiliar em futuras construções.
 
+Após a construção da série de dados de etp, p e q, executa-se
+\begin{Verbatim}[breaklines=true]
+python3.7 balagua_ugrhi_leastsq.py
+\end{Verbatim}
+ou
+\begin{Verbatim}[breaklines=true]
+python3.7 balagua_ugrhi_brute.py
+\end{Verbatim}
+conforme o método de otimização de parâmetros ``Levenberg-Marquardt'' ou ``brute'', o qual deseja-se.  
 
 
 % \vspace{\baselineskip}
@@ -735,6 +748,40 @@ O modelo de balanço de água descrito em \cite{vandewiele1992}, foi reproduzido
 % \end{Verbatim}
 
 % %\vspace{\baselineskip}
+
+
+% \begin{Verbatim}[breaklines=true]
+%     m1 = 500  # estimativa de m1 inicial
+%     r2 = 0.
+%     s2 = 0.
+%     n2 = 0.
+%     d2 = 0
+%     m2 = 0
+   
+%     for kount in range(0, m_func):
+%         """
+%         Modelo de balanco de agua
+%         r2 => evapotranpiracao real
+%         s2 => escoamento lento
+%         n2 => precipitacao ativa
+%         f2 => escoamento rapido
+%         d2 => vazao com filtro
+%         """
+%         r2 = min(
+%             etp[kount]*(1.-a1**((p2[kount]+max(m1, 0.))/etp[kount])),
+%             (p2[kount]+max(m1, 0.))
+%         )
+%         s2 = a2*(max(m1, 0.)**a22)
+%         n2 = p2[kount]-etp[kount]*(1-np.exp(-p2[kount]/etp[kount]))
+%         f2 = a3*max(m1, 0.)*n2
+%         d2 = s2+f2
+%         m2 = m1 + p2[kount] - r2 - d2
+%         modeloerro[kount] = np.sqrt(q2[kount]) - np.sqrt(d2)  # Wanderwiele
+
+%         m1 = m2
+% \end{Verbatim}
+
+
 
 
 \endgroup

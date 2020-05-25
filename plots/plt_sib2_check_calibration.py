@@ -24,22 +24,23 @@ xtime = np.asarray(dadosobs.index)
 
 rn_o = np.asarray(dadosobs['Rn'])
 ustar_o = np.asarray(dadosobs['Ustar'])
-www1_o = np.asarray(dadosobs['SWC1'])
+www1_o = np.asarray(dadosobs['VW1'])
 h_o = np.asarray(dadosobs['H'])
 le_o = np.asarray(dadosobs['LE'])
+swc_o = np.asarray(dadosobs['SWC'])
 
 rn_c = np.asarray(dadoscal['Rn_C'])
 ustar_c = np.asarray(dadoscal['u*_C'])
 www1_c = np.asarray(dadoscal['W1_C'])
 h_c = np.asarray(dadoscal['H_C'])
 le_c = np.asarray(dadoscal['LE_C'])
+swc_c = (np.asarray(dadoscal['W2_C'])+np.asarray(dadoscal['W3_C'])+np.asarray(dadoscal['W4_C'])+np.asarray(dadoscal['W5_C'])+np.asarray(dadoscal['W6_C'])) / 5.
 
-
-dic_o = {'rn': rn_o, 'ustar': ustar_o, 'www1': www1_o, 'h': h_o, 'le': le_o}
+dic_o = {'rn': rn_o, 'ustar': ustar_o, 'www1': www1_o, 'h': h_o, 'le': le_o, 'swc': swc_o}
 df_obs = pd.DataFrame(data=dic_o, index=xtime)
 df_obs = df_obs.replace(-99999., np.nan)
 
-dic_c = {'rn': rn_c, 'ustar': ustar_c, 'www1': www1_c, 'h': h_c, 'le': le_c}
+dic_c = {'rn': rn_c, 'ustar': ustar_c, 'www1': www1_c, 'h': h_c, 'le': le_c, 'swc': swc_c}
 df_cal = pd.DataFrame(data=dic_c, index=xtime)
 
 line1x1 = [-1000., 10000.]
@@ -60,10 +61,10 @@ for row in ax:
             col.set_xlabel(str(df_obs.columns[k])+'_o')
             col.set_ylabel(str(df_cal.columns[k])+'_c')
 
-            col.set_xlim(np.nanmin(df_obs[df_obs.columns[k]]),
-                         np.nanmax(df_obs[df_obs.columns[k]]))
-            col.set_ylim(np.nanmin(df_obs[df_obs.columns[k]]),
-                         np.nanmax(df_obs[df_obs.columns[k]]))
+            col.set_xlim(np.nanmin(df_obs[df_obs.columns[k]]) -.05 ,
+                         np.nanmax(df_obs[df_obs.columns[k]])+.5)
+            col.set_ylim(np.nanmin(df_obs[df_obs.columns[k]]) -.05,
+                         np.nanmax(df_obs[df_obs.columns[k]])+.5)
 
             print('--------'+str(df_obs.columns[k])+'--------')
             df = pd.DataFrame(data={'obs': df_obs[df_obs.columns[k]],
