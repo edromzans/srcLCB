@@ -34,7 +34,29 @@ ustar_c = np.asarray(dadoscal['u*_C'])
 www1_c = np.asarray(dadoscal['W1_C'])
 h_c = np.asarray(dadoscal['H_C'])
 le_c = np.asarray(dadoscal['LE_C'])
-swc_c = (np.asarray(dadoscal['W2_C'])+np.asarray(dadoscal['W3_C'])+np.asarray(dadoscal['W4_C'])+np.asarray(dadoscal['W5_C'])+np.asarray(dadoscal['W6_C'])) / 5.
+
+w2 = np.asarray(dadoscal['W2_C'])
+w3 = np.asarray(dadoscal['W3_C'])
+w4 = np.asarray(dadoscal['W4_C'])
+w5 = np.asarray(dadoscal['W5_C'])
+w6 = np.asarray(dadoscal['W6_C'])
+
+poros1 = 0.515
+poros2 = 0.525
+poros3 = 0.520
+poros4 = 0.540
+poros5 = 0.525
+poros6 = 0.525
+poros7 = 0.600
+poros8 = 0.600
+poros9 = 0.600
+poros10 = 0.600
+
+swc_c = (w2*poros2
+         + w3*poros3
+         + w4*poros4
+         + w5*poros5
+         + w6*poros6) / 5.
 
 dic_o = {'rn': rn_o, 'ustar': ustar_o, 'www1': www1_o, 'h': h_o, 'le': le_o, 'swc': swc_o}
 df_obs = pd.DataFrame(data=dic_o, index=xtime)
@@ -61,10 +83,13 @@ for row in ax:
             col.set_xlabel(str(df_obs.columns[k])+'_o')
             col.set_ylabel(str(df_cal.columns[k])+'_c')
 
-            col.set_xlim(np.nanmin(df_obs[df_obs.columns[k]]) -.05 ,
-                         np.nanmax(df_obs[df_obs.columns[k]])+.5)
-            col.set_ylim(np.nanmin(df_obs[df_obs.columns[k]]) -.05,
-                         np.nanmax(df_obs[df_obs.columns[k]])+.5)
+            xydata = np.concatenate((df_obs[df_obs.columns[k]],
+                                     df_cal[df_cal.columns[k]]))
+
+            col.set_xlim(np.nanmin(xydata),
+                         np.nanmax(xydata))
+            col.set_ylim(np.nanmin(xydata),
+                         np.nanmax(xydata))
 
             print('--------'+str(df_obs.columns[k])+'--------')
             df = pd.DataFrame(data={'obs': df_obs[df_obs.columns[k]],

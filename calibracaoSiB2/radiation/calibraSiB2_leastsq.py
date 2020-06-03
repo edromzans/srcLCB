@@ -1,3 +1,4 @@
+
 import pandas as pd
 import numpy as np
 from lmfit import Minimizer, Parameters, report_fit
@@ -62,15 +63,17 @@ def residualSiB2(params, Rn_O, posval, nlinha):
 
     # remove os 30 primeiros valores calculados
     # modeloerro = modeloerro[30:]
-    # print(modeloerro)
+    print(modeloerro)
+    print(np.sum(modeloerro))
+    # time.sleep(2)
     return modeloerro
 
 
 params = Parameters()
 params.add('tran_11', value=0.0170, max=0.2, min=0.01)
 params.add('tran_21', value=0.2000, max=0.6, min=0.01)
-params.add('tran_12', value=0.0010, max=0.5, min=0.0001)  # , vary=False)
-params.add('tran_22', value=0.0010, max=0.5, min=0.0001)
+params.add('tran_12', value=0.0010, max=0.5, min=0.0007)  # , vary=False)
+params.add('tran_22', value=0.0010, max=0.5, min=0.0007)
 params.add('ref_11', value=0.0700, max=0.2, min=0.01)
 params.add('ref_21', value=0.5000, max=0.8, min=0.01)
 params.add('ref_12', value=0.1600, max=0.4, min=0.01)
@@ -95,3 +98,5 @@ print('---Parametros---')
 params.pretty_print()
 print('---Otimizacao---')
 report_fit(out_leastsq)
+
+print('---Para data1---')

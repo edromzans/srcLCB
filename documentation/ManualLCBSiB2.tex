@@ -72,11 +72,12 @@
 \setlength\afterchapskip{\lineskip}
 \hypersetup{bookmarks=true}
 
-\autor{}
-\instituicao{ }
-\titulo{}
-\local{}
-\data{}
+\autor{Evandro Moimaz Anselmo}
+\instituicao{USP/LCB/IAG}
+\titulo{Manual para os modelos: SiB2 e Balanço de água. \par Processo de calibração dos modelos pela otimização de parâmetros.}
+\local{São Paulo - SP}
+\data{2020}
+
 
 %\comentario{}
 \makeatletter
@@ -84,10 +85,12 @@
 \makeatother
 
 \begin{document}
+
+
 %\selectlanguage{brazil}
 %\frenchspacing 
 
-%\imprimircapa
+\imprimircapa
 %\imprimirfolhaderosto
 %\sumario
 
@@ -112,9 +115,11 @@
 \chapter{Início}
 \vspace{\baselineskip}
 
-Esta documentação faz referência aos repositórios: \textbf{srcLCB} e \textbf{srcsib2model}. O repositório é composto de códigos utilitários para o LCB/IAG/USP, enquanto o \textbf{srcsib2model} concentra apenas o código fonte do modelo SiB2 \cite{sellers1996I,sellers1996II} e suas respectivas modificações. 
+Esta documentação faz referência aos repositórios: \textbf{hidromodel}, \textbf{srcLCB} e \textbf{srcsib2model}. O repositório \textbf{hidromodel} possui o modelo de balanço hidrológico para pequenas bacias hidrográficas proposto em \citeonline{vandewiele1992}, \textbf{srcLCB} é composto de códigos utilitários para o LCB/IAG/USP, enquanto o \textbf{srcsib2model} concentra apenas o código fonte do modelo SiB2 \cite{sellers1996I,sellers1996II} com respectivas modificações.
 
-A versão mais atual do modelo SiB2 está no repositório \textbf{srcsib2model},
+Os repositórios \textbf{hidromodel}, \textbf{srcLCB} e \textbf{srcsib2model} estão versionados pelo sistema Git, portanto é possível avaliar todo o respectivo histórico de desenvolvimento de cada código usando os comandos do git.  
+
+Logo no início destaca-se que, a versão mais atual do modelo SiB2 está no repositório \textbf{srcsib2model},
 diretório ``SiB2f95modvars'', em que, o SiB2 está traduzido para Fortran 95 e as variáveis do comsibc e pardif operam como um módulo de Fortran.
 
 Para compilar o SiB2:
@@ -135,7 +140,7 @@ está no repositório \textbf{srcsib2model}, diretório ``SiB2f77''.
 
 \vspace{\baselineskip}
 
-\chapter{Descrição e melhorias do SiB2 do LCB}
+\chapter{Descrição e modificações no SiB2}
 \section{Formato dos dados ambientais de entrada: arquivo data2}
 
 São sete colunas de dados, sendo, da esquerda para direita:\\
@@ -269,7 +274,7 @@ ter inicialmente no código, se existe alguma que o seu valor deve ser diferente
 \section{SiB2pymod}
 
 O SiB2pymod é o modelo SiB2 em Fortran 95, compilado como um módulo de python 
-3 com o uso do f2py do integra o numpy. Para isso, uma pequena mudança
+3 com o uso do f2py que integra o numpy. Para isso, uma pequena mudança
 no código do SiB2 é feita. O programa sib2 é descrito como
 uma sub-rotina. Desta forma o sib2 é usado como uma função python.
 
@@ -310,7 +315,7 @@ Na segunda execução, pode ocorrer algo igual eu cito em \ref{f95}, em que vari
 
 Quando o SiB2 offline é executado na linha de comando apenas uma vez, não se observa  problemas de herança de valores da rodada anterior. Agora na execução do SiB2 como um módulo de python, o problema de herança de valores da rodada anterior pode ser notado como mostra a figura \ref{rn1rn2}.
 
-Também deve-se considerar o \textit{warm-up} do modelo SiB2 em rodadas consecutivas dentro do python. Variáveis com temperatura do solo e umidade do solo, possuem uma persistência maior no tempo do que as demais variáveis. Se o modelo inicia-se em um período úmido, mas a sua rodada anterior no ambiente python terminou em um período seco, os valores iniciais terão um efeito de \textit{warm-up}.  
+Também deve-se considerar o \textit{warm-up} do modelo SiB2 em rodadas consecutivas dentro do python. Variáveis como temperatura do solo e umidade do solo, possuem uma persistência maior no tempo do que as demais variáveis. Se o modelo inicia-se em um período úmido, mas a sua rodada anterior no ambiente python terminou em um período seco, os valores iniciais terão um efeito de \textit{warm-up}.  
 %\vspace{\baselineskip}
 \section{Calibração do SiB2: uso de método de otimização de parâmetros
 do modelo.}
@@ -327,20 +332,91 @@ A calibração do SiB2 é realizada em 4 módulos:
 \item Módulo de carbono e água
 \end{itemize}
 
-O processo de otimização de parâmetros consiste basicamente na definição de uma função que determina um erro a ser minimizado. Diferentes métodos numéricos de minimização de erro podem ser utilizado, no entanto, aqui utiliza-se o método ``brute'' que calcula todas as possibilidades diante grade de prarâmetros pré definida e o método ``leastqr'' que consiste no método de Levenberg-Marquardt. 
+O processo de otimização de parâmetros consiste basicamente na definição de uma função que determina um erro a ser minimizado. Diferentes métodos numéricos de minimização de erro podem ser utilizado, no entanto, aqui utiliza-se o método ``brute'' que calcula todas as possibilidades diante uma grade pré definida de parâmetros e o método ``leastqr'' que consiste no método de Levenberg-Marquardt. 
 
 Foi desenvolvido um SiB2pymod para cada módulo de calibração que se encontram em \textbf{srcsib2model}/SiB2pymod/. As rotinas para a calibração, que usam cada respectivo SiB2pymod estão em \textbf{srcLCB}/calibracaoSiB2/.
 
 É importante sempre verificar os valores do ``modeloerro'' da função ``residualSiB2''. Erros enormes, principalmente associados a valores inválidos (-9999.) comprometem todo o processo de otimização de parâmetros.
 
-Mais detalhes a respeito dos métodos minimização de erro da classe ``Minimizer'' do LMFIT e a respeito da definição do ``modeloerro'' por meio de uma função residual, aqui denominada como ``residualSiB2'', podem ser consultadas em \url{https://lmfit.github.io/lmfit-py/}
+Mais detalhes a respeito dos métodos de minimização de erro da classe ``Minimizer'' do LMFIT e a respeito da definição do ``modeloerro'' por meio de uma função residual, aqui denominada como ``residualSiB2'', podem ser consultadas em \url{https://lmfit.github.io/lmfit-py/}
+
+\vspace{\baselineskip}
+\subsection{Breve descrição das saídas da classe Minimizer}
+\vspace{\baselineskip}
+As saídas da classe ``Minimizer'' do LMFIT, que aplica os métodos numéricos de minimização de erro para otimização dos parâmetros tem o seguinte aspecto.
+
+\begin{Verbatim}[breaklines=true]
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 45
+    # data points      = 1682
+    # variables        = 4
+    chi-square         = 295216.370
+    reduced chi-square = 175.933474
+    Akaike info crit   = 8700.11342
+    Bayesian info crit = 8721.82438
+[[Variables]]
+    gradm:     15.9663468 +/- 0.01794231 (0.11%) (init = 16)
+    gmudmu:    1.00159207 +/- 0.00151948 (0.15%) (init = 1)
+    greeness:  0.96532180 +/- 0.00200255 (0.21%) (init = 0.99)
+    vmax:      107.506586 +/- 0.20663948 (0.19%) (init = 105)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(greeness, vmax)   = -0.565
+    C(gmudmu, vmax)     =  0.482
+    C(gradm, greeness)  = -0.424
+    C(gradm, vmax)      = -0.174
+    C(gmudmu, greeness) =  0.167
+    C(gradm, gmudmu)    =  0.104
+\end{Verbatim}
+
+Sendo:
+
+\begin{itemize}
+\item fitting method: Método de minimização do erro em função dos parâmetros.
+\item function evals: Número de iterações, ie., quantas vezes a função residual foi chamada.
+\item data points: Tamanho da série de dados.
+\item variables: São os parâmetros do modelo a ser calibrado.     
+\item chi-square: Somatório do erro quadrático do conjunto de parâmetros ótimos.
+\item reduced chi-square: $\chi^2$ / {(Número de pontos da série de dados) - (Número de parâmetros)}
+\item Akaike info crit: Akaike Information Criterion statistic (aic)
+\item Bayesian info crit: Bayesian Information Criterion statistic (bic)
+\item {[[Variables]]}: O resultados dos parâmetros ótimos segue com o erro (+/-) que é calculado com base na matriz de covariância dos parâmetros e ``init ='' é o valor inicial do parâmetro.
+\item {[[Correlations]]}: Correlação linear de cada par de parâmetros a partir da matriz de covariância dos parâmetros.
+\end{itemize}
+
+Os melhores resultados de conjunto de parâmetros estarão associados com menores valores de chi-square ($\chi^2$), aic e bic. Para mais informações a respeito das estatísticas presentes nos saídas da ``Minimizer'', consulte \url{https://lmfit.github.io/lmfit-py/fitting.html}.
 
 \vspace{\baselineskip}
 \section{Cálculo do conjunto de parâmetros aerodinâmicos a cada passo
   de tempo: acoplamento da derive\_trans do DBHM no SiB2.}
 \vspace{\baselineskip}
 
+A partir do \textit{Distributed Biosphere-Hydrological (DBH) Model} disponível em \url{http://hydro.iis.u-tokyo.ac.jp/DBH/}, o qual tem interface com o SiB2, utilizou-se a função ``derive\_trans.f'' para o cálculo dos parâmetros aerodinâmicos relacionados as características da cobertura vegetal dos biomas.
 
+A ``derive\_trans.f'' do DBHM foi traduzida para Fortran 95 (``derive\_trans.f95''), e acoplada no SiB2 para que o conjunto de parâmetros aerodinâmicos seja calculado conforme a variação do índice de área foliar a cada passo de tempo, sobrescrevendo os valores fixados do data1.
+
+O SiB2 acoplado com a ``derive\_trans'' está em \textbf{srcsib2model}/SiB2\_DBHM\_derive\_trans/F95. O DBHM também encontra-se no repositório em \textbf{srcsib2model}/SiB2\_DBHM\_derive\_trans/DBHModel.
+
+A função ``derive\_trans'' acoplada no SiB2 recebe os parâmetros
+\begin{Verbatim}[breaklines=true]
+g1, z2, z1, chil, vcover, zlt, ztz0, vkc, gx, cpair, rhoair
+\end{Verbatim}
+e calcula
+\begin{Verbatim}[breaklines=true]
+ha, z0d, dd, g2, g3, cc1, cc2, corb1, corb2
+\end{Verbatim}
+a cada passo de tempo.
+
+Os parâmetros
+\begin{Verbatim}[breaklines=true]
+zs     - Ground roughness length  (m)
+zc     - Inflection height for leaf-area density(m)
+leafw  - Leaf width (m) - zlw
+leafl  - Leaf width (m) - zlen
+\end{Verbatim}
+devem ser prescritos no código ``derive\_trans.f95''. Estes são parâmetros que definem a geometria do dossel e são adicionais aos parâmetros que participam dos cálculos do SiB2. 
+
+Esta versão do SiB2, visa o aprimoramento dos cálculos para a agricultura e biomas em que a vegetação sofre mudanças acentuadas em escala sazonal. Também o uso da ``derive\_trans.f95'' é uma alternativa ao programa ``SIBX''.
 
 \vspace{\baselineskip}
 \section{Tradução do SiB2 para linguagem C com f2c}
@@ -459,7 +535,7 @@ python3.7 calibraSiB2_brute.py
 
 \end{enumerate}
 
-Obs.: O programa callSiB2pymodule.py em em \textbf{srcsib2model}/SiB2pymod/RadiativeTransModule, é um exemplo de como o sib2pymod do módulo de radiação deve ser executado no ambiente Python. 
+Obs.: O programa callSiB2pymodule.py em \textbf{srcsib2model}/SiB2pymod/RadiativeTransModule, é um exemplo de como o sib2pymod do módulo de radiação deve ser executado no ambiente Python. 
 
 \section{Calibração do Módulo de Momentum}
 
@@ -715,7 +791,7 @@ O formulação numérica do modelo está no repositório \textbf{hidromodel}, no
 
 \section{Obtendo os parâmetros do modelo de balanço de água}
 
-Os parâmetros do modelo são obtidos com base na série temporal mensal de dados observacionais de evapotranspiração potencial (etp), precipitação (p) e vazão (q). Aqui, a evapotranspiração potencial foi obtida da \textit{Climatic Research Unit (University of East Anglia) and Met Office} (\url{http://www.cru.uea.ac.uk/}) ou da \textit{Texas A\&M University} \url{https://utexas.app.box.com/v/xavier-etal-ijoc-data} e os dados de vazão e precipitação, obtidos das UGRHI (Unidade de Gerenciamento de Recursos Hídricos de São Paulo) e estações meteorológicas do INMET (Instituto Nacional de Meteorologia). Porém essa combinação pode variar conforme cada bacia hidrográfica e método de obtenção da evapotranspiração potencial.
+Os parâmetros do modelo são obtidos com base na série temporal mensal de dados observacionais de evapotranspiração potencial (etp), precipitação (p) e vazão (q). Aqui, a evapotranspiração potencial foi obtida da \textit{Climatic Research Unit (University of East Anglia) and Met Office} (\url{http://www.cru.uea.ac.uk/}) ou da \textit{Texas A\&M University} \url{https://utexas.app.box.com/v/xavier-etal-ijoc-data} e os dados de vazão e precipitação, obtidos das UGRHI (Unidade de Gerenciamento de Recursos Hídricos de São Paulo) e estações meteorológicas do INMET (Instituto Nacional de Meteorologia). Porém essa combinação pode variar para diferentes bacias hidrográficas, método de obtenção da evapotranspiração potencial, etc.
 
 O código fonte ``ts\_to\_hidromodel\_ugrhi\_cru.py'' em \textbf{srcLCB}/utils vem sendo utilizado para criar as séries de dados observacionais de entrada para o modelamento das bacias hidrográficas que pertencem as UGRHI do estado de São Paulo no LCB e poderá auxiliar em futuras construções.
 
@@ -728,6 +804,19 @@ ou
 python3.7 balagua_ugrhi_brute.py
 \end{Verbatim}
 conforme o método de otimização de parâmetros ``Levenberg-Marquardt'' ou ``brute'', o qual deseja-se.  
+
+O programa ``loadMinimizerResult\_checkCandidates.py'' em \textbf{hidromodel} é uma adaptação do exemplo denominado como \textit{Global minimization using the brute method (a.k.a. grid search)}, o qual faz uma avaliação das saídas da classe ``Minimizer'' para o método ``brute''. Este tipo de avaliação permite uma visualização gráfica das soluções conforme mostra a figura \ref{gridsearch}. Para mais detalhes, consulte 
+\url{https://lmfit.github.io/lmfit-py/examples/example_brute.html?highlight=brute%20example}
+
+\begin{figure}[ht]
+\centering 
+\includegraphics[width=\textwidth]{img/4B-015_pltGridParams}
+\caption{Visualização gráfica dos valores dos parâmetros associados ao erro mínimo, com base nos cálculos do método ``brute'' da classe ``Minimizer'' do python LMFIT.}
+\label{gridsearch}
+\end{figure}
+
+
+
 
 
 % \vspace{\baselineskip}
