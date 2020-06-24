@@ -23,10 +23,9 @@ posval = posval[0]
 www1_o = www1_o[posval]
 
 swc_o = np.asarray(dadosobs.SWC)
-posval = np.asarray(swc_o > -9999.).nonzero()
-posval = posval[0]
-swc_o = swc_o[posval]
-
+# posval = np.asarray(swc_o > -9999.).nonzero()
+# posval = posval[0]
+# swc_o = swc_o[posval]
 
 nlinha = len(dadosobs)
 # print(nlinha, ' <--------- nlinha')
@@ -42,7 +41,12 @@ def residualSiB2(params, www1_o, swc_o, posval, nlinha):
     bee26_param = params['bee26']
     phsat26_param = params['phsat26']
     satco26_param = params['satco26']
-    poros26_param = params['poros26']
+
+    poros2_param = params['poros2']
+    poros3_param = params['poros3']
+    poros4_param = params['poros4']
+    poros5_param = params['poros5']
+    poros6_param = params['poros6']
 
     print(params)
 
@@ -55,16 +59,24 @@ def residualSiB2(params, www1_o, swc_o, posval, nlinha):
 
     # www1_c = www1_c[posval]
 
+    # [www1, www2, www3, www4, www5, www6, www7, www8, www9, www10] = sib2(
+    #     bee1_param, phsat1_param, satco1_param, poros1_param,
+    #     bee26_param, phsat26_param, satco26_param, poros26_param,
+    #     nlinha)
+
     [www1, www2, www3, www4, www5, www6, www7, www8, www9, www10] = sib2(
         bee1_param, phsat1_param, satco1_param, poros1_param,
-        bee26_param, phsat26_param, satco26_param, poros26_param,
+        bee26_param, phsat26_param, satco26_param,
+        poros2_param, poros3_param, poros4_param, poros5_param, poros6_param,
         nlinha)
 
-    www2_c = www2[posval]
-    www3_c = www3[posval]
-    www4_c = www4[posval]
-    www5_c = www5[posval]
-    www6_c = www6[posval]
+    www1_c = www1[posval] * poros1_param
+
+    www2_c = www2[posval] * poros2_param
+    www3_c = www3[posval] * poros3_param
+    www4_c = www4[posval] * poros4_param
+    www5_c = www5[posval] * poros5_param
+    www6_c = www6[posval] * poros6_param
 
     swc_c = (www2_c + www3_c + www4_c + www5_c + www6_c) / 5.
 
@@ -72,26 +84,41 @@ def residualSiB2(params, www1_o, swc_o, posval, nlinha):
     # time.sleep(5)
     # print(params)
 
-    # modeloerro = www1_o - www1_c
+    erroI = www1_o - www1_c
+    # erroII = swc_o - swc_c
 
-    modeloerro = swc_o - swc_c
+    # modeloerro = www1_o - www1_c
+    # modeloerro = swc_o - swc_c
+
+    # modeloerro = (erroI**2) * 0.2 + (erroII**2) * 0.8
+
+    modeloerro = erroI
 
     # remove os 30 primeiros valores calculados
     # modeloerro = modeloerro[30:]
-    print(modeloerro)
+    # print(modeloerro)
+
+    print(np.min(erroI), np.max(erroI), ' www1')
+    # print(np.min(erroII), np.max(erroII), ' swc')
+
     return modeloerro
 
 
 params = Parameters()
-params.add('bee1', value=9.16338009, max=15.0, min=2.0, vary=False)
-params.add('phsat1', value=-0.04004558, max=-0.01, min=-0.5, vary=False)
-params.add('satco1', value=2.8011e-05, max=1e-04, min=1e-07, vary=False)
-params.add('poros1', value=0.3, max=0.6, min=0.3, vary=False)
+params.add('bee1', value=9.16338009, max=15.0, min=2.0)  # , vary=False)
+params.add('phsat1', value=-0.04004558, max=-0.01, min=-0.5)  # , vary=False)
+params.add('satco1', value=2.8011e-05, max=1e-04, min=1e-07)  # , vary=False)
+params.add('poros1', value=0.3, max=0.6, min=0.3)  # , vary=False)
 
-params.add('bee26', value=7.12, max=15.0, min=2.0)
-params.add('phsat26', value=-0.2, max=-0.01, min=-0.5)
-params.add('satco26', value=5e-06, max=1e-04, min=1e-07)
-params.add('poros26', value=0.530, max=0.6, min=0.3)  # , vary=False)
+params.add('bee26', value=7.12, max=15.0, min=2.0,  vary=False)
+params.add('phsat26', value=-0.2, max=-0.01, min=-0.5,  vary=False)
+params.add('satco26', value=5e-06, max=1e-04, min=1e-07, vary=False)
+
+params.add('poros2', value=0.5, max=0.6, min=0.3, vary=False)
+params.add('poros3', value=0.5, max=0.6, min=0.3, vary=False)
+params.add('poros4', value=0.5, max=0.6, min=0.3, vary=False)
+params.add('poros5', value=0.5, max=0.6, min=0.3, vary=False)
+params.add('poros6', value=0.5, max=0.6, min=0.3, vary=False)
 
 otimiza = Minimizer(residualSiB2, params,
                     reduce_fcn=None,

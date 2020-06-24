@@ -115,7 +115,7 @@
 \chapter{Início}
 \vspace{\baselineskip}
 
-Esta documentação faz referência aos repositórios: \textbf{hidromodel}, \textbf{srcLCB} e \textbf{srcsib2model}. O repositório \textbf{hidromodel} possui o modelo de balanço hidrológico para pequenas bacias hidrográficas proposto em \citeonline{vandewiele1992}, \textbf{srcLCB} é composto de códigos utilitários para o LCB/IAG/USP, enquanto o \textbf{srcsib2model} concentra apenas o código fonte do modelo SiB2 \cite{sellers1996I,sellers1996II} com respectivas modificações.
+Esta documentação faz referência aos repositórios: \textbf{hidromodel}, \textbf{srcLCB} e \textbf{srcsib2model}. O repositório \textbf{hidromodel} possui o modelo de balanço hidrológico para pequenas bacias hidrográficas proposto em \citeonline{vandewiele1992}, \textbf{srcLCB} é composto de códigos utilitários para o LCB/IAG/USP, enquanto o \textbf{srcsib2model} concentra apenas o código fonte do modelo SiB2 \cite{sellers1996I,sellers1996II}.
 
 Os repositórios \textbf{hidromodel}, \textbf{srcLCB} e \textbf{srcsib2model} estão versionados pelo sistema Git, portanto é possível avaliar todo o respectivo histórico de desenvolvimento de cada código usando os comandos do git.  
 
@@ -215,7 +215,7 @@ Fazendo modificações no código do SiB2 em Fortran 77, combinadas com os flags
 \label{checkvars}
 \end{figure}
 
-Com o código em IDL \textbf{srcLCB}/plots/x\_plot\_checkdefault.pro é possível gerar o
+Com o código em linguagem IDL/GDL em \textbf{srcLCB}/plots/x\_plot\_checkdefault.pro é possível gerar o
 painel da figura \ref{checkvars} para todas as variáveis do SiB2.
 
 Após esta etapa de compilação e execução do SiB2 em Fortran 77, o
@@ -235,7 +235,7 @@ gfortran comsibc.f95 pardif.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f95 -o sib2run
 
 Além dos módulos de variáveis, acrescentou-se ``implicit none'' no
 programa e em todas as sub-rotinas declarando todas as variáveis
-explicitamente.
+explicitamente e todas as variáveis do tipo REAL foram declaradas com dupla precisão, i.e., 64 bits.
 
 Nesta etapa, foi revisada a necessidade do uso dos
 flags de compilação -- ``-fno-automatic -finit-local-zero'' -- que
@@ -271,7 +271,7 @@ windows, como mostrado na figura \ref{checkvars}. No entanto, sugiro uma
 verificação destas variáveis a respeito de quais os valores elas devem
 ter inicialmente no código, se existe alguma que o seu valor deve ser diferente de zero.
 
-\section{SiB2pymod}
+\section{O SiB2pymod}
 
 O SiB2pymod é o modelo SiB2 em Fortran 95, compilado como um módulo de python 
 3 com o uso do f2py que integra o numpy. Para isso, uma pequena mudança
@@ -336,7 +336,7 @@ O processo de otimização de parâmetros consiste basicamente na definição de
 
 Foi desenvolvido um SiB2pymod para cada módulo de calibração que se encontram em \textbf{srcsib2model}/SiB2pymod/. As rotinas para a calibração, que usam cada respectivo SiB2pymod estão em \textbf{srcLCB}/calibracaoSiB2/.
 
-É importante sempre verificar os valores do ``modeloerro'' da função ``residualSiB2''. Erros enormes, principalmente associados a valores inválidos (-9999.) comprometem todo o processo de otimização de parâmetros.
+É importante sempre verificar os valores do ``modeloerro'' da função ``residualSiB2''. Erros enormes, principalmente associados a valores inválidos (-99999.) comprometem todo o processo de otimização de parâmetros.
 
 Mais detalhes a respeito dos métodos de minimização de erro da classe ``Minimizer'' do LMFIT e a respeito da definição do ``modeloerro'' por meio de uma função residual, aqui denominada como ``residualSiB2'', podem ser consultadas em \url{https://lmfit.github.io/lmfit-py/}
 
@@ -443,7 +443,7 @@ gcc -c -o Sib2xb.o Sib2xb.c
 gcc -o SiB2runF2C sib2x.o Sib2xa.o Sib2xb.o -lf2c -lm
 \end{Verbatim}
 
-Este mesmo resultado obtém utilizando o script fort77 em perl que pode ser obtido pelo pacote ``fort77 - Invoke f2c like a real compiler'' do debian.
+Esta tradução também pode ser obtida utilizando o script fort77 em perl, obtido pelo pacote ``fort77 - Invoke f2c like a real compiler'' do debian.
 
 \vspace{\baselineskip}
 \chapter{Processos de Calibração do SiB2}
@@ -510,28 +510,69 @@ python3.7 calibraSiB2_brute.py
 \begin{Verbatim}[breaklines=true]
 [[Fit Statistics]]
     # fitting method   = leastsq
-    # function evals   = 46
-    # data points      = 726
-    # variables        = 4
-    chi-square         = 4484619.38
-    reduced chi-square = 6211.38418
-    Akaike info crit   = 6344.97389
-    Bayesian info crit = 6363.32409
+    # function evals   = 265
+    # data points      = 26286
+    # variables        = 11
+    chi-square         = 12771313.4
+    reduced chi-square = 486.063308
+    Akaike info crit   = 162625.101
+    Bayesian info crit = 162715.046
 [[Variables]]
-    TVN:     0.52254353 +/- 0.04203620 (8.04%) (init = 0.2)
-    RVN:     0.45039796 +/- 0.00364906 (0.81%) (init = 0.5)
-    RSOLOP:  0.07975519 +/- 3.23101609 (4051.17%) (init = 0.11)
-    RSOLON:  0.21900602 +/- 1.30159136 (594.32%) (init = 0.225)
+    tran_11:  0.02950107 +/- 0.02428086 (82.31%) (init = 0.017)
+    tran_21:  0.19553723 +/- 0.01811426 (9.26%) (init = 0.2)
+    tran_12:  0.06763576 +/- 0.16353388 (241.79%) (init = 0.001)
+    tran_22:  0.09467824 +/- 0.14948139 (157.88%) (init = 0.001)
+    ref_11:   0.06541928 +/- 0.01854913 (28.35%) (init = 0.07)
+    ref_21:   0.49246437 +/- 0.01588988 (3.23%) (init = 0.5)
+    ref_12:   0.34896582 +/- 0.13876444 (39.76%) (init = 0.16)
+    ref_22:   0.02420730 +/- 0.04904501 (202.60%) (init = 0.39)
+    soref_1:  0.01110515 +/- 0.01851393 (166.71%) (init = 0.11)
+    soref_2:  0.01003659 +/- 0.00558512 (55.65%) (init = 0.225)
+    chil:     0.14619933 +/- 0.00588779 (4.03%) (init = 0.1)
 [[Correlations]] (unreported correlations are < 0.100)
-    C(RVN, RSOLON)    =  0.941
-    C(TVN, RSOLON)    = -0.829
-    C(RVN, RSOLOP)    = -0.802
-    C(RSOLOP, RSOLON) = -0.762
-    C(TVN, RVN)       = -0.744
-    C(TVN, RSOLOP)    =  0.289
+    C(tran_21, ref_21)  = -0.985
+    C(tran_11, ref_11)  = -0.969
+    C(tran_21, tran_12) =  0.766
+    C(tran_12, ref_21)  = -0.742
+    C(tran_22, ref_22)  = -0.677
+    C(tran_11, tran_12) = -0.670
+    C(tran_11, ref_12)  = -0.573
+    C(tran_12, tran_22) = -0.570
+    C(tran_12, ref_11)  =  0.557
+    C(tran_11, tran_22) =  0.523
+    C(tran_22, ref_12)  = -0.492
+    C(ref_11, ref_12)   =  0.476
+    C(tran_22, ref_11)  = -0.401
+    C(ref_21, soref_1)  = -0.400
+    C(tran_11, tran_21) = -0.371
+    C(tran_21, soref_1) =  0.358
+    C(ref_12, soref_1)  = -0.358
+    C(tran_11, ref_21)  =  0.333
+    C(tran_21, tran_22) = -0.302
+    C(tran_12, soref_1) =  0.281
+    C(ref_21, chil)     =  0.280
+    C(tran_12, ref_22)  =  0.277
+    C(tran_21, chil)    = -0.275
+    C(ref_11, soref_1)  = -0.266
+    C(soref_1, chil)    =  0.254
+    C(tran_11, soref_1) =  0.225
+    C(tran_21, ref_11)  =  0.212
+    C(ref_11, ref_21)   = -0.193
+    C(ref_11, chil)     =  0.191
+    C(ref_11, ref_22)   = -0.182
+    C(soref_1, soref_2) = -0.163
+    C(soref_2, chil)    = -0.161
+    C(tran_22, ref_21)  =  0.153
+    C(tran_22, chil)    = -0.138
+    C(ref_21, ref_12)   =  0.130
+    C(ref_12, chil)     =  0.120
+    C(tran_11, chil)    = -0.118
+    C(tran_22, soref_2) = -0.116
+    C(tran_12, ref_12)  =  0.113
+    C(tran_22, soref_1) =  0.106
 \end{Verbatim}
 
-\item Anote os valores dos parâmetros calibrados. Para mais detalhes a respeito da estatística do método de otimização de parâmetros aqui utilizado veja a seção \textit{Goodness-of-Fit Statistics} em \url{https://lmfit.github.io/lmfit-py/fitting.html}
+\item Anote os valores dos parâmetros calibrados.
 
 \end{enumerate}
 
@@ -556,7 +597,7 @@ f2py3.7 --fcompiler=gnu95 -c *.f95 -m sib2pymod
 
 \item Obtenha os arquivos de entrada do SiB2: arquivo ``data2'' e o arquivo ``data1''.
   
-\item Execute o programa ``callSiB2pymodule.py''.
+\item Informe o número de linhas de dados do arquivo data2 no programa ``callSiB2pymodule.py'' e execute-o.
 \begin{Verbatim}[breaklines=true]
 python3.7 callSiB2pymodule.py
 \end{Verbatim}
@@ -814,64 +855,6 @@ O programa ``loadMinimizerResult\_checkCandidates.py'' em \textbf{hidromodel} é
 \caption{Visualização gráfica dos valores dos parâmetros associados ao erro mínimo, com base nos cálculos do método ``brute'' da classe ``Minimizer'' do python LMFIT.}
 \label{gridsearch}
 \end{figure}
-
-
-
-
-
-% \vspace{\baselineskip}
-% \chapter{Utilitários para o LCB: repositório srcLCB}
-% \vspace{\baselineskip}
-% \section{Usando o GNU Data Language - GDL}
-% \vspace{\baselineskip}
-
-% Baixe a ultima versão em https://github.com/gnudatalanguage/gdl
- 
-% \begin{Verbatim}[breaklines=true]
-% mkdir gdl-build
-% cd gdl-build
-% cmake -DLIBPROJ4=YES
-% -DLIBPROJ4DIR='/home/user/GDL/libs/proj-4.9.3_bin' -DPYTHON_MODULE=YES
-% ../gdl-master cmake -DLIBPROJ4=YES -DLIBPROJ4DIR='/home/evandro/pacotes/GDL/libs/proj-4.9.3_bin'
-% -DPYTHON_MODULE=YES -DPYTHON=YES ../gdl-master
-% \end{Verbatim}
-
-% %\vspace{\baselineskip}
-
-
-% \begin{Verbatim}[breaklines=true]
-%     m1 = 500  # estimativa de m1 inicial
-%     r2 = 0.
-%     s2 = 0.
-%     n2 = 0.
-%     d2 = 0
-%     m2 = 0
-   
-%     for kount in range(0, m_func):
-%         """
-%         Modelo de balanco de agua
-%         r2 => evapotranpiracao real
-%         s2 => escoamento lento
-%         n2 => precipitacao ativa
-%         f2 => escoamento rapido
-%         d2 => vazao com filtro
-%         """
-%         r2 = min(
-%             etp[kount]*(1.-a1**((p2[kount]+max(m1, 0.))/etp[kount])),
-%             (p2[kount]+max(m1, 0.))
-%         )
-%         s2 = a2*(max(m1, 0.)**a22)
-%         n2 = p2[kount]-etp[kount]*(1-np.exp(-p2[kount]/etp[kount]))
-%         f2 = a3*max(m1, 0.)*n2
-%         d2 = s2+f2
-%         m2 = m1 + p2[kount] - r2 - d2
-%         modeloerro[kount] = np.sqrt(q2[kount]) - np.sqrt(d2)  # Wanderwiele
-
-%         m1 = m2
-% \end{Verbatim}
-
-
-
 
 \endgroup
 \renewcommand{\bibname}{REFER\^ENCIAS}

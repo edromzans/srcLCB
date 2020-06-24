@@ -27,7 +27,6 @@ Rn_O = Rn_O[posval]
 nlinha = len(dadosobs)
 # print(nlinha, ' <--------- nlinha')
 
-
 def residualSiB2(params, Rn_O, posval, nlinha):
 
     tran_1_1 = params['tran_11']
@@ -98,5 +97,3 @@ print('---Parametros---')
 params.pretty_print()
 print('---Otimizacao---')
 report_fit(out_leastsq)
-
-print('---Para data1---')
