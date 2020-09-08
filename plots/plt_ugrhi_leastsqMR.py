@@ -7,7 +7,6 @@ import pickle
 import calendar
 from scipy import signal
 
-
 # UGRHI SP
 # tagname = '58220000'
 # -------------------------
