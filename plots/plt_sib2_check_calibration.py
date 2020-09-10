@@ -12,7 +12,7 @@ dadosobs = pd.read_csv('data3.csv')  # , delim_whitespace=True)
 # SWC1	SWC2	SWC3	SWC4	SWC5	SWC6	SWC7
 
 # dadoscal = pd.read_table(dirsib2+'sib2dt.dat', delim_whitespace=True)
-dadoscal = pd.read_table('sib2dt.dat', delim_whitespace=True)
+dadoscal = pd.read_table('sib2dt.dat', sep='\s+')
 
 #    NYMD        Tm        em        um        Ki      Rn_m       alb
 # Ldwn      Lupw      Rn_C       H_C      LE_C       G_C       J_C
@@ -41,22 +41,16 @@ w4 = np.asarray(dadoscal['W4_C'])
 w5 = np.asarray(dadoscal['W5_C'])
 w6 = np.asarray(dadoscal['W6_C'])
 
-poros1 = 0.515
-poros2 = 0.525
-poros3 = 0.520
-poros4 = 0.540
-poros5 = 0.525
-poros6 = 0.525
-poros7 = 0.600
-poros8 = 0.600
-poros9 = 0.600
-poros10 = 0.600
+poros1 = 0.4500
+poros2 = 0.4500
+poros3 = 0.4500
+poros4 = 0.4500
+poros5 = 0.4500
+poros6 = 0.4500
 
-swc_c = (w2*poros2
-         + w3*poros3
-         + w4*poros4
-         + w5*poros5
-         + w6*poros6) / 5.
+swc_c = (w2*poros2 + w3*poros3) / 2.
+
+www1_c = www1_c * poros1
 
 dic_o = {'rn': rn_o, 'ustar': ustar_o, 'www1': www1_o, 'h': h_o, 'le': le_o, 'swc': swc_o}
 df_obs = pd.DataFrame(data=dic_o, index=xtime)

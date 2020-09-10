@@ -24,7 +24,7 @@ ustar_o_serie = np.asarray(dadosobs.Ustar)
 # print(dadosobs)
 # time.sleep(30)
 
-df_zlt_aero = pd.read_table(zlt_aero_ts, delim_whitespace=True)
+df_zlt_aero = pd.read_table(zlt_aero_ts, sep='\s+')
 zlt_serie = np.asarray(df_zlt_aero.zlt)
 
 # verifica dados validos
@@ -124,7 +124,7 @@ corb2_serie = np.asarray(df_zlt_g.corb2)
 
 # Determine o range dos parametros
 
-perc = 30.
+perc = 25.
 ha_min = np.min(ha_serie) - np.min(ha_serie)*(perc/100.)
 ha_max = np.max(ha_serie) + np.max(ha_serie)*(perc/100.)
 z0d_min = np.min(z0d_serie) - np.min(z0d_serie)*(perc/100.)

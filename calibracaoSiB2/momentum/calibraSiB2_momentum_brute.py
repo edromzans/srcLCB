@@ -24,7 +24,7 @@ ustar_o_serie = np.asarray(dadosobs.Ustar)
 # print(dadosobs)
 # time.sleep(30)
 
-df_zlt_aero = pd.read_table(zlt_aero_ts, delim_whitespace=True)
+df_zlt_aero = pd.read_table(zlt_aero_ts, sep='\s+')
 zlt_serie = np.asarray(df_zlt_aero.zlt)
 
 # verifica dados validos
