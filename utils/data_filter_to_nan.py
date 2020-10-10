@@ -31,8 +31,10 @@ dadosobs.loc[(dadosobs['SWC'] > 0.5) | (dadosobs['SWC'] < 0.1), ['SWC']] = np.na
 dadosobs.loc[(dadosobs['VW1'] > 0.5) | (dadosobs['VW1'] < 0.1), ['VW1']] = np.nan
 
 
+# dirdata = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
+#     'SiB2/calibracaoFlorAtlantica_16_w1_swc/1_rodadaInicial_semcalibracao/'
 dirdata = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
-    'SiB2/calibracaoFlorAtlantica_16_w1_swc/1_rodadaInicial_semcalibracao/'
+    'SiB2/InstUtilCalSiB2/input/'
 
 #dadosobs.to_csv(dirdata+'data3_filtered.csv', index=False, na_rep='NaN')
 dadosobs.to_csv(dirdata+'data3_filtered.csv', index=False, na_rep='-99999.')
@@ -60,8 +62,5 @@ plt.plot(xtime, vw1)
 # plt.plot(vw4)
 # plt.plot(vw5)
 # plt.plot(vw6)
-
-
-
 
 plt.show()
