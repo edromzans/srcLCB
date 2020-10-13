@@ -168,7 +168,7 @@ xf = x_eixo[posval2[-1]]
 # xi = np.datetime64('2014-01-01')
 # xf = np.datetime64('2016-08-01')
 
-pngfigplot = dirplot+tagname+'_pltBalagua_ts.png'
+pngfigplot = dirplot+tagname+'_pltBalagua_SerieTemporal.png'
 
 # report_fit(out_leastsq)
 # print(gresult.fit_report())
@@ -188,7 +188,7 @@ plt.xlim(xi, xf)
 
 plt.subplot(7, 1, 2)
 plt.plot(x_eixo, ts_Dm, '.-')
-plt.ylabel('(S-S$_{-1})$\n(mm/mês)')
+plt.ylabel('$\Delta$S\n(mm/mês)')
 plt.xlim(xi, xf)
 
 # considera os anos com falhas nas medidas menores do que 3 meses
@@ -205,18 +205,18 @@ DeltaS_ano_ts[posval9] = totanual.DeltaS[posval9]
 plt.subplot(7, 1, 3)
 #plt.plot(x_eixo, ts_mt, '.-')
 plt.plot(x_eixo_ano_ts, DeltaS_ano_ts, '.-')
-plt.ylabel('S\n(mm/ano)')
+plt.ylabel('$\Delta$S\n(mm/ano)')
 plt.xlim(xi, xf)
 
 ax1 = plt.subplot(7, 1, 4)
 ax1.plot(x_eixo, q2, 'black', label='Q$_m$', linewidth=0.8)
 ax1.plot(x_eixo, ts_dt, 'red', label='Q$_c$', linewidth=0.8)
-plt.ylabel('(mm/mês)')
+plt.ylabel('Q$_{m,c}$\n(mm/mês)')
 plt.xlim(xi, xf)
 
 ax2 = ax1.twinx()
 ax2.plot(x_eixo, p2, 'b', label='P', linewidth=0.8)
-plt.ylabel('P (mm/mês)', axes=ax2)
+plt.ylabel('P\n(mm/mês)', axes=ax2)
 plt.xlim(xi, xf)
 
 ax2.legend(loc='upper right')
@@ -230,12 +230,12 @@ p_anual = np.asarray(medianual.P)
 ax1 = plt.subplot(7, 1, 5)
 ax1.plot(x_eixo_ano_ts, qm_anual, 'black', label='Q$_m$', linewidth=0.8)
 ax1.plot(x_eixo_ano_ts, qc_anual, 'red', label='Q$_c$', linewidth=0.8)
-plt.ylabel('(mm/ano)')
+plt.ylabel('Q$_{m,c}$\n(mm/ano)')
 plt.xlim(xi, xf)
 
 ax2 = ax1.twinx()
 ax2.plot(x_eixo_ano_ts, p_anual, 'b', label='P', linewidth=0.8)
-plt.ylabel('P (mm/ano)', axes=ax2)
+plt.ylabel('P\n(mm/ano)', axes=ax2)
 plt.xlim(xi, xf)
 
 ax2.legend(loc='upper right')
@@ -245,7 +245,7 @@ ax1.legend(loc='upper left')
 plt.subplot(7, 1, 6)
 plt.plot(x_eixo, ts_r, 'g', label='ET', linewidth=0.8)
 plt.plot(x_eixo, etp, 'black', label='ETP', linewidth=0.8)
-plt.ylabel('(mm/mês)')
+plt.ylabel('ET,ETP\n(mm/mês)')
 plt.xlim(xi, xf)
 plt.legend()
 
@@ -255,7 +255,7 @@ ETP_anual = np.asarray(medianual.ETP)
 plt.subplot(7, 1, 7)
 plt.plot(x_eixo_ano_ts, ET_anual, 'g', label='ET', linewidth=0.8)
 plt.plot(x_eixo_ano_ts, ETP_anual, 'black', label='ETP', linewidth=0.8)
-plt.ylabel('(mm/ano)')
+plt.ylabel('ET,ETP\n(mm/ano)')
 plt.xlim(xi, xf)
 plt.legend()
 
@@ -266,7 +266,7 @@ plt.savefig(pngfigplot, dpi=300, bbox_inches='tight')
 Figura - erro do modelamento
 '''
 
-pngfigplot = dirplot+tagname+'_pltBalagua_erro.png'
+pngfigplot = dirplot+tagname+'_pltBalagua_ErroModelo.png'
 fig = plt.figure()
 fig.set_figwidth(7)
 fig.set_figheight(4)
@@ -277,15 +277,17 @@ plt.subplot(2, 1, 1)
 ts_u_svar = ts_u[~np.isnan(ts_u)]
 
 semivar = signal.correlate(ts_u_svar, ts_u_svar)
+# https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.correlate.html
 semivarplt = semivar[np.int(semivar.size/2):]
 plt.plot(semivarplt)
-plt.ylabel('Autocorr')
+plt.ylabel('Autocorrelação')
 plt.xlabel('Lag')
 
 plt.subplot(2, 1, 2)
 plt.scatter(xhist, hist_u)
 plt.plot(xhist, gresult.best_fit, 'r-', label='Gaussiana')
-plt.ylabel('Prob')
+plt.ylabel('(%)')
+plt.xlabel('u')
 plt.legend()
 corrperson = np.corrcoef(hist_u, gresult.best_fit)
 corrperson = corrperson[0, 1]
@@ -374,7 +376,7 @@ plt.savefig(pngfigplot, dpi=300, bbox_inches='tight')
 Figura - ciclo anual
 '''
 
-pngfigplot = dirplot+tagname+'_pltBalagua_cicloanual.png'
+pngfigplot = dirplot+tagname+'_pltBalagua_CicloAnual.png'
 
 
 canual = toanual_df.groupby('mes').agg(np.nanmean)
@@ -427,7 +429,7 @@ plt.savefig(pngfigplot, dpi=300, bbox_inches='tight')
 Terceira figura
 '''
 
-pngfigplot = dirplot+tagname+'_pltBalagua_dispersao.png'
+pngfigplot = dirplot+tagname+'_pltBalagua_Dispersao.png'
 
 
 fig = plt.figure()
@@ -511,7 +513,7 @@ DeltaS_ano_plt = totanual.DeltaS[posval8]
 P_ano_plt = totanual.P[posval8]
 
 plt.scatter(P_ano_plt, DeltaS_ano_plt, c='black', marker='+', linewidth=0.8)
-plt.ylabel('S-S$_{-ano}$ (mm/ano)')
+plt.ylabel('$\Delta$S (mm/ano)')
 plt.xlabel('P (mm/ano)')
 
 plt.savefig(pngfigplot, dpi=300, bbox_inches='tight')
