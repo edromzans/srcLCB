@@ -26,24 +26,20 @@ lon = -48.09
 ##########
 
 dirdata = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
-    'calibracaoBalagua/dados/CRU/'
+    'calibracaoBalagua/dados/ET0_xavier/'
 
-# crunc = 'cru_ts4.03.1901.2018.pet.dat.nc'
-crunc = 'cru_ts4.04.1901.2019.pet.dat.nc'
+xaviernc = 'ETo_daily_UT_Brazil_v2_20140101_20170731_s1.nc'
 
 dirsubset = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
     'calibracaoBalagua/dados/subsets/'
 
-filesubset = tagname+'_cru_pet_subset.pkl'
+filesubset = tagname+'_xavier_et0_subset.pkl'
 
-# import netCDF4 as nc4
-# import numpy as np
-# import pandas as pd
-# import matplotlib.pyplot as plt
+ds = xr.open_dataset(dirdata+xaviernc)
 
-ds = xr.open_dataset(dirdata+crunc)
+et0_xavier = ds.ETo.sel(longitude=lon, latitude=lat, method='nearest')
 
-pet_cru = ds.pet.sel(lon=lon, lat=lat, method='nearest')
+et0_xavier = et0_xavier.resample(time='M').mean()
 
-pickle.dump(pet_cru,
+pickle.dump(et0_xavier,
             open(dirsubset+filesubset, 'wb'))
