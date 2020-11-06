@@ -86,6 +86,14 @@ ssr = ssr.sel(time=slice(t_inicio, t_final))
 ssrd = ds_era5land.ssrd.sel(longitude=lon, latitude=lat, method='nearest')
 ssrd = ssrd.sel(time=slice(t_inicio, t_final))
 
+# LE
+slhf = ds_era5land.slhf.sel(longitude=lon, latitude=lat, method='nearest')
+slhf = slhf.sel(time=slice(t_inicio, t_final))
+
+# H
+sshf = ds_era5land.sshf.sel(longitude=lon, latitude=lat, method='nearest')
+sshf = sshf.sel(time=slice(t_inicio, t_final))
+
 # ERA5_monthly_averaged_reanalysis_on_single_levels
 tisr = ds_era5singlev.tisr.sel(longitude=lon, latitude=lat, expver=1,
                                method='nearest')
@@ -98,11 +106,12 @@ tmax_cru = ds_cru_tmx.tmx.sel(lon=lon, lat=lat, method='nearest')
 tmax_cru = tmax_cru.sel(time=slice(t_inicio, t_final))
 
 # Calculos de etp
-etp_penmanmontaith = etp.penmanmontaith(t2m, u10, v10, d2m, sp, ssr, str)
+etp_penmanmontaith = etp.penmanmontaith(t2m, u10, v10, d2m, sp,
+                                        ssr, str, slhf, sshf)
 
-k_coef = 0.4  # coeficiente mensal de consumo
-p_coef = 0.5  # percentual de horas de sol no periodo
-etp_blaneycriddle = etp.blaneycriddle(k_coef, p_coef, t2m)
+# k_coef = 0.4  # coeficiente mensal de consumo
+# p_coef = 0.5  # percentual de horas de sol no periodo
+# etp_blaneycriddle = etp.blaneycriddle(k_coef, p_coef, t2m)
 
 # tmax = 28.
 # tmin = 23.
@@ -113,16 +122,13 @@ etp_makkink = etp.makkink(t2m, sp, ssrd)
 
 etp_priestleytaylor = etp.priestleytaylor(ssr.values, str.values, t2m.values,
                                           sp.values)
-
-etp_rohwer = etp.rohwer(t2m, d2m, u10, v10)
+# etp_rohwer = etp.rohwer(t2m, d2m, u10, v10)
 
 etp_penman = etp.penman(t2m, d2m, u10, v10)
 
 pickle.dump((etp_penmanmontaith,
-             etp_blaneycriddle,
              etp_hargreavessamani,
              etp_makkink,
              etp_priestleytaylor,
-             etp_rohwer,
              etp_penman),
             open(dirsubset+filesubset, 'wb'))
