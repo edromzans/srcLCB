@@ -1,6 +1,6 @@
 '''
 Calcula a ETP a partir dos dados das reanalises do
-ECMWF ERA5 Land
+ECMWF ERA5
 '''
 import numpy as np
 
@@ -65,9 +65,8 @@ def penmanmontaith(t2m, u10, v10, d2m, sp, ssr, str, slhf, sshf):
     # Rn = (Rns - Rnl)
     Rn = ssr + str
 
-    # G = Rn - slhf - sshf
-
-    G = 0.
+    G = Rn + slhf + sshf
+    # G = 0.
 
     # ETP Penman-Montaith
     etp_penmanmontaith = (
