@@ -168,7 +168,6 @@ print(np.corrcoef(hist_u, gresult.best_fit))
 
 plt.savefig(pngfigplot, dpi=300, bbox_inches='tight')
 
-
 '''
 Segunda figura
 '''
