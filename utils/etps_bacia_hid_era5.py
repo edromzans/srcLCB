@@ -43,6 +43,8 @@ lon = -46.97
 
 tagname = 'pcj'
 
+
+# diretorios
 dirdata = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
     'calibracaoBalagua/dados/ECMWF_ERA5/'
 dirdata_cru = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
@@ -53,7 +55,10 @@ dirshape_bacia = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
 dirsubset = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
     'calibracaoBalagua/dados/subsets/'
 
-era5land = 'ERA5-Land_monthly_averaged_reanalysis.nc'
+# Arquivos
+# era5land = 'ERA5-Land_monthly_averaged_reanalysis.nc'
+era5land = 'reanalysis-era5-land-monthly-means.nc'
+
 era5singlev = 'ERA5_monthly_averaged_reanalysis_on_single_levels.nc'
 cru_tmn = 'cru_ts4.04.1901.2019.tmn.dat.nc'
 cru_tmx = 'cru_ts4.04.1901.2019.tmx.dat.nc'
@@ -61,11 +66,14 @@ cru_tmx = 'cru_ts4.04.1901.2019.tmx.dat.nc'
 sh_pcj = 'pcj_basin.shp'
 
 file_etps_df = tagname+'_era5_etp_baciahid.pkl'
+file_reanalises_df = tagname+'_era5_reanalise_baciahid.pkl'
 
+# Datasets
 ds_era5land = xr.open_dataset(dirdata+era5land)
 ds_era5singlev = xr.open_dataset(dirdata+era5singlev)
 ds_cru_tmn = xr.open_dataset(dirdata_cru+cru_tmn)
 ds_cru_tmx = xr.open_dataset(dirdata_cru+cru_tmx)
+###################################################################33
 
 t_inicio = '1981-01-01'
 t_final = '2019-12-30'
@@ -256,6 +264,15 @@ tmax_cru_bacia = ds_cru_tmx.tmx.sel(
     time=slice(t_inicio, t_final)).where(
         ds_cru_tmx.mask == 1, drop=True).mean({'lon', 'lat'})
 
+# Variaveis adicionais
+pev_bacia = ds_era5land.pev.sel(
+    time=slice(t_inicio, t_final)).where(
+        ds_era5land.mask == 1, drop=True).mean({'longitude', 'latitude'})
+
+tp_bacia = ds_era5land.tp.sel(
+    time=slice(t_inicio, t_final)).where(
+        ds_era5land.mask == 1, drop=True).mean({'longitude', 'latitude'})
+
 # Calculos de etp
 etp_penmanmontaith = etp.penmanmontaith(t2m_bacia,
                                         u10_bacia, v10_bacia,
@@ -276,22 +293,34 @@ etp_priestleytaylor = etp.priestleytaylor(ssr_bacia, str_bacia, t2m_bacia,
 
 etp_penman = etp.penman(t2m_bacia, d2m_bacia, u10_bacia, v10_bacia)
 
-# ETPs dataframe
+# Faz dataframes de saida
 xtime = t2m_bacia.time.values
+
+# ETPs
 dados_etps = {'penmanmontaith': etp_penmanmontaith.values,
               'hargreavessamani': etp_hargreavessamani,
               'makkink': etp_makkink.values,
               'priestleytaylor': etp_priestleytaylor.values,
               'penman': etp_penman.values}
-
 etps_df = pd.DataFrame(dados_etps, index=xtime)
-
-# Salva ts to hidromodel binario
 etps_df.to_pickle(dirsubset+file_etps_df)
 
-# pickle.dump((etp_penmanmontaith,
-#              etp_hargreavessamani,
-#              etp_makkink,
-#              etp_priestleytaylor,
-#              etp_penman),
-#             open(dirsubset+filesubset, 'wb'))
+# Reanalises
+dados_re = {'u10': u10_bacia,
+            'v10': v10_bacia,
+            't2m': t2m_bacia,
+            'd2m': d2m_bacia,
+            'sp': sp_bacia,
+            'str': str_bacia,
+            'strd': strd_bacia,
+            'ssr': ssr_bacia,
+            'ssrd': ssrd_bacia,
+            'slhf': slhf_bacia,
+            'sshf': sshf_bacia,
+            'tisr': tisr_bacia,
+            'tmin_cru': tmin_cru_bacia,
+            'tmax_cru': tmax_cru_bacia,
+            'pev': pev_bacia,
+            'tp': tp_bacia}
+reanalises_df = pd.DataFrame(dados_re, index=xtime)
+reanalises_df.to_pickle(dirsubset+file_reanalises_df)
