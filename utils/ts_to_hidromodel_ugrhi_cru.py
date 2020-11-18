@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import netCDF4 as nc4
 
-
 dirInput = '/dados/ProcessoOtimizacaoModelos/' \
     'calibracaoBalagua/dados/inputs/ugrhi_sp/'
 
