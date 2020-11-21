@@ -21,7 +21,7 @@ file_etps_df = 'pcj_era5_etp_baciahid.pkl'
 file_reanalises_df = 'pcj_era5_reanalise_baciahid.pkl'
 file_cru_pet_df = 'pcj_cru_pet_bacia_hid.pkl'
 file_xavier_et0_df = 'pcj_xavier_et0_bacia_hid.pkl'
-file_out_balagua_model_df = 'pcj_bacia_hid_3D-002_urghi_sp.pkl'
+file_out_balagua_model_df = 'pcj_bacia_hid_3D-002_ugrhi_sp.pkl'
 
 df_pet_cru = pickle.load(open(dirsubset +
                               file_cru_pet_df, "rb"))

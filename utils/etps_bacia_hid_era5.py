@@ -68,6 +68,9 @@ sh_pcj = 'pcj_basin.shp'
 file_etps_df = tagname+'_era5_etp_baciahid.pkl'
 file_reanalises_df = tagname+'_era5_reanalise_baciahid.pkl'
 
+file_df_t2m_maxmin = tagname+'_t2m_max_min_from_era5land_houly.pkl'
+
+
 # Datasets
 ds_era5land = xr.open_dataset(dirdata+era5land)
 ds_era5singlev = xr.open_dataset(dirdata+era5singlev)
@@ -212,6 +215,11 @@ tmax_cru_bacia = ds_cru_tmx.tmx.sel(
     time=slice(t_inicio, t_final)).where(
         ds_cru_tmx.mask == 1, drop=True).mean({'lon', 'lat'})
 
+# t2m max min from era5land hourly
+
+df_t2m_maxmin = pickle.load(open(dirsubset +
+                                 file_df_t2m_maxmin, "rb"))
+
 # Variaveis adicionais
 pev_bacia = ds_era5land.pev.sel(
     time=slice(t_inicio, t_final)).where(
@@ -221,8 +229,9 @@ tp_bacia = ds_era5land.tp.sel(
     time=slice(t_inicio, t_final)).where(
         ds_era5land.mask == 1, drop=True).mean({'longitude', 'latitude'})
 
+
 # Calculos de etp
-etp_penmanmontaith = etp.penmanmontaith(t2m_bacia,
+etp_penmanmonteith = etp.penmanmonteith(t2m_bacia,
                                         u10_bacia, v10_bacia,
                                         d2m_bacia,
                                         sp_bacia,
@@ -230,8 +239,8 @@ etp_penmanmontaith = etp.penmanmontaith(t2m_bacia,
                                         slhf_bacia, sshf_bacia)
 
 etp_hargreavessamani = etp.hargreavessamani(tisr_bacia.values,
-                                            tmax_cru_bacia.values,
-                                            tmin_cru_bacia.values,
+                                            df_t2m_maxmin.tmax.values,
+                                            df_t2m_maxmin.tmin.values,
                                             t2m_bacia.values)
 
 etp_makkink = etp.makkink(t2m_bacia, sp_bacia, ssrd_bacia)
@@ -245,7 +254,7 @@ etp_penman = etp.penman(t2m_bacia, d2m_bacia, u10_bacia, v10_bacia)
 xtime = t2m_bacia.time.values
 
 # ETPs
-dados_etps = {'penmanmontaith': etp_penmanmontaith.values,
+dados_etps = {'penmanmonteith': etp_penmanmonteith.values,
               'hargreavessamani': etp_hargreavessamani,
               'makkink': etp_makkink.values,
               'priestleytaylor': etp_priestleytaylor.values,
@@ -257,6 +266,10 @@ etps_df.to_pickle(dirsubset+file_etps_df)
 dados_re = {'u10': u10_bacia,
             'v10': v10_bacia,
             't2m': t2m_bacia,
+            't2m_max': df_t2m_maxmin.tmax.values,
+            't2m_min': df_t2m_maxmin.tmin.values,
+            'tmax_cru': tmax_cru_bacia,
+            'tmin_cru': tmin_cru_bacia,
             'd2m': d2m_bacia,
             'sp': sp_bacia,
             'str': str_bacia,
@@ -266,8 +279,6 @@ dados_re = {'u10': u10_bacia,
             'slhf': slhf_bacia,
             'sshf': sshf_bacia,
             'tisr': tisr_bacia,
-            'tmin_cru': tmin_cru_bacia,
-            'tmax_cru': tmax_cru_bacia,
             'pev': pev_bacia,
             'tp': tp_bacia}
 reanalises_df = pd.DataFrame(dados_re, index=xtime)

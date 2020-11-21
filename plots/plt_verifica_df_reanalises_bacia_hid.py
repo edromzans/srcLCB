@@ -38,11 +38,15 @@ plt.title('Ciclo anual')
 
 df_reanalises.t2m = df_reanalises.t2m - 273.15
 df_reanalises.d2m = df_reanalises.d2m - 273.15
-df_reanalises[{'t2m', 'd2m', 'tmin_cru', 'tmax_cru'}].plot()
+df_reanalises.t2m_max = df_reanalises.t2m_max - 273.15
+df_reanalises.t2m_min = df_reanalises.t2m_min - 273.15
+df_reanalises[{'t2m', 't2m_max', 't2m_min',
+               'tmin_cru', 'tmax_cru', 'd2m'}].plot()
 plt.xlabel('tempo')
 plt.ylabel('$^\circ$C')
 plt.title('Serie temporal - média mensal')
-df_reanalises[{'t2m', 'd2m', 'tmin_cru', 'tmax_cru'}].groupby(
+df_reanalises[{'t2m', 't2m_max', 't2m_min',
+               'tmin_cru', 'tmax_cru', 'd2m'}].groupby(
     df_reanalises.index.month).mean().plot()
 plt.xlabel('mês')
 plt.ylabel('$^\circ$C')
