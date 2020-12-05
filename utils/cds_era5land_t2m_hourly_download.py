@@ -4,10 +4,14 @@ dirdata = '/home/evandro/lcbiag/ProcessoOtimizacaoModelos/' \
     'calibracaoBalagua/dados/ECMWF_ERA5/'
 
 # era5land = 'reanalysis-era5-land_t2m_hourly_1981-1990.nc'
-era5land = 'reanalysis-era5-land_t2m_hourly_1991-2000.nc'
+# era5land = 'reanalysis-era5-land_t2m_hourly_1991-2000.nc'
 # era5land = 'reanalysis-era5-land_t2m_hourly_2001-2010.nc'
 # era5land = 'reanalysis-era5-land_t2m_hourly_2011-2020.nc'
 
+era5land = 'reanalysis-era5-land_t2m_hourly_SE_1981-1990.nc'
+# era5land = 'reanalysis-era5-land_t2m_hourly_SE_1991-2000.nc'
+# era5land = 'reanalysis-era5-land_t2m_hourly_SE_2001-2010.nc'
+# era5land = 'reanalysis-era5-land_t2m_hourly_SE_2011-2020.nc'
 
 c = cdsapi.Client()
 
@@ -17,8 +21,8 @@ c.retrieve(
         'format': 'netcdf',
         'variable': '2m_temperature',
         'year': [
-#            '1981', '1982', '1983', '1984', '1985', '1986', '1987', '1988', '1989', '1990',
-            '1991', '1992', '1993', '1994', '1995', '1996', '1997', '1998', '1999', '2000',
+            '1981', '1982', '1983', '1984', '1985', '1986', '1987', '1988', '1989', '1990',
+#            '1991', '1992', '1993', '1994', '1995', '1996', '1997', '1998', '1999', '2000',
 #            '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010',
 #            '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020',
         ],
@@ -52,8 +56,8 @@ c.retrieve(
             '21:00', '22:00', '23:00',
         ],
         'area': [
-            -22.1, -48.5, -23.3,
-            -46.1,
+            #  -22.1, -48.5, -23.3, -46.1,  # PCJ
+            -13., -56., -27., -38.,  # Sudeste expandido
         ],
     },
-    dirdata+era5land)
+    dirdata + era5land)

@@ -4,7 +4,8 @@
 \usepackage{microtype} 			% para melhorias de justificação
 \usepackage{morefloats}			% permite mais floats
 
-\usepackage{Alegreya,AlegreyaSans} 
+%\usepackage{Alegreya,AlegreyaSans} 
+%\usepackage{Alegreya}
 %\usepackage{lmodern}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
@@ -115,9 +116,9 @@
 \chapter{Início}
 \vspace{\baselineskip}
 
-Esta documentação faz referência aos repositórios: \textbf{hidromodel}, \textbf{srcLCB} e \textbf{srcsib2model}. O repositório \textbf{hidromodel} possui o modelo de balanço hidrológico para pequenas bacias hidrográficas proposto em \citeonline{vandewiele1992}, \textbf{srcLCB} é composto de códigos utilitários para o LCB/IAG/USP, enquanto o \textbf{srcsib2model} concentra apenas o código fonte do modelo SiB2 \cite{sellers1996I,sellers1996II}.
+Esta documentação faz referência aos repositórios: \textbf{balaguamodel}, \textbf{srcLCB} e \textbf{srcsib2model}. O repositório \textbf{balaguamodel} possui o modelo de balanço hidrológico para pequenas bacias hidrográficas proposto em \citeonline{vandewiele1992}, \textbf{srcLCB} é composto de códigos utilitários para o LCB/IAG/USP, enquanto o \textbf{srcsib2model} concentra apenas o código fonte do modelo SiB2 \cite{sellers1996I,sellers1996II}.
 
-Os repositórios \textbf{hidromodel}, \textbf{srcLCB} e \textbf{srcsib2model} estão versionados pelo sistema Git, portanto é possível avaliar todo o respectivo histórico de desenvolvimento de cada código usando os comandos do git.  
+Os repositórios \textbf{balaguamodel}, \textbf{srcLCB} e \textbf{srcsib2model} estão versionados pelo sistema Git, portanto é possível avaliar todo o respectivo histórico de desenvolvimento de cada código usando os comandos do git.  
 
 Logo no início destaca-se que, a versão mais atual do modelo SiB2 está no repositório \textbf{srcsib2model},
 diretório ``SiB2f95modvars'', em que, o SiB2 está traduzido para Fortran 95 e as variáveis do comsibc e pardif operam como um módulo de Fortran.
@@ -828,7 +829,7 @@ gfortran comsibc.f95 pardif.f95 load_aeropars.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f9
 
 O modelo de balanço de água descrito em \citeonline{vandewiele1992}, foi reproduzido no ambiente python. Nesta formulação, os parâmetros do  modelo são obtidos por um processo numérico de minimização de erros com base em dados observacionais de evapotranspiração potencial, precipitação e vazão. Ao invés do uso do pacote computacional ``VA05A'' foi utilizado os métodos ``brute'' e ``Levenberg-Marquardt'' do LMFI \cite{lmfit} para obtenção dos parâmetros do modelo de balanço de água.
 
-O formulação numérica do modelo está no repositório \textbf{hidromodel}, nos códigos ``balagua\_ugrhi\_brute.py'' e ``balagua\_ugrhi\_leastsq.py'' que correspondem ao mesmo modelo de balanço de água de \citeonline{vandewiele1992} já acoplado com o método de obtenção de parâmetros ``brute'' e ``Levenberg-Marquardt'' respectivamente.   
+O formulação numérica do modelo está no repositório \textbf{balaguamodel}, nos códigos ``balagua\_ugrhi\_brute.py'' e ``balagua\_ugrhi\_leastsq.py'' que correspondem ao mesmo modelo de balanço de água de \citeonline{vandewiele1992} já acoplado com o método de obtenção de parâmetros ``brute'' e ``Levenberg-Marquardt'' respectivamente.   
 
 \section{Obtendo os parâmetros do modelo de balanço de água}
 
@@ -846,7 +847,7 @@ python3.7 balagua_ugrhi_brute.py
 \end{Verbatim}
 conforme o método de otimização de parâmetros ``Levenberg-Marquardt'' ou ``brute'', o qual deseja-se.  
 
-O programa ``loadMinimizerResult\_checkCandidates.py'' em \textbf{hidromodel} é uma adaptação do exemplo denominado como \textit{Global minimization using the brute method (a.k.a. grid search)}, o qual faz uma avaliação das saídas da classe ``Minimizer'' para o método ``brute''. Este tipo de avaliação permite uma visualização gráfica das soluções conforme mostra a figura \ref{gridsearch}. Para mais detalhes, consulte 
+O programa ``loadMinimizerResult\_checkCandidates.py'' ou ``loadPlotGridParams.py'' em \textbf{balaguamodel} é uma adaptação do exemplo denominado como \textit{Global minimization using the brute method (a.k.a. grid search)}, o qual faz uma avaliação das saídas da classe ``Minimizer'' para o método ``brute''. Este tipo de avaliação permite uma visualização gráfica das soluções conforme mostra a figura \ref{gridsearch}. Para mais detalhes, consulte 
 \url{https://lmfit.github.io/lmfit-py/examples/example_brute.html?highlight=brute%20example}
 
 \begin{figure}[ht]
