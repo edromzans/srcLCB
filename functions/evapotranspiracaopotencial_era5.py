@@ -12,14 +12,16 @@ def fao56reference(t2m, t2m_max, t2m_min, u10, v10, d2m, sp,
 
     # Conversoes & cte
     t2m = t2m - 273.15  # [C]
+    t2m_max = t2m_max - 273.15  # [C]
+    t2m_min = t2m_min - 273.15  # [C]
     d2m = d2m - 273.15  # [C]
 
     str = (str/10.**6)  # [MJ m**-2 d**-1]
     ssr = (ssr/10.**6)  # [MJ m**-2 d**-1]
     # strd = (strd/10.**6)  # [MJ m**-2 d**-1]
 
-    slhf = slhf/10.**6
-    sshf = sshf/10.**6
+    slhf = slhf/10.**6  # [MJ m**-2 d**-1]
+    sshf = sshf/10.**6  # [MJ m**-2 d**-1]
 
     sp = sp/10.**3      # [kPa]
     # rs = 0.23           # Albedo - 0.23 grass reference
@@ -33,7 +35,6 @@ def fao56reference(t2m, t2m_max, t2m_min, u10, v10, d2m, sp,
     es = 0.611*np.exp((17.27*t2m)/(t2m+237.3))  # [kPa]
     es_tmax = 0.611*np.exp((17.27*t2m_max)/(t2m_max+237.3))  # [kPa]
     es_tmin = 0.611*np.exp((17.27*t2m_min)/(t2m_min+237.3))  # [kPa]
-
     es_daily = (es_tmax + es_tmin)/2.
 
     ea = 0.611*np.exp((17.27*d2m)/(d2m+237.3))  # [kPa]
@@ -43,31 +44,6 @@ def fao56reference(t2m, t2m_max, t2m_min, u10, v10, d2m, sp,
     u2 = np.sqrt(u10**2+v10**2)  # [m s**-1]
     u2 = u2*0.66  # 10m para 2m
 
-    # tm1 = t2m
-    # tm0 = np.roll(t2m, 1)
-    # G = 0.14*(tm1-tm0)
-
-    # Saldo de radiacao de onda curta (Rns):
-    #
-    # Considerado a radiacao direta e difusa para a superficie (S_sup_down)
-    # e o albedo
-    #
-
-    # Rns = (1. - rs) * ssrd
-    #
-    # Usando o saldo de onda curta na superficie (S_sup_down - S_sup_up)
-    # do ERA5 Land
-    # Rns = ssr
-    #
-
-    # Saldo de radiacao de onda longa (L_sup_down - L_sup_up):
-    # Rnl = (str)*(-1)
-    #
-    # Componente da Terra para a atmosfera
-    # L_sup_up = strd - str
-    #
-
-    # Rn = (Rns - Rnl)
     Rn = ssr + str
 
     G = Rn + slhf + sshf
@@ -87,17 +63,18 @@ def asceewripenmanmonteith(t2m, t2m_max, t2m_min, u10, v10, d2m, sp,
 
     # Conversoes & cte
     t2m = t2m - 273.15  # [C]
+    t2m_max = t2m_max - 273.15  # [C]
+    t2m_min = t2m_min - 273.15  # [C]
     d2m = d2m - 273.15  # [C]
 
     str = (str/10.**6)  # [MJ m**-2 d**-1]
     ssr = (ssr/10.**6)  # [MJ m**-2 d**-1]
     # strd = (strd/10.**6)  # [MJ m**-2 d**-1]
 
-    slhf = slhf/10.**6
-    sshf = sshf/10.**6
+    slhf = slhf/10.**6  # [MJ m**-2 d**-1]
+    sshf = sshf/10.**6  # [MJ m**-2 d**-1]
 
     sp = sp/10.**3      # [kPa]
-    # rs = 0.23           # Albedo - 0.23 grass reference
 
     # cte psicrometrica
     # psi = 0.063  # [kPa C**-1]
@@ -108,7 +85,6 @@ def asceewripenmanmonteith(t2m, t2m_max, t2m_min, u10, v10, d2m, sp,
     es = 0.611*np.exp((17.27*t2m)/(t2m+237.3))  # [kPa]
     es_tmax = 0.611*np.exp((17.27*t2m_max)/(t2m_max+237.3))  # [kPa]
     es_tmin = 0.611*np.exp((17.27*t2m_min)/(t2m_min+237.3))  # [kPa]
-
     es_daily = (es_tmax + es_tmin)/2.
 
     ea = 0.611*np.exp((17.27*d2m)/(d2m+237.3))  # [kPa]
@@ -141,10 +117,9 @@ def penmanmonteith(t2m, t2m_max, t2m_min, u10, v10, d2m, sp,
 
     str = (str/10.**6)  # [MJ m**-2 d**-1]
     ssr = (ssr/10.**6)  # [MJ m**-2 d**-1]
-    # strd = (strd/10.**6)  # [MJ m**-2 d**-1]
 
-    slhf = slhf/10.**6
-    sshf = sshf/10.**6
+    slhf = slhf/10.**6  # [MJ m**-2 d**-1]
+    sshf = sshf/10.**6  # [MJ m**-2 d**-1]
 
     sp = sp/10.**3      # [kPa]
 
@@ -173,7 +148,7 @@ def penmanmonteith(t2m, t2m_max, t2m_min, u10, v10, d2m, sp,
     u2 = u2*0.66  # 10m para 2m
 
     rhoa = sp/(rgas*tv)  # [kg m**-3]
-    ca = (psi*epsilon*calorlatvap)/sp  # [MJ kg**-1 C**-1]
+    ca = (psi*epsilon*calorlatvap)/sp  # [MJ kg**-1 C**-1] Calor especifico ar
     ra = 208./u2
     rs = 70.
 
@@ -190,7 +165,7 @@ def penmanmonteith(t2m, t2m_max, t2m_min, u10, v10, d2m, sp,
     return etp_penmanmonteith
 
 
-def hargreavessamani(tisr, t2m, t2m_max, t2m_min):
+def hargreavessamani(ra, t2m, t2m_max, t2m_min):
     # ([J m**-2], [K], [K], [K])
 
     # Conversoes
@@ -199,29 +174,35 @@ def hargreavessamani(tisr, t2m, t2m_max, t2m_min):
     t2m_min = t2m_min - 273.15  # [C]
 
     calorlatvap = 2.501 - (2.361*10.**(-3))*t2m  # [MJ kg**-1]
-    chs = 0.00185*(t2m_max-t2m_min)**2-0.0433*(t2m_max-t2m_min)+0.4023
+    chs = (0.00185*(t2m_max-t2m_min)**2)-0.0433*(t2m_max-t2m_min)+0.4023
 
-    etp_hargreavessamani = (0.0135*chs*(tisr/calorlatvap) *
-                            (np.sqrt(t2m_max-t2m_min))*(t2m + 17.8))
+    # Hargreaves and Samani, 1985
+    etp_hargreavessamani = (0.0135*chs*(ra/calorlatvap)
+                            * (np.sqrt(t2m_max-t2m_min))*(t2m + 17.8))
 
     return etp_hargreavessamani
 
 
-def mhargreaves(tisr, t2m, t2m_max, t2m_min, tp_monthly):
-    # ([J m**-2], [K], [K], [K], [mm month**-1])
+def mhargreaves(ra, t2m, t2m_max, t2m_min, tp):
+    # ([MJ m**-2], [K], [K], [K], [m])
 
     # Conversoes
     t2m = t2m - 273.15  # [C]
     t2m_max = t2m_max - 273.15  # [C]
     t2m_min = t2m_min - 273.15  # [C]
+    tp = tp*10**3  # [mm d**-1]
+    ndiasmes = t2m.time.dt.daysinmonth.values
+    tp = tp*ndiasmes[:, np.newaxis, np.newaxis]  # [mm month**-1]
 
-    tisr_mmday = tisr / (
+    ra_mmday = (ra*(10**6)) / (
         (2500.8-2.37*t2m +
          0.0016*(t2m**2) -
          0.00006*(t2m**3.))*10.**3)  # [mm d**-1]
+    # ra_mmday = ra*0.408  # aproximacao FAO
 
-    etp_mhargreaves = (0.0013*tisr_mmday*(t2m + 17.) *
-                       ((t2m_max-t2m_min)-0.0123*tp_monthly)**0.76)
+    # Modified Hargreaves
+    etp_mhargreaves = (0.0013*ra_mmday*(t2m + 17.) *
+                       (((t2m_max-t2m_min)-0.0123*tp)**0.76))
 
     return etp_mhargreaves
 
@@ -232,8 +213,13 @@ def priestleytaylor(ssr, str, slhf, sshf, t2m, sp):
     # Conversoes & cte
     alpha = 1.26
     t2m = t2m - 273.15  # [C]
+
     str = str/10.**6    # [MJ m**-2 d**-1]
     ssr = ssr/10.**6    # [MJ m**-2 d**-1]
+
+    slhf = slhf/10.**6  # [MJ m**-2 d**-1]
+    sshf = sshf/10.**6  # [MJ m**-2 d**-1]
+
     sp = sp/(10.**3)    # [kPa]
 
     calorlatvap = 2.501 - (2.361*10.**(-3))*t2m  # [MJ kg**-1]
@@ -251,15 +237,19 @@ def priestleytaylor(ssr, str, slhf, sshf, t2m, sp):
 
     G = Rn + slhf + sshf
 
+    # Priestley and Taylor, (1972)
     etp_priestleytaylor = alpha*((delta/(delta+psi))*(Rn/calorlatvap)
-                                         - (G/calorlatvap))
+                                 - (G/calorlatvap))
 
     return etp_priestleytaylor
 
 
-def thornthwaite(t2m, Ith, ath, hrday, ndaymonth):
-    # Ith =
-    # ath =
-    etp_thornthwaite = 16*(hrday/24)*(ndaymonth/30)*((10*t2m)/Ith)**ath
+def thornthwaite(t2m, Ith, ath, daylh):
+
+    t2m = t2m - 273.15  # [C]
+
+    etp_thornthwaite = (16 * (daylh/24)
+                        * (1/30)
+                        * ((10*t2m)/Ith)**ath)  # [mm d**-1]
 
     return etp_thornthwaite

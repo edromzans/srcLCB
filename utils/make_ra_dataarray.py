@@ -23,12 +23,12 @@ nx = ds_era5land.dims['longitude']
 ny = ds_era5land.dims['latitude']
 nt = ds_era5land.dims['time']
 
-dayofyearall = ds_era5land.time.dt.dayofyear.values
+dayofyearall = np.fix(ds_era5land.time.dt.dayofyear.values +
+                      ds_era5land.time.dt.daysinmonth.values/2)
 
-dayear = (np.ones((nt, ny, nx))*dayofyearall[:, np.newaxis, np.newaxis]) + 15
+dayear = (np.ones((nt, ny, nx))*dayofyearall[:, np.newaxis, np.newaxis])
 
 lat = np.transpose([ds_era5land.latitude.values]*nx)
-
 
 da_lat = xr.DataArray(data=lat,
                       dims=['latitude', 'longitude'],
