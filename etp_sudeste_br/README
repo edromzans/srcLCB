@@ -1,0 +1,18 @@
+Execute:
+
+python3 main_etps.py
+
+para a criação de um arquivo NetCDF de ETP conforme as configurações desejadas em ./config/etps_config.py
+
+Para fazer uma média entre diferentes conjuntos de dados (datasets) de ETPs criados com o
+programa main_etps.py, verifique o programa em ./utils/faz_dataset_etp_media.py
+
+
+Execute:
+
+python3 main_reanalise.py
+
+para a criação de arquivo NetCDF com cada variável que participam dos cálculos das ETPs,
+conforme as configurações desejadas em ./config/reanalise_config.py
+
+
