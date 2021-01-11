@@ -344,6 +344,7 @@ Mais detalhes a respeito dos métodos de minimização de erro da classe ``Minim
 \vspace{\baselineskip}
 \subsection{Breve descrição das saídas da classe Minimizer}
 \vspace{\baselineskip}
+\label{descSaidaMinimizer}
 As saídas da classe ``Minimizer'' do LMFIT, que aplica os métodos numéricos de minimização de erro para otimização dos parâmetros tem o seguinte aspecto.
 
 \begin{Verbatim}[breaklines=true]
@@ -376,7 +377,7 @@ Sendo:
 \item fitting method: Método de minimização do erro em função dos parâmetros.
 \item function evals: Número de iterações, ie., quantas vezes a função residual foi chamada.
 \item data points: Tamanho da série de dados.
-\item variables: São os parâmetros do modelo a ser calibrado.     
+ \item variables: São os parâmetros do modelo a ser calibrado.     
 \item chi-square: Somatório do erro quadrático do conjunto de parâmetros ótimos.
 \item reduced chi-square: $\chi^2$ / {(Número de pontos da série de dados) - (Número de parâmetros)}
 \item Akaike info crit: Akaike Information Criterion statistic (aic)
@@ -823,6 +824,11 @@ gfortran comsibc.f95 pardif.f95 load_aeropars.f95 sib2x.f95 Sib2xa.f95 Sib2xb.f9
 \end{enumerate}
 
 
+\section{Considerações sobre a calibração do SiB2 usando o método bruto}
+
+Apesar do método ``brute'' de minimização do qui-quadrado -- que é somatório do erro quadrático $\chi^2 = \sum_{i}^{N} (Resid_i)^2$ (descrito também em \ref{descSaidaMinimizer}) -- possuir um custo computacional alto e portanto exige um bom dimensionamento da grade de parâmetros a ser investigada, nele é calculado o $\chi^2$ para todo o espaço definido pela grade de parâmetros, possibilitando uma visualização gráfica de $\chi^2$ em função dos parâmetros. Este tipo visualização (ver figure \ref{gridsearch}) é uma cópia do exemplo \url{https://lmfit.github.io/lmfit-py/examples/example_brute.html?highlight=brute%20example} contido na documentação do LMFIT e é gerado a partir do programa ``loadBruteGridMinimizerResult.py'' onde a função ``gradeparamsbrute.py'' é chamada. O programa ``loadBruteGridMinimizerResult.py'' apenas restaura o resultado gerado em ``calibraSiB2\_brute.py'' e faz os gráficos por meio da função ``gradeparamsbrute.py''. O programa ``loadBruteGridMinimizerResult.py'' e a função ``gradeparamsbrute.py'' estão contidos  no diretório de cada módulo de calibração.
+
+
 \vspace{\baselineskip}
 \chapter{Calibração de modelo de balanço de água para pequenas bacias}
 \vspace{\baselineskip}
@@ -832,6 +838,7 @@ O modelo de balanço de água descrito em \citeonline{vandewiele1992}, foi repro
 O formulação numérica do modelo está no repositório \textbf{balaguamodel}, nos códigos ``balagua\_ugrhi\_brute.py'' e ``balagua\_ugrhi\_leastsq.py'' que correspondem ao mesmo modelo de balanço de água de \citeonline{vandewiele1992} já acoplado com o método de obtenção de parâmetros ``brute'' e ``Levenberg-Marquardt'' respectivamente.   
 
 \section{Obtendo os parâmetros do modelo de balanço de água}
+\label{balabrute}
 
 Os parâmetros do modelo são obtidos com base na série temporal mensal de dados observacionais de evapotranspiração potencial (etp), precipitação (p) e vazão (q). Aqui, a evapotranspiração potencial foi obtida da \textit{Climatic Research Unit (University of East Anglia) and Met Office} (\url{http://www.cru.uea.ac.uk/}) ou da \textit{Texas A\&M University} \url{https://utexas.app.box.com/v/xavier-etal-ijoc-data} e os dados de vazão e precipitação, obtidos das UGRHI (Unidade de Gerenciamento de Recursos Hídricos de São Paulo) e estações meteorológicas do INMET (Instituto Nacional de Meteorologia). Porém essa combinação pode variar para diferentes bacias hidrográficas, método de obtenção da evapotranspiração potencial, etc.
 

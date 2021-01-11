@@ -1,18 +1,23 @@
-Execute:
+Para a criação de um arquivo NetCDF de ETP conforme as configurações desejadas em ./config/etps_config.py,
+execute:
 
 python3 main_etps.py
 
-para a criação de um arquivo NetCDF de ETP conforme as configurações desejadas em ./config/etps_config.py
-
+O adicionalmente o programa main_etps.py faz o mapa da média temporal, e os gráficos da média espacial e
+ciclo anual da media espacial para a ETP selecionada.  
 Para fazer uma média entre diferentes conjuntos de dados (datasets) de ETPs criados com o
 programa main_etps.py, verifique o programa em ./utils/faz_dataset_etp_media.py
 
 
-Execute:
+Para a criação de arquivo NetCDF com cada variável que participam dos cálculos das ETPs,
+conforme as configurações desejadas em ./config/reanalise_config.py,
+execute:
 
 python3 main_reanalise.py
 
-para a criação de arquivo NetCDF com cada variável que participam dos cálculos das ETPs,
-conforme as configurações desejadas em ./config/reanalise_config.py
+O adicionalmente o programa main_reanalise.py faz o mapa da média temporal, e os gráficos da média espacial e
+ciclo anual da media espacial para a variável selecionada.
 
+
+Havendo a necessidade de construir os campos de etps para uma região fora da longitude entre -56 e -38 e latitude entre -13 e -27, verifique o README no diretório ./utils/datasets/.
 

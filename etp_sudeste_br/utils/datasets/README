@@ -1,0 +1,36 @@
+README
+
+	Os campos de evapotranspiração potencial (etp) calculados em três dimensões; tempo, latitude e longitude; são construídos com base em um conjunto de dados no formato NetCDF constituído dos dados de reanálise do ECMWF ERA5 Land, médias mensais e horário, e cálculo de constantes que dependem do espaço e tempo que participam das equações para as etps.
+	Para obter os campos de etps para regiões que estão fora do sudeste brasileiro, mais especificamente fora da região de longitude entre -56 e -38 e latitude entre -13 e -27, o usuário deverá criar o arquivo NetCDF das variáveis para as equações de etps conforme os programas no diretório “./utils/”, seguindo as seguintes etapas:
+
+1 -- Baixe o Climate data Storage do ECMWF ERA5 Land -- monthly averaged data -- referente a região e período de interesse das seguintes variáveis:
+		longitude:long_name = "longitude" ;
+		latitude:long_name = "latitude" ;
+		time:long_name = "time" ;
+		u10:long_name = "10 metre U wind component" ;
+		v10:long_name = "10 metre V wind component" ;
+		d2m:long_name = "2 metre dewpoint temperature" ;
+		t2m:long_name = "2 metre temperature" ;
+		pev:long_name = "Potential evaporation" ;
+		slhf:long_name = "Surface latent heat flux" ;
+		ssr:long_name = "Surface net solar radiation" ;
+		str:long_name = "Surface net thermal radiation" ;
+		sp:long_name = "Surface pressure" ;
+		sshf:long_name = "Surface sensible heat flux" ;
+		ssrd:long_name = "Surface solar radiation downwards" ;
+		strd:long_name = "Surface thermal radiation downwards" ;
+		tp:long_name = "Total precipitation" ;
+
+2 -- Baixe o Climate data Storage do ECMWF ERA5 Land -- hourly data -- referente a região e período de interesse da variável:
+		t2m:long_name = "2 metre temperature" ;
+Observe que pela quantidade de dados e nível de acesso do usuário, o sistema copernicus do ECMWF pode restringir a quantidade de itens, sendo necessário baixar estes dados de maneira segmentada.
+
+3 -- Faça o conjunto de dados da temperatura (t2m) mensal média para as t2m máximas e mínimas diárias conforme o programa “make_monthy_t2m_max_min_from_era5land_hourly.py”.
+
+4 -- Faça o conjunto de dados da radiação extraterrestre considerando as mesmas coordenadas dos arquivos baixados no ECMWF, conforme o programa “make_ra_dataarray.py”.
+
+5 -- Faça o conjuntos de dados dos índices de Thornthwaite; “I”, “a” e as horas do dia com luz do sol (daylight hours N), considerando as mesmas coordenadas dos arquivos baixados no ECMWF, conforme o programa “make_thornthwaite_indexes.py”.
+
+6 -- Faça o conjunto de dados para o cálculo das etps unido o conjunto de dados baixados do ECMWF e os demais criados em 3, 4 e 5, usando o programa “make_dataset_to_etps.py”.
+
+Tendo o arquivo NetCDF das variáveis para as equações de etps, os campos de etps serão feitos com o programa “make_ds_etps.py”. Após a criação dos dois novos arquivos NetCDF, um referente as variáveis que envolvem os cálculos das etps e o outro com os campos de etps, faça o uso dos programas “main_reanalise.py” e “main_etps.py”, certificando-se dos caminhos declarados para “dataset_etps” e “dataset_reanalise” nos arquivos do diretório “./config/”.

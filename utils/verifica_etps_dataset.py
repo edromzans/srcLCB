@@ -94,6 +94,7 @@ plt.plot(xtime, hs, label='hargreavessamani')
 plt.plot(xtime, mh, label='mhargreaves')
 plt.plot(xtime, pritay, label='priestleytaylor')
 plt.plot(xtime, th, label='th')
+plt.ylabel('mm d$^-1$')
 plt.legend()
 plt.show()
 
