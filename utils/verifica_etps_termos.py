@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 # lon = -47.28
 # -------------------------
 # tagname = '5B-011'
-lat = -20.91
+lat = -20.91  # Selecao inicial de verificacao
 lon = -48.09
 # -------------------------
 # tagname = '3D-002'
@@ -108,11 +108,8 @@ t2m_max_s = t2m_max.sel(longitude=lon, latitude=lat, method='nearest')
 t2m_min_s = t2m_min.sel(longitude=lon, latitude=lat, method='nearest')
 tp_s = tp.sel(longitude=lon, latitude=lat, method='nearest')
 
-
-
 mh = etp_mhargreaves.sel(longitude=lon, latitude=lat, method='nearest')
 S0_s = S0.sel(longitude=lon, latitude=lat, method='nearest')
-
 
 # fao56.plot()
 # plt.ylabel('fao56 ETP (mm d$^-1)$')

@@ -21,12 +21,12 @@ import matplotlib.pyplot as plt
 # lon = -47.28
 # -------------------------
 # tagname = '5B-011'
-lat = -20.91
-lon = -48.09
+# lat = -20.91 # primeira verificacao
+# lon = -48.09
 # -------------------------
 # tagname = '3D-002'
-# lat = -22.70
-# lon = -46.97
+lat = -22.70
+lon = -46.97
 # -------------------------
 ##########
 

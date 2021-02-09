@@ -22,12 +22,12 @@ from geopy.distance import geodesic
 # lon = -47.28
 # -------------------------
 # tagname = '5B-011'
-lat = -20.91
-lon = -48.09
+# lat = -20.91
+# lon = -48.09
 # -------------------------
 # tagname = '3D-002'
-# lat = -22.70
-# lon = -46.97
+lat = -22.70
+lon = -46.97
 # -------------------------
 ##########
 
@@ -92,8 +92,9 @@ dic_dadosestacoes = {'Tmax': data_estacao[:, 0],
                      'u2'  : data_estacao[:, 4],
                      'ETo' : data_estacao[:, 5]}
 
-df_dadosestacoes = pd.DataFrame(data=dic_dadosestacoes, index=pdts)
 
+# ['Celcius degrees', 'Celcius degrees', 'MJ m-2', '%', 'm/s', 'mm']
+df_dadosestacoes = pd.DataFrame(data=dic_dadosestacoes, index=pdts)
 
 #dados de precipitacao
 npzfile = np.load(prec_raw)
@@ -129,3 +130,8 @@ df_pluv = pd.DataFrame(data=dic_pluviometros, index=pdts_prec)
 
 # df_prec = pd.DataFrame()
 # head = struct['names']
+
+df_serie = pd.concat([df_dadosestacoes, df_pluv], axis=1)
+
+df_serie.to_csv(dirsubset+'estacaometeoserie.csv',
+                float_format='%g')  # '%.3f')

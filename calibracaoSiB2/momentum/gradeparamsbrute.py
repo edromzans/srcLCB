@@ -137,4 +137,4 @@ def plot_results_brute(result, best_vals=True, varlabels=None,
     # cbar.set_ticks(LogLocator(subs='all'))  # (base=10.,subs=(500.,1000.,1500.,2000.,2500.)))
     if output is not None:
         plt.savefig(output, format='png', dpi=300)
-    plt.show(output)
+    plt.show()

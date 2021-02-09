@@ -70,7 +70,6 @@ file_reanalises_df = tagname+'_era5_reanalise_baciahid.pkl'
 
 file_df_t2m_maxmin = tagname+'_t2m_max_min_from_era5land_houly.pkl'
 
-
 # Datasets
 ds_era5land = xr.open_dataset(dirdata+era5land)
 ds_era5singlev = xr.open_dataset(dirdata+era5singlev)
