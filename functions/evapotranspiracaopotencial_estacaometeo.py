@@ -197,8 +197,6 @@ def priestleytaylor(t2m, rn):
 
 def thornthwaite(t2m, Ith, ath, daylh):
 
-    t2m = t2m - 273.15  # [C]
-
     etp_thornthwaite = (16 * (daylh/24)
                         * (1/30)
                         * ((10*t2m)/Ith)**ath)  # [mm d**-1]
